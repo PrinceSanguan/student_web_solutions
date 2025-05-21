@@ -3,123 +3,43 @@ import ChatBot from '@/components/landing/chat-bot';
 import Footer from '@/components/landing/footer';
 import ProjectShowcase from '@/components/landing/project-showcase';
 import { Head } from '@inertiajs/react';
-import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { TextPlugin } from 'gsap/TextPlugin';
+import { SplitText } from 'gsap/SplitText';
 
-const ParallaxBackground = () => {
-    const [scrollY, setScrollY] = useState(0);
-    const [mouseX, setMouseX] = useState(0);
-    const [mouseY, setMouseY] = useState(0);
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, TextPlugin, SplitText);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrollY(window.scrollY);
-        };
+// Import components from their new locations
+import CustomCursor from '@/components/landing/animations/CustomCursor';
+import TextScramble from '@/components/landing/animations/TextScramble';
+import ParallaxBackground from '@/components/landing/animations/ParallaxBackground';
+import ParticleBackground from '@/components/landing/animations/ParticleBackground';
+import SmoothScrollSection from '@/components/landing/animations/SmoothScrollSection';
+import InteractiveCard from '@/components/landing/cards/InteractiveCard';
+import TiltCard from '@/components/landing/cards/TiltCard';
+import TestimonialSlider from '@/components/landing/sections/TestimonialSlider';
+import AnimatedCounter from '@/components/landing/sections/AnimatedCounter';
+import PageLoader from '@/components/landing/sections/PageLoader';
+import IntroVideo from '@/components/landing/sections/IntroVideo';
 
-        const handleMouseMove = (e: { clientX: number; clientY: number }) => {
-            setMouseX(e.clientX / window.innerWidth);
-            setMouseY(e.clientY / window.innerHeight);
-        };
 
-        window.addEventListener('scroll', handleScroll);
-        window.addEventListener('mousemove', handleMouseMove);
 
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('mousemove', handleMouseMove);
-        };
-    }, []);
 
-    return (
-        <div className="fixed inset-0 -z-10 h-screen w-full overflow-hidden">
-            <div
-                className="absolute inset-0 h-[120%] w-full bg-cover bg-center"
-                style={{
-                    backgroundImage: "url('/assets/images/background.sws.png')",
-                    transform: `translateY(-${scrollY * 0.5}px) translateX(${(mouseX - 0.5) * -10}px) translateY(${(mouseY - 0.5) * -10}px)`,
-                    filter: 'brightness(0.7)',
-                }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-900/70" />
-            <div
-                className="absolute inset-0"
-                style={{
-                    background: 'radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%)',
-                }}
-            />
-        </div>
-    );
-};
 
-// Mobile-responsive Intro Video Component
-const IntroVideo = ({ onVideoComplete }: { onVideoComplete: () => void }) => {
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
 
-    // Handle video ended event
-    const handleVideoEnded = () => {
-        // Mark video as watched in localStorage
-        localStorage.setItem('introVideoWatched', 'true');
-        onVideoComplete();
-        setIsPlaying(false);
-    };
 
-    // Handle video play/pause events
-    const handleVideoPlay = () => {
-        setIsPlaying(true);
-    };
 
-    const handleVideoPause = () => {
-        setIsPlaying(false);
-    };
 
-    useEffect(() => {
-        const videoElement = videoRef.current;
-        if (videoElement) {
-            videoElement.addEventListener('play', handleVideoPlay);
-            videoElement.addEventListener('pause', handleVideoPause);
 
-            return () => {
-                videoElement.removeEventListener('play', handleVideoPlay);
-                videoElement.removeEventListener('pause', handleVideoPause);
-            };
-        }
-    }, []);
 
-    return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-start overflow-y-auto bg-black px-4 py-8 sm:justify-center sm:p-6 md:p-8">
-            {/* Welcome message - visible when video is not playing */}
-            <div
-                className={`mb-6 w-full max-w-sm rounded-lg border-2 border-green-600 bg-black p-4 text-center ${isPlaying ? 'hidden' : 'block'} sm:mb-8 sm:max-w-md md:mb-10 md:max-w-lg`}
-            >
-                <h2 className="text-xl font-bold text-white sm:text-2xl md:text-3xl">Welcome to Student Web Solutions</h2>
-                <p className="mt-2 text-sm text-white sm:text-base md:text-lg">
-                    Please watch our promotional video to continue to the website.
-                    <br />
-                    <span className="font-semibold">Click the video to play.</span>
-                </p>
-            </div>
 
-            {/* Video container - portrait orientation when playing */}
-            <div className={`w-full ${isPlaying ? 'max-w-xs' : 'max-w-sm'} sm:max-w-md md:max-w-lg`}>
-                <div className={`relative overflow-hidden rounded-lg bg-black ${isPlaying ? 'pb-[177.78%]' : 'pb-[56.25%]'} shadow-xl`}>
-                    <video
-                        ref={videoRef}
-                        className="absolute top-0 left-0 h-full w-full object-contain"
-                        onEnded={handleVideoEnded}
-                        controls={true}
-                        playsInline
-                        poster="/assets/images/logo.png"
-                        preload="auto"
-                    >
-                        <source src="/assets/videos/promotion.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-            </div>
-        </div>
-    );
-};
+
+
+
+
 
 interface WelcomeProps {
     dailyVisitors: number;
@@ -140,8 +60,13 @@ interface WelcomeProps {
 
 const Welcome = (props: WelcomeProps) => {
     const [darkMode, setDarkMode] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const heroRef = useRef<HTMLElement>(null);
+    const headingRef = useRef<HTMLHeadingElement>(null);
+    const descriptionRef = useRef<HTMLParagraphElement>(null);
+    const mainRef = useRef<HTMLElement>(null);
 
     // Check if intro video has been watched before
     useEffect(() => {
@@ -157,14 +82,70 @@ const Welcome = (props: WelcomeProps) => {
         setDarkMode(isDarkMode);
     }, []);
 
+    // Set up GSAP animations
+    useEffect(() => {
+        if (!showIntro && !isLoading && mainRef.current) {
+            // Stagger animation for the header elements
+            const tl = gsap.timeline();
+
+            tl.from(headingRef.current, {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            })
+            .from(descriptionRef.current, {
+                y: 20,
+                opacity: 0,
+                duration: 0.6,
+                ease: "power3.out"
+            }, "-=0.4");
+
+            // Create scroll animations
+            ScrollTrigger.batch("[data-gsap='reveal']", {
+                onEnter: batch => gsap.to(batch, {
+                    opacity: 1,
+                    y: 0,
+                    stagger: 0.15,
+                    duration: 0.8,
+                    ease: "power2.out"
+                }),
+                start: "top 85%"
+            });
+
+            // Create floating animation for elements with float class
+            const floatingElements = document.querySelectorAll('.float');
+            floatingElements.forEach((el, index) => {
+                const direction = index % 2 === 0 ? 1 : -1;
+                const delay = index * 0.2;
+
+                gsap.to(el, {
+                    y: direction * 12,
+                    ease: "sine.inOut",
+                    repeat: -1,
+                    yoyo: true,
+                    duration: 3 + index * 0.2,
+                    delay
+                });
+            });
+
+            // Add scroll progress indicator
+            gsap.to('.scroll-progress', {
+                scaleX: 1,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: document.body,
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 0.3
+                }
+            });
+        }
+    }, [showIntro, isLoading]);
+
     // Toggle dark mode function
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
-    };
-
-    // Toggle mobile menu
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
     };
 
     // Handle video completion
@@ -179,14 +160,40 @@ const Welcome = (props: WelcomeProps) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+                <style>
+                    {`
+                    * {
+                        cursor: none;
+                    }
+
+                    @media (max-width: 640px) {
+                        * {
+                            cursor: auto;
+                        }
+                    }
+                    `}
+                </style>
             </Head>
 
-            {showIntro && <IntroVideo onVideoComplete={handleVideoComplete} />}
+            {/* Custom cursor */}
+            <CustomCursor darkMode={darkMode} />
+
+            {/* Scroll progress bar */}
+            <div className="fixed top-0 left-0 z-50 w-full h-1">
+                <div className="scroll-progress h-full w-full scale-x-0 bg-gradient-to-r from-blue-500 to-purple-600 origin-left"></div>
+            </div>
+
+            {/* Page loader */}
+            <PageLoader isLoading={isLoading} setIsLoading={setIsLoading} />
+
+            {!isLoading && showIntro && <IntroVideo onVideoComplete={handleVideoComplete} />}
 
             <div
                 className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} relative transition-colors duration-300`}
+                style={{ visibility: isLoading ? 'hidden' : 'visible' }}
             >
                 <ParallaxBackground />
+                <ParticleBackground darkMode={darkMode} />
 
                 {/* Enhanced Header with Mobile Support */}
                 <header className="sticky top-0 z-40 w-full bg-white/70 px-4 py-4 shadow-sm backdrop-blur-md dark:bg-gray-900/70">
@@ -195,7 +202,7 @@ const Welcome = (props: WelcomeProps) => {
                             <img
                                 src="/assets/images/sws.png"
                                 alt="Student Web Solutions Logo"
-                                className="h-10 w-10 rounded-full shadow-md sm:h-12 sm:w-12"
+                                className="h-10 w-10 rounded-full shadow-md sm:h-12 sm:w-12 float"
                             />
                             <div>
                                 <h1 className="text-lg font-bold sm:text-xl">Student Web Solutions</h1>
@@ -203,7 +210,7 @@ const Welcome = (props: WelcomeProps) => {
                             </div>
                         </div>
 
-                        {/* Mobile menu button */}
+                        {/* Dark mode toggle */}
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={toggleDarkMode}
@@ -237,38 +244,138 @@ const Welcome = (props: WelcomeProps) => {
                 </header>
 
                 {/* Main Content */}
-                <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+                <main ref={mainRef} className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
                     {/* Hero Section */}
-                    <section className="mb-16 text-center">
-                        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                            <h2 className="mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl md:text-5xl">
-                                Our Portfolio
-                            </h2>
-                            <p className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg dark:text-gray-300">
+                    <section ref={heroRef} className="mb-16 text-center">
+                        <div className="overflow-hidden">
+                            <TextScramble
+                                text="Our Portfolio"
+                                className="mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl md:text-5xl"
+                            />
+                            <p
+                                ref={descriptionRef}
+                                className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg dark:text-gray-300"
+                            >
                                 Explore our showcase projects. Click to learn more and access test credentials.
                             </p>
-                        </motion.div>
+                        </div>
                     </section>
 
+                    {/* Stats section with animated counters */}
+                    <section className="mb-20">
+                        <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
+                            <TextScramble
+                                text="Our Impact"
+                                className="mb-8 text-center bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl md:text-4xl"
+                            />
+
+                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                                <AnimatedCounter
+                                    value={100}
+                                    suffix="+"
+                                    title="Satisfied Clients"
+                                    darkMode={darkMode}
+                                />
+                                <AnimatedCounter
+                                    value={250}
+                                    suffix="+"
+                                    title="Projects Completed"
+                                    darkMode={darkMode}
+                                />
+                                <AnimatedCounter
+                                    value={5}
+                                    suffix="+"
+                                    title="Years Experience"
+                                    darkMode={darkMode}
+                                />
+                                <AnimatedCounter
+                                    value={24}
+                                    suffix="/7"
+                                    title="Support"
+                                    darkMode={darkMode}
+                                />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Services section with interactive cards */}
+                    <section className="mb-20">
+                        <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
+                            <TextScramble
+                                text="Our Services"
+                                className="mb-8 text-center bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl md:text-4xl"
+                            />
+
+                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                <InteractiveCard
+                                    darkMode={darkMode}
+                                    title="Web Development"
+                                    description="Custom web development solutions tailored to your needs."
+                                    icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 float" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                        </svg>
+                                    }
+                                />
+                                <InteractiveCard
+                                    darkMode={darkMode}
+                                    title="UI/UX Design"
+                                    description="Beautiful, intuitive interfaces that enhance user experience."
+                                    icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 float" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                                        </svg>
+                                    }
+                                />
+                                <InteractiveCard
+                                    darkMode={darkMode}
+                                    title="Mobile App Development"
+                                    description="Cross-platform mobile applications with responsive design."
+                                    icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 float" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                    }
+                                />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Testimonial slider section */}
+                    <section className="mb-20">
+                        <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
+                            <TestimonialSlider darkMode={darkMode} />
+                        </div>
+                    </section>
+
+                    {/* Smooth scroll text section */}
+                    <SmoothScrollSection />
+
                     {/* Project Showcase */}
-                    <ProjectShowcase darkMode={darkMode} />
+                    <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
+                        <ProjectShowcase darkMode={darkMode} />
+                    </div>
 
                     {/* Analytics Dashboard Section */}
-                    <Analytics
-                        darkMode={darkMode}
-                        dailyVisitors={props.dailyVisitors}
-                        monthlyVisitors={props.monthlyVisitors}
-                        dailyVisitorsData={props.dailyVisitorsData}
-                        monthlyVisitorsData={props.monthlyVisitorsData}
-                    />
+                    <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
+                        <Analytics
+                            darkMode={darkMode}
+                            dailyVisitors={props.dailyVisitors}
+                            monthlyVisitors={props.monthlyVisitors}
+                            dailyVisitorsData={props.dailyVisitorsData}
+                            monthlyVisitorsData={props.monthlyVisitorsData}
+                        />
+                    </div>
                 </main>
 
                 {/* Enhanced Footer */}
-                <Footer darkMode={darkMode} />
+                <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
+                    <Footer darkMode={darkMode} />
+                </div>
             </div>
 
             {/* Chat Bot */}
-            <ChatBot darkMode={darkMode} />
+            {!isLoading && <ChatBot darkMode={darkMode} />}
         </>
     );
 };
