@@ -63,21 +63,20 @@ const IntroVideo = ({ onVideoComplete }: { onVideoComplete: () => void }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black p-4 sm:p-6 md:p-8">
-            {/* Welcome message - responsive text sizes */}
-            <div className="bg-opacity-80 mb-3 w-full max-w-sm rounded-lg bg-gray-900 p-3 text-center sm:mb-4 sm:max-w-md sm:p-4 md:mb-6 md:max-w-lg">
-                <h2 className="text-lg font-bold text-white sm:text-xl md:text-2xl">Welcome to Student Web Solutions</h2>
-                <p className="mt-1 text-sm text-gray-300 sm:mt-2 sm:text-base">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-start overflow-y-auto bg-black px-4 py-8 sm:justify-center sm:p-6 md:p-8">
+            {/* Welcome message - responsive text sizes with improved spacing */}
+            <div className="bg-opacity-80 mb-6 w-full max-w-sm rounded-lg bg-gray-900 p-4 text-center sm:mb-4 sm:max-w-md md:mb-6 md:max-w-lg">
+                <h2 className="text-xl font-bold text-white sm:text-xl md:text-2xl">Welcome to Student Web Solutions</h2>
+                <p className="mt-2 text-sm text-gray-300 sm:text-base">
                     Please watch our promotional video to continue to the website.
                     <br />
                     <span className="font-semibold">Click the video to play.</span>
                 </p>
             </div>
 
-            {/* Video container with aspect ratio box for responsiveness */}
-            <div className="w-full max-w-4xl">
-                {/* 16:9 aspect ratio wrapper */}
-                <div className="relative overflow-hidden rounded-lg bg-black pb-[56.25%] shadow-xl">
+            {/* Video container with adjusted aspect ratio */}
+            <div className="w-full max-w-sm sm:max-w-md md:max-w-lg">
+                <div className="relative overflow-hidden rounded-lg bg-black pb-[177.78%] shadow-xl">
                     <video
                         ref={videoRef}
                         className="absolute top-0 left-0 h-full w-full object-contain"
@@ -91,9 +90,6 @@ const IntroVideo = ({ onVideoComplete }: { onVideoComplete: () => void }) => {
                         Your browser does not support the video tag.
                     </video>
                 </div>
-
-                {/* Mobile-friendly instruction below video on small screens */}
-                <p className="mt-2 text-center text-xs text-white sm:hidden">Tap the play button to start the video</p>
             </div>
         </div>
     );
