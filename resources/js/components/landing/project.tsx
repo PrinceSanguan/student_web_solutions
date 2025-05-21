@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 // Define project interface
@@ -197,6 +197,90 @@ export const ServiceCard = ({ icon, title, description }: { icon: React.ReactNod
     );
 };
 
+// Custom Confirmation Dialog Component
+export const ConfirmationDialog = ({
+    isOpen,
+    onClose,
+    onConfirm,
+    darkMode,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    darkMode: boolean;
+}) => {
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={onClose}
+                >
+                    <motion.div
+                        className={`w-full max-w-md rounded-2xl p-1 ${darkMode ? 'bg-gradient-to-br from-blue-500 to-purple-600' : 'bg-gradient-to-br from-blue-400 to-purple-500'}`}
+                        initial={{ scale: 0.9, y: 20 }}
+                        animate={{ scale: 1, y: 0 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className={`rounded-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                            <div className="mb-4 flex justify-center">
+                                <div className={`rounded-full p-4 ${darkMode ? 'bg-gray-700' : 'bg-blue-100'}`}>
+                                    <svg
+                                        className={`h-10 w-10 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <h3 className={`mb-2 text-center text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Leaving This Site</h3>
+
+                            <p className={`mb-6 text-center ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                You will now go to my Facebook page to message me. Would you like to continue?
+                            </p>
+
+                            <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3">
+                                <button
+                                    onClick={onClose}
+                                    className={`flex-1 rounded-lg px-4 py-3 font-medium transition-colors ${
+                                        darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                    }`}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={onConfirm}
+                                    className={`flex-1 rounded-lg px-4 py-3 font-medium transition-colors ${
+                                        darkMode
+                                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
+                                            : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600'
+                                    }`}
+                                >
+                                    Continue to Facebook
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
 // Project Detail Modal Component
 export const ProjectDetailModal = ({
     project,
@@ -212,6 +296,7 @@ export const ProjectDetailModal = ({
     const modalRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [copied, setCopied] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     // Handle click outside
     useEffect(() => {
@@ -276,6 +361,16 @@ export const ProjectDetailModal = ({
             videoRef.current.currentTime = 0;
         }
         onClose();
+    };
+
+    const handleFacebookClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setShowConfirmation(true);
+    };
+
+    const handleConfirmFacebook = () => {
+        setShowConfirmation(false);
+        window.open('https://www.facebook.com/profile.php?id=61560390520092', '_blank');
     };
 
     return (
@@ -346,7 +441,8 @@ export const ProjectDetailModal = ({
 
                     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                         <a
-                            href="/contact"
+                            href="#"
+                            onClick={handleFacebookClick}
                             className={`flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium shadow-md transition-all sm:w-auto ${
                                 darkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
                             }`}
@@ -382,6 +478,14 @@ export const ProjectDetailModal = ({
                     </div>
                 </div>
             </motion.div>
+
+            {/* Confirmation Dialog */}
+            <ConfirmationDialog
+                isOpen={showConfirmation}
+                onClose={() => setShowConfirmation(false)}
+                onConfirm={handleConfirmFacebook}
+                darkMode={darkMode}
+            />
         </motion.div>
     );
 };
