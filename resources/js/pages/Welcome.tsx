@@ -210,45 +210,6 @@ const Welcome = (props: WelcomeProps) => {
                                     </svg>
                                 )}
                             </button>
-                            <button
-                                className="block rounded-md p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-900 lg:hidden dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
-                                onClick={toggleMobileMenu}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Mobile menu */}
-                    <div
-                        className={`${
-                            isMobileMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
-                        } overflow-hidden transition-all duration-300 lg:hidden`}
-                    >
-                        <div className="mx-auto mt-4 space-y-2 px-4">
-                            <a
-                                href="#projects"
-                                className="block rounded-md px-3 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                Projects
-                            </a>
-                            <a
-                                href="#analytics"
-                                className="block rounded-md px-3 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                Analytics
-                            </a>
-                            <a
-                                href="#contact"
-                                className="block rounded-md px-3 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                Contact
-                            </a>
                         </div>
                     </div>
                 </header>
