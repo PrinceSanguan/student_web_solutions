@@ -62,12 +62,12 @@ class ProcessVisitorTracking implements ShouldQueue
     private function getCountryFromIp($ip)
     {
         try {
-            // Using the free IP-API service
-            $response = Http::get("http://ip-api.com/json/{$ip}");
+            // Using a more reliable IP geolocation API
+            $response = Http::get("https://ipapi.co/{$ip}/json/");
 
             if ($response->successful()) {
                 $data = $response->json();
-                return $data['country'] ?? 'Unknown';
+                return $data['country_name'] ?? 'Unknown';
             }
         } catch (\Exception $e) {
             // Log the error but continue execution

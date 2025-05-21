@@ -73,12 +73,12 @@ class HomeController extends Controller
     private function getCountryFromIp($ip)
     {
         try {
-            // Using the free IP-API service
-            $response = Http::get("http://ip-api.com/json/{$ip}");
+            // Using a more reliable IP geolocation API
+            $response = Http::get("https://ipapi.co/{$ip}/json/");
 
             if ($response->successful()) {
                 $data = $response->json();
-                return $data['country'] ?? 'Unknown';
+                return $data['country_name'] ?? 'Unknown';
             }
         } catch (\Exception $e) {
             // Log the error but continue execution
@@ -215,18 +215,19 @@ class HomeController extends Controller
     {
         try {
             $pusher = new Pusher(
-                env('PUSHER_APP_KEY', '5ccdc1968f9495836d5e'),
-                env('PUSHER_APP_SECRET', '6a6036c2c6cd0f838d36'),
-                env('PUSHER_APP_ID', '1995759'),
+                env('PUSHER_APP_KEY'),
+                env('PUSHER_APP_SECRET'),
+                env('PUSHER_APP_ID'),
                 [
-                    'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'),
-                    'useTLS' => true
+                    'cluster' => env('PUSHER_APP_CLUSTER'),
+                    'useTLS' => (bool)env('PUSHER_APP_ENCRYPTED', true)
                 ]
             );
 
             $pusher->trigger('visitor-channel', 'new-visitor', [
                 'path' => $request->path() ?: '/',
-                'timestamp' => Carbon::now()->toDateTimeString()
+                'timestamp' => Carbon::now()->toDateTimeString(),
+                'ip' => $request->ip()
             ]);
         } catch (\Exception $e) {
             // Log error but continue execution

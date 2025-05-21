@@ -193,7 +193,7 @@ const Welcome = (props: WelcomeProps) => {
 
     // Add Pusher integration for real-time updates
     useEffect(() => {
-        // Initialize Pusher
+        // Initialize Pusher with your credentials from ENV
         const pusher = new Pusher('5ccdc1968f9495836d5e', {
             cluster: 'mt1',
             forceTLS: true,
@@ -204,29 +204,50 @@ const Welcome = (props: WelcomeProps) => {
 
         // Update active users when new visitor arrives
         channel.bind('new-visitor', function (data: any) {
-            // Increment active users count
-            setActiveUsers((prevCount) => prevCount + 1);
+            // Only increment if it's a new visitor (not self)
+            const currentUrl = window.location.pathname;
+            if (data.path !== currentUrl) {
+                // Increment active users count
+                setActiveUsers((prevCount) => prevCount + 1);
 
-            // Update page breakdown
-            const path = data.path;
-            setActiveUsersBreakdown((prevBreakdown) => {
-                // Create a copy and update
-                const updated = [...prevBreakdown];
-                const existingIndex = updated.findIndex((item) => item.page_visited === path);
+                // Update page breakdown
+                const path = data.path;
+                setActiveUsersBreakdown((prevBreakdown) => {
+                    // Create a copy of the breakdown
+                    const updated = [...prevBreakdown];
+                    const existingIndex = updated.findIndex((item) => item.page_visited === path);
 
-                if (existingIndex >= 0) {
-                    updated[existingIndex].count++;
-                } else if (updated.length < 3) {
-                    updated.push({ page_visited: path, count: 1 });
-                }
+                    if (existingIndex >= 0) {
+                        updated[existingIndex].count++;
+                    } else if (updated.length < 3) {
+                        updated.push({ page_visited: path, count: 1 });
+                    } else {
+                        // Find lowest count to replace
+                        const minIndex = updated.reduce((minIdx, item, idx, arr) => (arr[idx].count < arr[minIdx].count ? idx : minIdx), 0);
+                        updated[minIndex] = { page_visited: path, count: 1 };
+                    }
 
-                return updated;
-            });
+                    // Sort by count descending
+                    return updated.sort((a, b) => b.count - a.count);
+                });
+            }
         });
+
+        // Poll for active users count every 30 seconds as a fallback
+        const interval = setInterval(() => {
+            fetch('/api/active-users')
+                .then((response) => response.json())
+                .then((data) => {
+                    setActiveUsers(data.count);
+                    setActiveUsersBreakdown(data.breakdown);
+                })
+                .catch((error) => console.error('Error fetching active users:', error));
+        }, 30000);
 
         // Clean up on component unmount
         return () => {
             pusher.unsubscribe('visitor-channel');
+            clearInterval(interval);
         };
     }, []);
 
