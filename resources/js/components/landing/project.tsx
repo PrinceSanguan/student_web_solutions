@@ -73,6 +73,20 @@ export const projects: Project[] = [
         },
         liveUrl: 'https://less-is-more-candy-main-qk8czn.laravel.cloud/',
     },
+    {
+        id: 5,
+        title: 'Athlete Tracking System',
+        description:
+            'This is a web application that allows coaches to track the performance of their athletes. It includes features such as athlete profiles, performance tracking, and reporting.',
+        image: '/assets/images/project-5.png',
+        video: '/assets/videos/tracking.mp4',
+        category: 'client',
+        credentials: {
+            username: 'No test Credential for this project',
+            password: 'No test Credential for this project',
+        },
+        liveUrl: 'https://ben.choros.io/',
+    },
 ];
 
 // Project Card Component

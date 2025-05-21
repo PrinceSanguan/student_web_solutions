@@ -1,54 +1,10 @@
+import Analytics from '@/components/landing/analytics';
 import ChatBot from '@/components/landing/chat-bot';
 import Footer from '@/components/landing/footer';
-import { Project, ProjectCard, ProjectDetailModal, projects } from '@/components/landing/project';
+import ProjectShowcase from '@/components/landing/project-showcase';
 import { Head } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import Pusher from 'pusher-js';
-import { useEffect, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-
-// Visitor data interface
-interface VisitorData {
-    date: string;
-    visitors: number;
-}
-
-// New interfaces for enhanced analytics
-interface DeviceData {
-    name: string;
-    value: number;
-}
-
-interface LocationData {
-    country: string;
-    visitors: number;
-}
-
-interface ConversionData {
-    date: string;
-    views: number;
-    inquiries: number;
-    conversions: number;
-}
-
-interface PageBreakdown {
-    page_visited: string;
-    count: number;
-}
-
-interface ActiveUsersData {
-    count: number;
-    breakdown: PageBreakdown[];
-}
-
-interface WelcomeProps {
-    dailyVisitors: number;
-    monthlyVisitors: number;
-    dailyVisitorsData: VisitorData[];
-    monthlyVisitorsData: VisitorData[];
-    geographicalDistribution: LocationData[];
-    activeUsers: ActiveUsersData;
-}
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 
 const ParallaxBackground = () => {
     const [scrollY, setScrollY] = useState(0);
@@ -95,95 +51,83 @@ const ParallaxBackground = () => {
     );
 };
 
-// Original visitor stats card
-const VisitorStatsCard = ({ title, count, data, darkMode }: { title: string; count: number; data: VisitorData[]; darkMode: boolean }) => {
+// Mobile-responsive Intro Video Component
+const IntroVideo = ({ onVideoComplete }: { onVideoComplete: () => void }) => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    // Handle video ended event
+    const handleVideoEnded = () => {
+        // Mark video as watched in localStorage
+        localStorage.setItem('introVideoWatched', 'true');
+        onVideoComplete();
+    };
+
     return (
-        <div className={`rounded-xl p-4 shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-lg font-medium">{title}</h3>
-                <span className="text-2xl font-bold text-blue-500">{count}</span>
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black p-4 sm:p-6 md:p-8">
+            {/* Welcome message - responsive text sizes */}
+            <div className="bg-opacity-80 mb-3 w-full max-w-sm rounded-lg bg-gray-900 p-3 text-center sm:mb-4 sm:max-w-md sm:p-4 md:mb-6 md:max-w-lg">
+                <h2 className="text-lg font-bold text-white sm:text-xl md:text-2xl">Welcome to Student Web Solutions</h2>
+                <p className="mt-1 text-sm text-gray-300 sm:mt-2 sm:text-base">
+                    Please watch our promotional video to continue to the website.
+                    <br />
+                    <span className="font-semibold">Click the video to play.</span>
+                </p>
             </div>
-            <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                    {title.includes('Today') ? (
-                        <LineChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#444' : '#eee'} />
-                            <XAxis dataKey="date" stroke={darkMode ? '#aaa' : '#666'} />
-                            <YAxis stroke={darkMode ? '#aaa' : '#666'} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: darkMode ? '#333' : '#fff',
-                                    color: darkMode ? '#fff' : '#333',
-                                    border: darkMode ? '1px solid #555' : '1px solid #ddd',
-                                }}
-                            />
-                            <Line type="monotone" dataKey="visitors" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                        </LineChart>
-                    ) : (
-                        <BarChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#444' : '#eee'} />
-                            <XAxis dataKey="date" stroke={darkMode ? '#aaa' : '#666'} />
-                            <YAxis stroke={darkMode ? '#aaa' : '#666'} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: darkMode ? '#333' : '#fff',
-                                    color: darkMode ? '#fff' : '#333',
-                                    border: darkMode ? '1px solid #555' : '1px solid #ddd',
-                                }}
-                            />
-                            <Bar dataKey="visitors" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                    )}
-                </ResponsiveContainer>
+
+            {/* Video container with aspect ratio box for responsiveness */}
+            <div className="w-full max-w-4xl">
+                {/* 16:9 aspect ratio wrapper */}
+                <div className="relative overflow-hidden rounded-lg bg-black pb-[56.25%] shadow-xl">
+                    <video
+                        ref={videoRef}
+                        className="absolute top-0 left-0 h-full w-full object-contain"
+                        onEnded={handleVideoEnded}
+                        controls={true}
+                        playsInline
+                        poster="/assets/images/logo.png"
+                        preload="auto"
+                    >
+                        <source src="/assets/videos/promotion.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                {/* Mobile-friendly instruction below video on small screens */}
+                <p className="mt-2 text-center text-xs text-white sm:hidden">Tap the play button to start the video</p>
             </div>
         </div>
     );
 };
 
-// New geographical distribution card
-const GeographicalDistributionCard = ({ darkMode, data }: { darkMode: boolean; data: LocationData[] }) => {
-    return (
-        <div className={`rounded-xl p-4 shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-lg font-medium">Geographical Distribution</h3>
-                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200">
-                    Top 3 Countries
-                </span>
-            </div>
-            <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart layout="vertical" data={data} margin={{ top: 5, right: 30, left: 80, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#444' : '#eee'} />
-                        <XAxis type="number" stroke={darkMode ? '#aaa' : '#666'} />
-                        <YAxis dataKey="country" type="category" stroke={darkMode ? '#aaa' : '#666'} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: darkMode ? '#333' : '#fff',
-                                color: darkMode ? '#fff' : '#333',
-                                border: darkMode ? '1px solid #555' : '1px solid #ddd',
-                            }}
-                        />
-                        <Bar dataKey="visitors" fill="#00C49F" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
-        </div>
-    );
-};
+interface WelcomeProps {
+    dailyVisitors: number;
+    monthlyVisitors: number;
+    dailyVisitorsData: {
+        date: string;
+        visitors: number;
+    }[];
+    monthlyVisitorsData: {
+        date: string;
+        visitors: number;
+    }[];
+    geographicalDistribution: {
+        country: string;
+        visitors: number;
+    }[];
+}
 
 const Welcome = (props: WelcomeProps) => {
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [darkMode, setDarkMode] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showIntro, setShowIntro] = useState(true);
 
-    // Use data from backend props
-    const [todayVisitors, setTodayVisitors] = useState(props.dailyVisitors || 0);
-    const [monthVisitors, setMonthVisitors] = useState(props.monthlyVisitors || 0);
-    const [dailyVisitorData, setDailyVisitorData] = useState<VisitorData[]>(props.dailyVisitorsData || []);
-    const [monthlyVisitorData, setMonthlyVisitorData] = useState<VisitorData[]>(props.monthlyVisitorsData || []);
-    const [locationData, setLocationData] = useState<LocationData[]>(props.geographicalDistribution || []);
-    const [activeUsers, setActiveUsers] = useState(props.activeUsers?.count || 0);
-    const [activeUsersBreakdown, setActiveUsersBreakdown] = useState(props.activeUsers?.breakdown || []);
-    const [activeTab, setActiveTab] = useState('overview'); // For analytics tabs
+    // Check if intro video has been watched before
+    useEffect(() => {
+        const videoWatched = localStorage.getItem('introVideoWatched');
+        if (videoWatched === 'true') {
+            setShowIntro(false);
+        }
+    }, []);
 
     // Check system preference for dark mode on load
     useEffect(() => {
@@ -191,69 +135,19 @@ const Welcome = (props: WelcomeProps) => {
         setDarkMode(isDarkMode);
     }, []);
 
-    // Add Pusher integration for real-time updates
-    useEffect(() => {
-        // Initialize Pusher with your credentials from ENV
-        const pusher = new Pusher('5ccdc1968f9495836d5e', {
-            cluster: 'mt1',
-            forceTLS: true,
-        });
-
-        // Subscribe to the visitor channel
-        const channel = pusher.subscribe('visitor-channel');
-
-        // Update active users when new visitor arrives
-        channel.bind('new-visitor', function (data: any) {
-            // Only increment if it's a new visitor (not self)
-            const currentUrl = window.location.pathname;
-            if (data.path !== currentUrl) {
-                // Increment active users count
-                setActiveUsers((prevCount) => prevCount + 1);
-
-                // Update page breakdown
-                const path = data.path;
-                setActiveUsersBreakdown((prevBreakdown) => {
-                    // Create a copy of the breakdown
-                    const updated = [...prevBreakdown];
-                    const existingIndex = updated.findIndex((item) => item.page_visited === path);
-
-                    if (existingIndex >= 0) {
-                        updated[existingIndex].count++;
-                    } else if (updated.length < 3) {
-                        updated.push({ page_visited: path, count: 1 });
-                    } else {
-                        // Find lowest count to replace
-                        const minIndex = updated.reduce((minIdx, item, idx, arr) => (arr[idx].count < arr[minIdx].count ? idx : minIdx), 0);
-                        updated[minIndex] = { page_visited: path, count: 1 };
-                    }
-
-                    // Sort by count descending
-                    return updated.sort((a, b) => b.count - a.count);
-                });
-            }
-        });
-
-        // Poll for active users count every 30 seconds as a fallback
-        const interval = setInterval(() => {
-            fetch('/api/active-users')
-                .then((response) => response.json())
-                .then((data) => {
-                    setActiveUsers(data.count);
-                    setActiveUsersBreakdown(data.breakdown);
-                })
-                .catch((error) => console.error('Error fetching active users:', error));
-        }, 30000);
-
-        // Clean up on component unmount
-        return () => {
-            pusher.unsubscribe('visitor-channel');
-            clearInterval(interval);
-        };
-    }, []);
-
     // Toggle dark mode function
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
+    };
+
+    // Toggle mobile menu
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+    };
+
+    // Handle video completion
+    const handleVideoComplete = () => {
+        setShowIntro(false);
     };
 
     return (
@@ -265,13 +159,15 @@ const Welcome = (props: WelcomeProps) => {
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
             </Head>
 
+            {showIntro && <IntroVideo onVideoComplete={handleVideoComplete} />}
+
             <div
                 className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} relative transition-colors duration-300`}
             >
                 <ParallaxBackground />
 
-                {/* Enhanced Header */}
-                <header className="sticky top-0 z-40 w-full bg-white/70 px-4 py-4 shadow-sm backdrop-blur-md sm:px-6 lg:px-8 dark:bg-gray-900/70">
+                {/* Enhanced Header with Mobile Support */}
+                <header className="sticky top-0 z-40 w-full bg-white/70 px-4 py-4 shadow-sm backdrop-blur-md dark:bg-gray-900/70">
                     <div className="mx-auto flex max-w-7xl items-center justify-between">
                         <div className="flex items-center gap-3">
                             <img
@@ -281,10 +177,11 @@ const Welcome = (props: WelcomeProps) => {
                             />
                             <div>
                                 <h1 className="text-lg font-bold sm:text-xl">Student Web Solutions</h1>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Professional Web Development</p>
+                                <p className="hidden text-xs text-gray-500 sm:block dark:text-gray-400">Professional Web Development</p>
                             </div>
                         </div>
 
+                        {/* Mobile menu button */}
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={toggleDarkMode}
@@ -313,131 +210,79 @@ const Welcome = (props: WelcomeProps) => {
                                     </svg>
                                 )}
                             </button>
+                            <button
+                                className="block rounded-md p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-900 lg:hidden dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                                onClick={toggleMobileMenu}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Mobile menu */}
+                    <div
+                        className={`${
+                            isMobileMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
+                        } overflow-hidden transition-all duration-300 lg:hidden`}
+                    >
+                        <div className="mx-auto mt-4 space-y-2 px-4">
+                            <a
+                                href="#projects"
+                                className="block rounded-md px-3 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Projects
+                            </a>
+                            <a
+                                href="#analytics"
+                                className="block rounded-md px-3 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Analytics
+                            </a>
+                            <a
+                                href="#contact"
+                                className="block rounded-md px-3 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Contact
+                            </a>
                         </div>
                     </div>
                 </header>
 
                 {/* Main Content */}
-                <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+                <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
                     {/* Hero Section */}
                     <section className="mb-16 text-center">
                         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                            <h2 className="mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
+                            <h2 className="mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl md:text-5xl">
                                 Our Portfolio
                             </h2>
-                            <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+                            <p className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg dark:text-gray-300">
                                 Explore our showcase projects. Click to learn more and access test credentials.
                             </p>
                         </motion.div>
                     </section>
 
                     {/* Project Showcase */}
-                    <section className="mb-24">
-                        <div className="mx-auto max-w-6xl">
-                            {/* Projects will be rendered here through ProjectsContainer component */}
-                            <div className="container mx-auto px-4 py-12">
-                                {/* Capstone Projects */}
-                                <div className="mb-16">
-                                    <div className="mb-6 flex items-center">
-                                        <h2 className="text-3xl font-bold">Capstone Projects</h2>
-                                        <div className="ml-4 flex-grow border-b-4 border-blue-500 dark:border-blue-400"></div>
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                                        {projects
-                                            .filter((project) => project.category === 'capstone')
-                                            .map((project) => (
-                                                <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
-                                            ))}
-                                    </div>
-                                </div>
-
-                                {/* Client Websites */}
-                                <div className="mb-12">
-                                    <div className="mb-6 flex items-center">
-                                        <h2 className="text-3xl font-bold">Client Websites</h2>
-                                        <div className="ml-4 flex-grow border-b-4 border-green-500 dark:border-green-400"></div>
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                                        {projects
-                                            .filter((project) => project.category === 'client')
-                                            .map((project) => (
-                                                <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
-                                            ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    <ProjectShowcase darkMode={darkMode} />
 
                     {/* Analytics Dashboard Section */}
-                    <section className="mb-16">
-                        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                            <div className="mb-8 text-center">
-                                <h2 className="mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-4xl font-bold text-transparent">
-                                    Our Analytics
-                                </h2>
-                                <p className="mx-auto max-w-2xl text-gray-600 dark:text-gray-300">Click on the cards for more details.</p>
-                            </div>
-
-                            {/* Analytics Cards Grid */}
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <VisitorStatsCard title="Unique Visitors Today" count={todayVisitors} data={dailyVisitorData} darkMode={darkMode} />
-                                <VisitorStatsCard
-                                    title="Unique Visitors This Month"
-                                    count={monthVisitors}
-                                    data={monthlyVisitorData}
-                                    darkMode={darkMode}
-                                />
-
-                                <GeographicalDistributionCard darkMode={darkMode} data={locationData} />
-
-                                <div className={`rounded-xl p-4 shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                                    <div className="mb-3 flex items-center justify-between">
-                                        <h3 className="text-lg font-medium">Real-time Active Users</h3>
-                                        <div className="flex items-center">
-                                            <span className="flex h-3 w-3 rounded-full bg-green-500"></span>
-                                            <span className="ml-1 text-sm">{activeUsers} Online</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex h-48 items-center justify-center">
-                                        <div className="text-center">
-                                            <div className="text-5xl font-bold text-green-500">{activeUsers}</div>
-                                            <p className="mt-2 text-gray-500 dark:text-gray-400">Users currently browsing the website</p>
-                                            <div className="mt-4 flex justify-center gap-2">
-                                                {activeUsersBreakdown &&
-                                                    activeUsersBreakdown.map((item, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className={`rounded ${
-                                                                index === 0
-                                                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                                                    : index === 1
-                                                                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                                      : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                                                            } px-2 py-1 text-xs`}
-                                                        >
-                                                            {item.page_visited}: {item.count}
-                                                        </div>
-                                                    ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </section>
+                    <Analytics
+                        darkMode={darkMode}
+                        dailyVisitors={props.dailyVisitors}
+                        monthlyVisitors={props.monthlyVisitors}
+                        dailyVisitorsData={props.dailyVisitorsData}
+                        monthlyVisitorsData={props.monthlyVisitorsData}
+                    />
                 </main>
 
                 {/* Enhanced Footer */}
                 <Footer darkMode={darkMode} />
             </div>
-
-            {/* Project Detail Modal */}
-            <AnimatePresence>
-                {selectedProject && (
-                    <ProjectDetailModal project={selectedProject} onClose={() => setSelectedProject(null)} darkMode={darkMode} className="z-30" />
-                )}
-            </AnimatePresence>
 
             {/* Chat Bot */}
             <ChatBot darkMode={darkMode} />

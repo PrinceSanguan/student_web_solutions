@@ -11,6 +11,7 @@ use App\Models\Visitor;
 use Carbon\Carbon;
 use Jenssegers\Agent\Agent;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ProcessVisitorTracking implements ShouldQueue
 {
@@ -71,7 +72,7 @@ class ProcessVisitorTracking implements ShouldQueue
             }
         } catch (\Exception $e) {
             // Log the error but continue execution
-            \Log::error('Error determining country from IP: ' . $e->getMessage());
+            Log::error('Error determining country from IP: ' . $e->getMessage());
         }
 
         return 'Unknown';

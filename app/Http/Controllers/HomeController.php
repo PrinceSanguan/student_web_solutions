@@ -8,8 +8,6 @@ use App\Models\Visitor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Agent\Agent;
-use Illuminate\Support\Facades\Http;
-use Pusher\Pusher;
 
 class HomeController extends Controller
 {
@@ -30,12 +28,7 @@ class HomeController extends Controller
             'monthlyVisitors' => $this->getMonthlyVisitors(),
             'monthlyVisitorsData' => $this->getMonthlyVisitorsData(),
             'dailyVisitorsData' => $this->getDailyVisitorsData(),
-            'geographicalDistribution' => $this->getGeographicalDistribution(),
-            'activeUsers' => $this->getActiveUsers(),
         ];
-
-        // Broadcast active user for real-time tracking
-        $this->broadcastActiveUser($request);
 
         return Inertia::render('Welcome', $analyticsData);
     }
@@ -55,37 +48,13 @@ class HomeController extends Controller
             ->first();
 
         if (!$existingVisit) {
-            // Get country data based on IP
-            $countryData = $this->getCountryFromIp($ip);
-
             Visitor::create([
                 'ip_address' => $ip,
-                'country' => $countryData ?? 'Unknown',
+                'country' => 'Unknown',
                 'device_type' => $agent->isDesktop() ? 'Desktop' : ($agent->isTablet() ? 'Tablet' : 'Mobile'),
                 'page_visited' => $request->path() ?: '/'
             ]);
         }
-    }
-
-    /**
-     * Get country information from IP address
-     */
-    private function getCountryFromIp($ip)
-    {
-        try {
-            // Using a more reliable IP geolocation API
-            $response = Http::get("https://ipapi.co/{$ip}/json/");
-
-            if ($response->successful()) {
-                $data = $response->json();
-                return $data['country_name'] ?? 'Unknown';
-            }
-        } catch (\Exception $e) {
-            // Log the error but continue execution
-            \Log::error('Error determining country from IP: ' . $e->getMessage());
-        }
-
-        return 'Unknown';
     }
 
     /**
@@ -154,84 +123,5 @@ class HomeController extends Controller
         }
 
         return $results;
-    }
-
-    /**
-     * Get geographical distribution of visitors
-     */
-    private function getGeographicalDistribution()
-    {
-        $countries = Visitor::select('country', DB::raw('COUNT(DISTINCT ip_address) as visitors'))
-            ->whereNotNull('country')
-            ->where('country', '!=', 'Unknown')
-            ->groupBy('country')
-            ->orderBy('visitors', 'desc')
-            ->limit(3)
-            ->get()
-            ->toArray();
-
-        // Add "Other" category
-        $topCountriesCount = array_sum(array_column($countries, 'visitors'));
-        $totalCount = Visitor::distinct('ip_address')->count('ip_address');
-        $otherCount = $totalCount - $topCountriesCount;
-
-        if ($otherCount > 0) {
-            $countries[] = [
-                'country' => 'Other',
-                'visitors' => $otherCount
-            ];
-        }
-
-        return $countries;
-    }
-
-    /**
-     * Get active users count
-     */
-    private function getActiveUsers()
-    {
-        // For simplicity, consider sessions active in the last 15 minutes
-        $activeCount = Visitor::where('created_at', '>=', Carbon::now()->subMinutes(15))->count();
-
-        // Get breakdown by page
-        $pageBreakdown = Visitor::select('page_visited', DB::raw('COUNT(*) as count'))
-            ->where('created_at', '>=', Carbon::now()->subMinutes(15))
-            ->groupBy('page_visited')
-            ->orderBy('count', 'desc')
-            ->limit(3)
-            ->get()
-            ->toArray();
-
-        return [
-            'count' => $activeCount,
-            'breakdown' => $pageBreakdown
-        ];
-    }
-
-    /**
-     * Broadcast active user for real-time updates
-     */
-    private function broadcastActiveUser(Request $request)
-    {
-        try {
-            $pusher = new Pusher(
-                env('PUSHER_APP_KEY'),
-                env('PUSHER_APP_SECRET'),
-                env('PUSHER_APP_ID'),
-                [
-                    'cluster' => env('PUSHER_APP_CLUSTER'),
-                    'useTLS' => (bool)env('PUSHER_APP_ENCRYPTED', true)
-                ]
-            );
-
-            $pusher->trigger('visitor-channel', 'new-visitor', [
-                'path' => $request->path() ?: '/',
-                'timestamp' => Carbon::now()->toDateTimeString(),
-                'ip' => $request->ip()
-            ]);
-        } catch (\Exception $e) {
-            // Log error but continue execution
-            \Log::error('Pusher error: ' . $e->getMessage());
-        }
     }
 }
