@@ -8,7 +8,7 @@ export interface Project {
     description: string;
     image: string;
     video: string;
-    category: 'capstone' | 'client'; // Added category field
+    category: 'capstone' | 'client' | 'founder' | 'mobile' | 'saas';
     credentials: {
         username: string;
         password: string;
@@ -86,6 +86,46 @@ export const projects: Project[] = [
             password: 'No test Credential for this project',
         },
         liveUrl: 'https://ben.choros.io/',
+    },
+    {
+        id: 6,
+        title: 'Founder Portfolio Website',
+        description:
+            'Personal portfolio website showcasing founder journey and achievements. Built with modern design principles and interactive elements.',
+        image: '/assets/images/project-6.png',
+        video: '/assets/videos/founder.mp4',
+        category: 'founder',
+        credentials: {
+            username: 'founder_demo',
+            password: 'demo123',
+        },
+        liveUrl: 'https://founder-portfolio.com',
+    },
+    {
+        id: 7,
+        title: 'Seraphina App',
+        description: 'Cross-platform mobile banking application with secure authentication and real-time transactions.',
+        image: '/assets/images/project-6.png',
+        video: '/assets/videos/Seraphina.mp4',
+        category: 'mobile',
+        credentials: {
+            username: 'Create the account with the app',
+            password: 'Create the account with the app',
+        },
+        liveUrl: 'https://mobile-banking-demo.com',
+    },
+    {
+        id: 8,
+        title: 'SAAS Analytics Platform',
+        description: 'Comprehensive analytics platform for businesses with real-time data visualization and reporting.',
+        image: '/assets/images/project-8.png',
+        video: '/assets/videos/saas.mp4',
+        category: 'saas',
+        credentials: {
+            username: 'saas_admin',
+            password: 'admin789',
+        },
+        liveUrl: 'https://analytics-saas.com',
     },
 ];
 
@@ -494,9 +534,11 @@ export const ProjectDetailModal = ({
 export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-    // Filter projects by category
     const capstoneProjects = projects.filter((project) => project.category === 'capstone');
     const clientProjects = projects.filter((project) => project.category === 'client');
+    const founderProjects = projects.filter((project) => project.category === 'founder');
+    const mobileProjects = projects.filter((project) => project.category === 'mobile');
+    const saasProjects = projects.filter((project) => project.category === 'saas');
 
     return (
         <div className="container mx-auto px-4 py-12">
@@ -515,13 +557,55 @@ export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
             )}
 
             {clientProjects.length > 0 && (
-                <div className="mb-12">
+                <div className="mb-16">
                     <div className="mb-6 flex items-center">
                         <h2 className="text-3xl font-bold">Client Websites</h2>
                         <div className="ml-4 flex-grow border-b-4 border-green-500 dark:border-green-400"></div>
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         {clientProjects.map((project) => (
+                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {founderProjects.length > 0 && (
+                <div className="mb-16">
+                    <div className="mb-6 flex items-center">
+                        <h2 className="text-3xl font-bold">Founder Websites</h2>
+                        <div className="ml-4 flex-grow border-b-4 border-purple-500 dark:border-purple-400"></div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                        {founderProjects.map((project) => (
+                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {mobileProjects.length > 0 && (
+                <div className="mb-16">
+                    <div className="mb-6 flex items-center">
+                        <h2 className="text-3xl font-bold">Mobile Websites</h2>
+                        <div className="ml-4 flex-grow border-b-4 border-orange-500 dark:border-orange-400"></div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                        {mobileProjects.map((project) => (
+                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {saasProjects.length > 0 && (
+                <div className="mb-12">
+                    <div className="mb-6 flex items-center">
+                        <h2 className="text-3xl font-bold">SAAS Websites</h2>
+                        <div className="ml-4 flex-grow border-b-4 border-red-500 dark:border-red-400"></div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                        {saasProjects.map((project) => (
                             <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
                         ))}
                     </div>

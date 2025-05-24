@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { useEffect, useRef, useState } from 'react';
 
 interface IntroVideoProps {
     onVideoComplete: () => void;
@@ -9,6 +9,18 @@ const IntroVideo = ({ onVideoComplete }: IntroVideoProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkIsMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        checkIsMobile();
+        window.addEventListener('resize', checkIsMobile);
+
+        return () => window.removeEventListener('resize', checkIsMobile);
+    }, []);
 
     // Handle video ended event
     const handleVideoEnded = () => {
@@ -20,8 +32,8 @@ const IntroVideo = ({ onVideoComplete }: IntroVideoProps) => {
             opacity: 0,
             y: -30,
             duration: 0.8,
-            ease: "power2.out",
-            onComplete: onVideoComplete
+            ease: 'power2.out',
+            onComplete: onVideoComplete,
         });
 
         setIsPlaying(false);
@@ -43,10 +55,7 @@ const IntroVideo = ({ onVideoComplete }: IntroVideoProps) => {
             videoElement.addEventListener('pause', handleVideoPause);
 
             // Animate in the intro container
-            gsap.fromTo(containerRef.current,
-                { opacity: 0, y: 20 },
-                { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
-            );
+            gsap.fromTo(containerRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' });
 
             return () => {
                 videoElement.removeEventListener('play', handleVideoPlay);
@@ -58,7 +67,9 @@ const IntroVideo = ({ onVideoComplete }: IntroVideoProps) => {
     return (
         <div
             ref={containerRef}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-start overflow-y-auto bg-black px-4 py-8 sm:justify-center sm:p-6 md:p-8"
+            className={`fixed inset-0 z-50 flex flex-col items-center ${
+                isPlaying && !isMobile ? 'justify-center' : 'justify-start'
+            } overflow-y-auto bg-black px-4 py-8 sm:justify-center sm:p-6 md:p-8`}
         >
             {/* Welcome message - visible when video is not playing */}
             <div
@@ -73,18 +84,22 @@ const IntroVideo = ({ onVideoComplete }: IntroVideoProps) => {
             </div>
 
             {/* Video container - portrait orientation when playing */}
-            <div className={`w-full ${isPlaying ? 'max-w-xs' : 'max-w-sm'} sm:max-w-md md:max-w-lg`}>
-                <div className={`relative overflow-hidden rounded-lg bg-black ${isPlaying ? 'pb-[177.78%]' : 'pb-[56.25%]'} shadow-xl`}>
+            <div className={`${isPlaying ? (isMobile ? 'w-full max-w-xs' : 'fixed inset-0 z-50') : 'w-full max-w-sm'} sm:max-w-md md:max-w-lg`}>
+                <div
+                    className={`relative overflow-hidden rounded-lg bg-black ${
+                        isPlaying ? (isMobile ? 'pb-[177.78%]' : 'h-screen w-screen') : 'pb-[56.25%]'
+                    } shadow-xl`}
+                >
                     <video
                         ref={videoRef}
-                        className="absolute top-0 left-0 h-full w-full object-contain"
+                        className={`absolute top-0 left-0 h-full w-full ${isPlaying && !isMobile ? 'object-cover' : 'object-contain'}`}
                         onEnded={handleVideoEnded}
                         controls={true}
                         playsInline
                         poster="/assets/images/logo.png"
                         preload="auto"
                     >
-                        <source src="/assets/videos/promotion.mp4" type="video/mp4" />
+                        <source src={isMobile ? '/assets/videos/promotion.mp4' : '/assets/videos/promotion-desktop.mp4'} type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
                 </div>

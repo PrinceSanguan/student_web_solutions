@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useEffect, useRef } from 'react';
 
 interface CustomCursorProps {
     darkMode: boolean;
@@ -16,14 +16,14 @@ const CustomCursor = ({ darkMode }: CustomCursorProps) => {
         if (!cursor || !cursorDot) return;
 
         // Set initial position off-screen
-        gsap.set(cursor, { xPercent: -50, yPercent: -50 });
-        gsap.set(cursorDot, { xPercent: -50, yPercent: -50 });
+        gsap.set(cursor, { x: -100, y: -100, xPercent: -50, yPercent: -50 });
+        gsap.set(cursorDot, { x: -100, y: -100, xPercent: -50, yPercent: -50 });
 
         // Variables for mouse position
-        let mouseX = 0;
-        let mouseY = 0;
-        let prevMouseX = 0;
-        let prevMouseY = 0;
+        let mouseX = -100;
+        let mouseY = -100;
+        let prevMouseX = -100;
+        let prevMouseY = -100;
 
         // Update cursor position with lerp for smooth movement
         gsap.ticker.add(() => {
@@ -43,7 +43,7 @@ const CustomCursor = ({ darkMode }: CustomCursorProps) => {
             gsap.set(cursor, {
                 x: prevMouseX,
                 y: prevMouseY,
-                scale: 1 + velocity * 0.05
+                scale: 1 + velocity * 0.05,
             });
 
             // Set dot position immediately
@@ -72,18 +72,18 @@ const CustomCursor = ({ darkMode }: CustomCursorProps) => {
 
         // Add hover effect for all clickable elements
         const clickables = document.querySelectorAll('a, button, [role="button"], input, select, textarea');
-        clickables.forEach(el => {
+        clickables.forEach((el) => {
             el.addEventListener('mouseenter', handleMouseEnter);
             el.addEventListener('mouseleave', handleMouseLeave);
         });
 
         return () => {
             window.removeEventListener('mousemove', trackMouse);
-            clickables.forEach(el => {
+            clickables.forEach((el) => {
                 el.removeEventListener('mouseenter', handleMouseEnter);
                 el.removeEventListener('mouseleave', handleMouseLeave);
             });
-            gsap.ticker.remove(trackMouse);
+            gsap.ticker.remove(() => {});
         };
     }, []);
 
@@ -91,15 +91,15 @@ const CustomCursor = ({ darkMode }: CustomCursorProps) => {
         <>
             <div
                 ref={cursorRef}
-                className={`pointer-events-none fixed left-0 top-0 z-50 h-6 w-6 rounded-full ${
+                className={`pointer-events-none fixed top-0 left-0 z-50 h-6 w-6 rounded-full ${
                     darkMode ? 'bg-white/20 backdrop-blur-sm' : 'bg-black/20 backdrop-blur-sm'
-                } mix-blend-difference hidden sm:block`}
+                } hidden mix-blend-difference sm:block`}
             ></div>
             <div
                 ref={cursorDotRef}
-                className={`pointer-events-none fixed left-0 top-0 z-50 h-2 w-2 rounded-full ${
+                className={`pointer-events-none fixed top-0 left-0 z-50 h-2 w-2 rounded-full ${
                     darkMode ? 'bg-white' : 'bg-black'
-                } mix-blend-difference hidden sm:block`}
+                } hidden mix-blend-difference sm:block`}
             ></div>
         </>
     );

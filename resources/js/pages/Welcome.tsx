@@ -3,43 +3,24 @@ import ChatBot from '@/components/landing/chat-bot';
 import Footer from '@/components/landing/footer';
 import ProjectShowcase from '@/components/landing/project-showcase';
 import { Head } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { TextPlugin } from 'gsap/TextPlugin';
 import { SplitText } from 'gsap/SplitText';
+import { TextPlugin } from 'gsap/TextPlugin';
+import { useEffect, useRef, useState } from 'react';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, TextPlugin, SplitText);
 
 // Import components from their new locations
-import CustomCursor from '@/components/landing/animations/CustomCursor';
-import TextScramble from '@/components/landing/animations/TextScramble';
 import ParallaxBackground from '@/components/landing/animations/ParallaxBackground';
 import ParticleBackground from '@/components/landing/animations/ParticleBackground';
 import SmoothScrollSection from '@/components/landing/animations/SmoothScrollSection';
+import TextScramble from '@/components/landing/animations/TextScramble';
 import InteractiveCard from '@/components/landing/cards/InteractiveCard';
-import TiltCard from '@/components/landing/cards/TiltCard';
-import TestimonialSlider from '@/components/landing/sections/TestimonialSlider';
-import AnimatedCounter from '@/components/landing/sections/AnimatedCounter';
-import PageLoader from '@/components/landing/sections/PageLoader';
 import IntroVideo from '@/components/landing/sections/IntroVideo';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import PageLoader from '@/components/landing/sections/PageLoader';
+import TestimonialSlider from '@/components/landing/sections/TestimonialSlider';
 
 interface WelcomeProps {
     dailyVisitors: number;
@@ -92,25 +73,29 @@ const Welcome = (props: WelcomeProps) => {
                 y: 30,
                 opacity: 0,
                 duration: 0.8,
-                ease: "power3.out"
-            })
-            .from(descriptionRef.current, {
-                y: 20,
-                opacity: 0,
-                duration: 0.6,
-                ease: "power3.out"
-            }, "-=0.4");
+                ease: 'power3.out',
+            }).from(
+                descriptionRef.current,
+                {
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.6,
+                    ease: 'power3.out',
+                },
+                '-=0.4',
+            );
 
             // Create scroll animations
             ScrollTrigger.batch("[data-gsap='reveal']", {
-                onEnter: batch => gsap.to(batch, {
-                    opacity: 1,
-                    y: 0,
-                    stagger: 0.15,
-                    duration: 0.8,
-                    ease: "power2.out"
-                }),
-                start: "top 85%"
+                onEnter: (batch) =>
+                    gsap.to(batch, {
+                        opacity: 1,
+                        y: 0,
+                        stagger: 0.15,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                    }),
+                start: 'top 85%',
             });
 
             // Create floating animation for elements with float class
@@ -121,11 +106,11 @@ const Welcome = (props: WelcomeProps) => {
 
                 gsap.to(el, {
                     y: direction * 12,
-                    ease: "sine.inOut",
+                    ease: 'sine.inOut',
                     repeat: -1,
                     yoyo: true,
                     duration: 3 + index * 0.2,
-                    delay
+                    delay,
                 });
             });
 
@@ -137,8 +122,8 @@ const Welcome = (props: WelcomeProps) => {
                     trigger: document.body,
                     start: 'top top',
                     end: 'bottom bottom',
-                    scrub: 0.3
-                }
+                    scrub: 0.3,
+                },
             });
         }
     }, [showIntro, isLoading]);
@@ -160,27 +145,11 @@ const Welcome = (props: WelcomeProps) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-                <style>
-                    {`
-                    * {
-                        cursor: none;
-                    }
-
-                    @media (max-width: 640px) {
-                        * {
-                            cursor: auto;
-                        }
-                    }
-                    `}
-                </style>
             </Head>
 
-            {/* Custom cursor */}
-            <CustomCursor darkMode={darkMode} />
-
             {/* Scroll progress bar */}
-            <div className="fixed top-0 left-0 z-50 w-full h-1">
-                <div className="scroll-progress h-full w-full scale-x-0 bg-gradient-to-r from-blue-500 to-purple-600 origin-left"></div>
+            <div className="fixed top-0 left-0 z-50 h-1 w-full">
+                <div className="scroll-progress h-full w-full origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-600"></div>
             </div>
 
             {/* Page loader */}
@@ -202,7 +171,7 @@ const Welcome = (props: WelcomeProps) => {
                             <img
                                 src="/assets/images/sws.png"
                                 alt="Student Web Solutions Logo"
-                                className="h-10 w-10 rounded-full shadow-md sm:h-12 sm:w-12 float"
+                                className="float h-10 w-10 rounded-full shadow-md sm:h-12 sm:w-12"
                             />
                             <div>
                                 <h1 className="text-lg font-bold sm:text-xl">Student Web Solutions</h1>
@@ -252,49 +221,9 @@ const Welcome = (props: WelcomeProps) => {
                                 text="Our Portfolio"
                                 className="mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl md:text-5xl"
                             />
-                            <p
-                                ref={descriptionRef}
-                                className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg dark:text-gray-300"
-                            >
+                            <p ref={descriptionRef} className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg dark:text-gray-300">
                                 Explore our showcase projects. Click to learn more and access test credentials.
                             </p>
-                        </div>
-                    </section>
-
-                    {/* Stats section with animated counters */}
-                    <section className="mb-20">
-                        <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
-                            <TextScramble
-                                text="Our Impact"
-                                className="mb-8 text-center bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl md:text-4xl"
-                            />
-
-                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                                <AnimatedCounter
-                                    value={100}
-                                    suffix="+"
-                                    title="Satisfied Clients"
-                                    darkMode={darkMode}
-                                />
-                                <AnimatedCounter
-                                    value={250}
-                                    suffix="+"
-                                    title="Projects Completed"
-                                    darkMode={darkMode}
-                                />
-                                <AnimatedCounter
-                                    value={5}
-                                    suffix="+"
-                                    title="Years Experience"
-                                    darkMode={darkMode}
-                                />
-                                <AnimatedCounter
-                                    value={24}
-                                    suffix="/7"
-                                    title="Support"
-                                    darkMode={darkMode}
-                                />
-                            </div>
                         </div>
                     </section>
 
@@ -303,17 +232,28 @@ const Welcome = (props: WelcomeProps) => {
                         <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
                             <TextScramble
                                 text="Our Services"
-                                className="mb-8 text-center bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl md:text-4xl"
+                                className="mb-8 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent sm:text-3xl md:text-4xl"
                             />
 
-                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                                 <InteractiveCard
                                     darkMode={darkMode}
                                     title="Web Development"
                                     description="Custom web development solutions tailored to your needs."
                                     icon={
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 float" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="float h-10 w-10"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                                            />
                                         </svg>
                                     }
                                 />
@@ -322,8 +262,19 @@ const Welcome = (props: WelcomeProps) => {
                                     title="UI/UX Design"
                                     description="Beautiful, intuitive interfaces that enhance user experience."
                                     icon={
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 float" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="float h-10 w-10"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                                            />
                                         </svg>
                                     }
                                 />
@@ -332,8 +283,61 @@ const Welcome = (props: WelcomeProps) => {
                                     title="Mobile App Development"
                                     description="Cross-platform mobile applications with responsive design."
                                     icon={
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 float" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="float h-10 w-10"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    }
+                                />
+                                <InteractiveCard
+                                    darkMode={darkMode}
+                                    title="POS Custom Made System"
+                                    description="Tailored point-of-sale systems for your business needs."
+                                    icon={
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="float h-10 w-10"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                    }
+                                />
+                                <InteractiveCard
+                                    darkMode={darkMode}
+                                    title="IoT System"
+                                    description="Internet of Things solutions connecting devices and data."
+                                    icon={
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="float h-10 w-10"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
+                                            />
                                         </svg>
                                     }
                                 />
