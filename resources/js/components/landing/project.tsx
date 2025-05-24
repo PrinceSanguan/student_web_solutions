@@ -130,7 +130,7 @@ export const projects: Project[] = [
 ];
 
 // Project Card Component
-export const ProjectCard = ({ project, onClick }: { project: Project; onClick: () => void }) => {
+export const ProjectCard = ({ project }: { project: Project }) => {
     const [isHovered, setIsHovered] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -153,7 +153,9 @@ export const ProjectCard = ({ project, onClick }: { project: Project; onClick: (
                 // Silent catch for browsers that prevent autoplay
             });
         }
-        onClick();
+
+        // Navigate to project detail page
+        window.location.href = `/project/${project.id}`;
     };
 
     return (
@@ -199,11 +201,9 @@ export const ProjectCard = ({ project, onClick }: { project: Project; onClick: (
 export const CategorySection = ({
     title,
     projects,
-    onSelectProject,
 }: {
     title: string;
     projects: Project[];
-    onSelectProject: (project: Project) => void;
 }) => {
     return (
         <div className="mb-12">
@@ -213,7 +213,7 @@ export const CategorySection = ({
             </div>
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-2">
                 {projects.map((project) => (
-                    <ProjectCard key={project.id} project={project} onClick={() => onSelectProject(project)} />
+                    <ProjectCard key={project.id} project={project} />
                 ))}
             </div>
         </div>
@@ -253,7 +253,7 @@ export const ConfirmationDialog = ({
         <AnimatePresence>
             {isOpen && (
                 <motion.div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -366,6 +366,19 @@ export const ProjectDetailModal = ({
         };
     }, [onClose]);
 
+    // Lock body scroll when modal opens
+    useEffect(() => {
+        // Save the current overflow value
+        const originalOverflow = window.getComputedStyle(document.body).overflow;
+        // Prevent scrolling on the body
+        document.body.style.overflow = 'hidden';
+
+        // Restore original overflow on cleanup
+        return () => {
+            document.body.style.overflow = originalOverflow;
+        };
+    }, []);
+
     // Play video with sound when modal opens and clean up when closed
     useEffect(() => {
         if (videoRef.current) {
@@ -415,26 +428,34 @@ export const ProjectDetailModal = ({
 
     return (
         <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md"
+            className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/80 pt-16 overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
         >
             <motion.div
                 ref={modalRef}
-                className={`max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl shadow-2xl ${
+                className={`w-full max-w-5xl max-h-[90vh] mx-auto flex flex-col md:flex-row ${className || ''} ${
                     darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
-                }`}
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                } rounded-lg overflow-hidden shadow-2xl`}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
             >
-                <div className="relative aspect-video">
-                    <video ref={videoRef} src={project.video} className="h-full w-full object-cover" autoPlay loop playsInline />
+                {/* Left side - Video */}
+                <div className="relative w-full md:w-1/2 h-48 md:h-auto">
+                    <div className="absolute inset-0 bg-black/80 z-10"></div>
+                    <video
+                        ref={videoRef}
+                        src={project.video}
+                        className="h-full w-full object-cover relative z-0"
+                        autoPlay
+                        loop
+                        playsInline
+                    />
                     <button
                         onClick={handleCloseModal}
-                        className="absolute top-4 right-4 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
+                        className="absolute top-4 right-4 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 z-20"
                         aria-label="Close"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -443,78 +464,81 @@ export const ProjectDetailModal = ({
                     </button>
                 </div>
 
-                <div className="p-6">
-                    <h2 className="mb-4 text-2xl font-bold">{project.title}</h2>
+                {/* Right side - Project Information */}
+                <div className="w-full md:w-1/2 max-h-[90vh] p-6 overflow-y-auto">
+                    <div className="flex flex-col">
+                        <h2 className="mb-4 text-2xl font-bold">{project.title}</h2>
 
-                    <div className="mb-6">
-                        <h3 className="mb-2 text-lg font-semibold">Project Overview</h3>
-                        <div className={`whitespace-pre-line ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{project.description}</div>
-                    </div>
+                        <div className="mb-6">
+                            <h3 className="mb-2 text-lg font-semibold">Project Overview</h3>
+                            <div className={`whitespace-pre-line ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{project.description}</div>
+                        </div>
 
-                    <div className={`mb-6 rounded-lg p-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                        <div className="mb-3 flex items-center justify-between">
-                            <h3 className="font-medium">Test Credentials</h3>
-                            <button
-                                onClick={copyCredentials}
-                                className={`rounded px-3 py-1 text-sm transition-colors ${
-                                    darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'
+                        <div className={`mb-6 rounded-lg p-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                            <div className="mb-3 flex items-center justify-between">
+                                <h3 className="font-medium">Test Credentials</h3>
+                                <button
+                                    onClick={copyCredentials}
+                                    className={`rounded px-3 py-1 text-sm transition-colors ${
+                                        darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'
+                                    }`}
+                                >
+                                    {copied ? 'Copied!' : 'Copy'}
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+                                <div>
+                                    <p className="text-gray-500 dark:text-gray-400">Username</p>
+                                    <p className={`mt-1 rounded p-2 font-mono break-all ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                                        {project.credentials.username}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-500 dark:text-gray-400">Password</p>
+                                    <p className={`mt-1 rounded p-2 font-mono break-all ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                                        {project.credentials.password}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-auto flex flex-col items-center justify-between gap-4 sm:flex-row">
+                            <a
+                                href="#"
+                                onClick={handleFacebookClick}
+                                className={`flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium shadow-md transition-all sm:w-auto ${
+                                    darkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
                                 }`}
                             >
-                                {copied ? 'Copied!' : 'Copy'}
-                            </button>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                                    />
+                                </svg>
+                                Have an idea you want to bring to life? Contact us!
+                            </a>
+                            <a
+                                href={project.liveUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium shadow-md transition-all sm:w-auto ${
+                                    darkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                }`}
+                            >
+                                <span>Try Live Demo</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                    />
+                                </svg>
+                            </a>
                         </div>
-                        <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-                            <div>
-                                <p className="text-gray-500 dark:text-gray-400">Username</p>
-                                <p className={`mt-1 rounded p-2 font-mono break-all ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                                    {project.credentials.username}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500 dark:text-gray-400">Password</p>
-                                <p className={`mt-1 rounded p-2 font-mono break-all ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                                    {project.credentials.password}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                        <a
-                            href="#"
-                            onClick={handleFacebookClick}
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium shadow-md transition-all sm:w-auto ${
-                                darkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
-                            }`}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                                />
-                            </svg>
-                            Have an idea you want to bring to life? Contact us!
-                        </a>
-                        <a
-                            href={project.liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium shadow-md transition-all sm:w-auto ${
-                                darkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                            }`}
-                        >
-                            <span>Try Live Demo</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                />
-                            </svg>
-                        </a>
                     </div>
                 </div>
             </motion.div>
@@ -531,9 +555,7 @@ export const ProjectDetailModal = ({
 };
 
 // Projects Container Component
-export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-
+export const ProjectsContainer = () => {
     const capstoneProjects = projects.filter((project) => project.category === 'capstone');
     const clientProjects = projects.filter((project) => project.category === 'client');
     const founderProjects = projects.filter((project) => project.category === 'founder');
@@ -550,7 +572,7 @@ export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         {capstoneProjects.map((project) => (
-                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                            <ProjectCard key={project.id} project={project} />
                         ))}
                     </div>
                 </div>
@@ -564,7 +586,7 @@ export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         {clientProjects.map((project) => (
-                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                            <ProjectCard key={project.id} project={project} />
                         ))}
                     </div>
                 </div>
@@ -578,7 +600,7 @@ export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         {founderProjects.map((project) => (
-                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                            <ProjectCard key={project.id} project={project} />
                         ))}
                     </div>
                 </div>
@@ -592,7 +614,7 @@ export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         {mobileProjects.map((project) => (
-                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                            <ProjectCard key={project.id} project={project} />
                         ))}
                     </div>
                 </div>
@@ -606,13 +628,11 @@ export const ProjectsContainer = ({ darkMode }: { darkMode: boolean }) => {
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         {saasProjects.map((project) => (
-                            <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+                            <ProjectCard key={project.id} project={project} />
                         ))}
                     </div>
                 </div>
             )}
-
-            {selectedProject && <ProjectDetailModal project={selectedProject} onClose={() => setSelectedProject(null)} darkMode={darkMode} />}
         </div>
     );
 };

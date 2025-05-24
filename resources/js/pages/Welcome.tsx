@@ -8,6 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { useEffect, useRef, useState } from 'react';
+import { ThemeProvider } from '@/components/landing/theme-provider';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, TextPlugin, SplitText);
@@ -139,7 +140,7 @@ const Welcome = (props: WelcomeProps) => {
     };
 
     return (
-        <>
+        <ThemeProvider>
             <Head title="Student Web Solutions | Professional Web Development">
                 <meta name="description" content="Professional web development solutions by Student Web Solutions." />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -357,7 +358,7 @@ const Welcome = (props: WelcomeProps) => {
 
                     {/* Project Showcase */}
                     <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
-                        <ProjectShowcase darkMode={darkMode} />
+                        <ProjectShowcase />
                     </div>
 
                     {/* Analytics Dashboard Section */}
@@ -380,7 +381,7 @@ const Welcome = (props: WelcomeProps) => {
 
             {/* Chat Bot */}
             {!isLoading && <ChatBot darkMode={darkMode} />}
-        </>
+        </ThemeProvider>
     );
 };
 

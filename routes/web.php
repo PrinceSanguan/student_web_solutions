@@ -13,9 +13,11 @@ use App\Http\Middleware\GuestMiddleware;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ChatBotController;
+use App\Http\Controllers\ProjectController;
 
 Route::middleware('web', \App\Http\Middleware\VisitorTrackingMiddleware::class)->group(function () {
   Route::get('/', [HomeController::class, 'index'])->name('home');
+  Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
 });
 
 Route::post('/chatbot', [ChatBotController::class, 'index'])
