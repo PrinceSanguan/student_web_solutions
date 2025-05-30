@@ -34,10 +34,10 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
     | Visitor-tracked public pages
     |------------------------------------------
     */
-  Route::middleware(VisitorTrackingMiddleware::class)->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
-  });
+
+  Route::get('/', [HomeController::class, 'index'])->name('home');
+
+  Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
 
   /*
     |------------------------------------------

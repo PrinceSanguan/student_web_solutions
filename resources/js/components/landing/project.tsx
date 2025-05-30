@@ -92,12 +92,12 @@ export const projects: Project[] = [
         title: 'Founder Portfolio Website',
         description:
             'Personal portfolio website showcasing founder journey and achievements. Built with modern design principles and interactive elements.',
-        image: '/assets/images/project-6.png',
+        image: '/assets/images/project-7.png',
         video: '/assets/videos/founder.mp4',
         category: 'founder',
         credentials: {
-            username: 'founder_demo',
-            password: 'demo123',
+            username: 'No test Credential for this project',
+            password: 'No test Credential for this project',
         },
         liveUrl: 'https://founder-portfolio.com',
     },
@@ -198,13 +198,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
 };
 
 // Category Section Component
-export const CategorySection = ({
-    title,
-    projects,
-}: {
-    title: string;
-    projects: Project[];
-}) => {
+export const CategorySection = ({ title, projects }: { title: string; projects: Project[] }) => {
     return (
         <div className="mb-12">
             <div className="mb-6 flex items-center">
@@ -428,34 +422,27 @@ export const ProjectDetailModal = ({
 
     return (
         <motion.div
-            className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/80 pt-16 overflow-y-auto"
+            className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/80 pt-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
         >
             <motion.div
                 ref={modalRef}
-                className={`w-full max-w-5xl max-h-[90vh] mx-auto flex flex-col md:flex-row ${className || ''} ${
+                className={`mx-auto flex max-h-[90vh] w-full max-w-5xl flex-col md:flex-row ${className || ''} ${
                     darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
-                } rounded-lg overflow-hidden shadow-2xl`}
+                } overflow-hidden rounded-lg shadow-2xl`}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
             >
                 {/* Left side - Video */}
-                <div className="relative w-full md:w-1/2 h-48 md:h-auto">
-                    <div className="absolute inset-0 bg-black/80 z-10"></div>
-                    <video
-                        ref={videoRef}
-                        src={project.video}
-                        className="h-full w-full object-cover relative z-0"
-                        autoPlay
-                        loop
-                        playsInline
-                    />
+                <div className="relative h-48 w-full md:h-auto md:w-1/2">
+                    <div className="absolute inset-0 z-10 bg-black/80"></div>
+                    <video ref={videoRef} src={project.video} className="relative z-0 h-full w-full object-cover" autoPlay loop playsInline />
                     <button
                         onClick={handleCloseModal}
-                        className="absolute top-4 right-4 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 z-20"
+                        className="absolute top-4 right-4 z-20 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
                         aria-label="Close"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -465,7 +452,7 @@ export const ProjectDetailModal = ({
                 </div>
 
                 {/* Right side - Project Information */}
-                <div className="w-full md:w-1/2 max-h-[90vh] p-6 overflow-y-auto">
+                <div className="max-h-[90vh] w-full overflow-y-auto p-6 md:w-1/2">
                     <div className="flex flex-col">
                         <h2 className="mb-4 text-2xl font-bold">{project.title}</h2>
 

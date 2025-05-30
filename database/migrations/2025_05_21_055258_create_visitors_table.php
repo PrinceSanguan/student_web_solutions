@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('visitor_analytics', function (Blueprint $table) {
+        Schema::create('visitors', function (Blueprint $table) {
             $table->id();
             $table->string('ip_address');
-            $table->string('country')->nullable();
-            $table->string('device_type')->nullable();
-            $table->string('page_visited');
+            $table->string('user_agent')->nullable();
+            $table->timestamp('visited_at');
             $table->timestamps();
+
+            $table->unique(['ip_address', 'visited_at']);
+            $table->index('visited_at');
         });
     }
 

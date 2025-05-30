@@ -38,23 +38,17 @@ class HomeController extends Controller
      */
     private function trackVisitor(Request $request)
     {
-        $ip = $request->ip();
-        $agent = new Agent();
-        $agent->setUserAgent($request->header('User-Agent'));
+        $ipAddress = $request->ip();
+        $userAgent = $request->userAgent();
+        $today = Carbon::today();
 
-        // Check if this IP has already visited today
-        $existingVisit = Visitor::where('ip_address', $ip)
-            ->whereDate('created_at', Carbon::today())
-            ->first();
-
-        if (!$existingVisit) {
-            Visitor::create([
-                'ip_address' => $ip,
-                'country' => 'Unknown',
-                'device_type' => $agent->isDesktop() ? 'Desktop' : ($agent->isTablet() ? 'Tablet' : 'Mobile'),
-                'page_visited' => $request->path() ?: '/'
-            ]);
-        }
+        // Only track one visit per IP per day
+        Visitor::firstOrCreate([
+            'ip_address' => $ipAddress,
+            'visited_at' => $today,
+        ], [
+            'user_agent' => $userAgent,
+        ]);
     }
 
     /**
