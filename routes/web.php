@@ -1,13 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // Middleware
 use App\Http\Middleware\GuestMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\UserMiddleware;
-use App\Http\Middleware\VisitorTrackingMiddleware;
 
 // Controllers
 use App\Http\Controllers\HomeController;

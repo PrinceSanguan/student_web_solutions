@@ -99,33 +99,62 @@ export const projects: Project[] = [
             username: 'No test Credential for this project',
             password: 'No test Credential for this project',
         },
-        liveUrl: 'https://founder-portfolio.com',
+        liveUrl: 'https://psanguan.com',
     },
     {
         id: 7,
         title: 'Seraphina App',
-        description: 'Cross-platform mobile banking application with secure authentication and real-time transactions.',
+        description: 'An mobile that you can earn money. Using with React native in frontend and laravel in backend.',
         image: '/assets/images/project-6.png',
         video: '/assets/videos/Seraphina.mp4',
         category: 'mobile',
         credentials: {
-            username: 'Create the account with the app',
-            password: 'Create the account with the app',
+            username: 'No test Credential for this project',
+            password: 'No test Credential for this project',
         },
-        liveUrl: 'https://mobile-banking-demo.com',
+        liveUrl: 'https://seraphina.laravel.cloud',
     },
     {
         id: 8,
-        title: 'SAAS Analytics Platform',
-        description: 'Comprehensive analytics platform for businesses with real-time data visualization and reporting.',
+        title: 'Resume Builder SAAS',
+        description:
+            'A comprehensive SAAS platform for creating professional resumes. It features a user-friendly interface, customizable templates, and real-time editing capabilities. Users can easily build, edit, and download their resumes in various formats.',
         image: '/assets/images/project-8.png',
         video: '/assets/videos/saas.mp4',
         category: 'saas',
         credentials: {
-            username: 'saas_admin',
-            password: 'admin789',
+            username: 'Go to the website and click on the "google connect" button to create an account.',
+            password: 'Go to the website and click on the "google connect" button to create an account.',
         },
-        liveUrl: 'https://analytics-saas.com',
+        liveUrl: 'https:biodata.psanguan.com',
+    },
+    {
+        id: 9,
+        title: 'ARMA Website',
+        description:
+            'Lawyer website that i created for my client. It is a simple website that contains the information about the lawyer, such as the date, time, and location of the lawyer. It also contains a contact form that allows clients to contact the lawyer.',
+        image: '/assets/images/project-9.png',
+        video: '/assets/videos/arma.mp4',
+        category: 'client',
+        credentials: {
+            username: 'No test Credential for this project',
+            password: 'No test Credential for this project',
+        },
+        liveUrl: 'https://arma-website-main-gbgm6t.laravel.cloud/',
+    },
+    {
+        id: 10,
+        title: 'Ammers Website',
+        description:
+            'Football website that i created for my client. It is a simple website that contains the information about the football team, such as the date, time, and location of the football team. It also contains a contact form that allows clients to contact the football team.',
+        image: '/assets/images/project-10.png',
+        video: '/assets/videos/ammers.mp4',
+        category: 'client',
+        credentials: {
+            username: 'No test Credential for this project',
+            password: 'No test Credential for this project',
+        },
+        liveUrl: 'https://ammers-academy-main-98ey9j.laravel.cloud/',
     },
 ];
 
@@ -551,6 +580,20 @@ export const ProjectsContainer = () => {
 
     return (
         <div className="container mx-auto px-4 py-12">
+            {founderProjects.length > 0 && (
+                <div className="mb-16">
+                    <div className="mb-6 flex items-center">
+                        <h2 className="text-3xl font-bold">Founder Websites</h2>
+                        <div className="ml-4 flex-grow border-b-4 border-purple-500 dark:border-purple-400"></div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                        {founderProjects.map((project) => (
+                            <ProjectCard key={project.id} project={project} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {capstoneProjects.length > 0 && (
                 <div className="mb-16">
                     <div className="mb-6 flex items-center">
@@ -573,20 +616,6 @@ export const ProjectsContainer = () => {
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         {clientProjects.map((project) => (
-                            <ProjectCard key={project.id} project={project} />
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {founderProjects.length > 0 && (
-                <div className="mb-16">
-                    <div className="mb-6 flex items-center">
-                        <h2 className="text-3xl font-bold">Founder Websites</h2>
-                        <div className="ml-4 flex-grow border-b-4 border-purple-500 dark:border-purple-400"></div>
-                    </div>
-                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                        {founderProjects.map((project) => (
                             <ProjectCard key={project.id} project={project} />
                         ))}
                     </div>
