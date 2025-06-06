@@ -1,162 +1,263 @@
-import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import TiltCard from '../cards/TiltCard';
+import { useEffect, useRef, useState } from 'react';
 
 interface TestimonialSliderProps {
     darkMode: boolean;
 }
 
 const TestimonialSlider = ({ darkMode }: TestimonialSliderProps) => {
-    const sliderRef = useRef<HTMLDivElement>(null);
-    const slideRefs = useRef<Array<HTMLDivElement | null>>([]);
-    const [currentSlide, setCurrentSlide] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const background1Ref = useRef<HTMLDivElement>(null);
+    const background2Ref = useRef<HTMLDivElement>(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [activeBackground, setActiveBackground] = useState(1);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const testimonials = [
-        {
-            text: "Student Web Solutions transformed our online presence with a beautiful, functional website that perfectly represents our brand.",
-            author: "Sarah Johnson",
-            role: "CEO, TechStart"
-        },
-        {
-            text: "The team at SWS delivered our e-commerce platform ahead of schedule and helped increase our online sales by 200%.",
-            author: "Michael Chen",
-            role: "Founder, EcoShop"
-        },
-        {
-            text: "Their attention to detail and commitment to quality is unmatched. I wouldn't trust anyone else with our web development needs.",
-            author: "Jessica Williams",
-            role: "Marketing Director, Innovate Inc."
-        }
+    const testimonialImages = [
+        '/assets/images/testimonial-1.png',
+        '/assets/images/testimonial-2.png',
+        '/assets/images/project-3.png',
+        '/assets/images/project-4.png',
+        '/assets/images/project-5.png',
+        '/assets/images/project-6.png',
     ];
 
     useEffect(() => {
-        if (!sliderRef.current) return;
+        // Preload all images
+        const preloadImages = async () => {
+            const imagePromises = testimonialImages.map((src) => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = src;
+                });
+            });
 
-        // Set up autoplay
-        const interval = setInterval(() => {
-            nextSlide();
-        }, 5000);
+            try {
+                await Promise.all(imagePromises);
+                setIsLoaded(true);
+            } catch (error) {
+                console.error('Failed to load some images');
+                setIsLoaded(true);
+            }
+        };
 
-        // Initialize positions
-        updateSlidePositions(currentSlide, true);
-
-        return () => clearInterval(interval);
+        preloadImages();
     }, []);
 
     useEffect(() => {
-        // Animate to new slide position when currentSlide changes
-        updateSlidePositions(currentSlide);
-    }, [currentSlide]);
+        if (!isLoaded) return;
 
-    const updateSlidePositions = (active: number, instant = false) => {
-        slideRefs.current.forEach((slide, index) => {
-            if (!slide) return;
+        // Set initial background
+        if (background1Ref.current) {
+            background1Ref.current.style.backgroundImage = `url(${testimonialImages[0]})`;
+            gsap.set(background1Ref.current, { opacity: 1 });
+            gsap.set(background2Ref.current, { opacity: 0 });
+        }
 
-            let xPosition: number;
+        // Start auto-changing images every 2 seconds
+        intervalRef.current = setInterval(() => {
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonialImages.length);
+        }, 2000);
 
-            if (index === active) {
-                xPosition = 0; // Center
-            } else if (index < active) {
-                xPosition = -100; // Left
-            } else {
-                xPosition = 100; // Right
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
             }
+        };
+    }, [isLoaded, testimonialImages.length]);
 
-            gsap.to(slide, {
-                xPercent: xPosition,
-                opacity: index === active ? 1 : 0,
-                scale: index === active ? 1 : 0.8,
-                duration: instant ? 0 : 0.6,
-                ease: "power2.out"
-            });
+    useEffect(() => {
+        if (!isLoaded || !background1Ref.current || !background2Ref.current) return;
+
+        const currentImage = testimonialImages[currentIndex];
+
+        // Determine which background to update
+        const nextBackground = activeBackground === 1 ? background2Ref.current : background1Ref.current;
+        const currentBackground = activeBackground === 1 ? background1Ref.current : background2Ref.current;
+
+        // Set the new background image
+        nextBackground.style.backgroundImage = `url(${currentImage})`;
+
+        // Create smooth crossfade animation
+        const tl = gsap.timeline({
+            onComplete: () => {
+                setActiveBackground(activeBackground === 1 ? 2 : 1);
+            },
         });
-    };
 
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    };
+        tl.to(nextBackground, {
+            opacity: 1,
+            duration: 1,
+            ease: 'power2.inOut',
+        }).to(
+            currentBackground,
+            {
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.inOut',
+            },
+            '<',
+        );
+    }, [currentIndex, isLoaded, activeBackground]);
 
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-    };
-
-    // Function to set references correctly
-    const setSlideRef = (el: HTMLDivElement | null, index: number) => {
-        slideRefs.current[index] = el;
+    const handleDotClick = (index: number) => {
+        setCurrentIndex(index);
     };
 
     return (
-        <div className="relative overflow-hidden py-10">
-            <h2 className="mb-8 text-center text-2xl font-bold sm:text-3xl md:text-4xl">
-                <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">Client Testimonials</span>
-            </h2>
+        <div className="relative overflow-hidden py-12 sm:py-16 md:py-20">
+            {/* Main background container */}
+            <div
+                ref={containerRef}
+                className="relative mx-auto h-64 w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl sm:h-80 md:h-96 lg:h-[32rem]"
+            >
+                {/* Background image layers for crossfade */}
+                <div
+                    ref={background1Ref}
+                    className="absolute inset-0 h-full w-full transition-opacity duration-1000 ease-in-out"
+                    style={{
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        opacity: 1,
+                    }}
+                />
+                <div
+                    ref={background2Ref}
+                    className="absolute inset-0 h-full w-full transition-opacity duration-1000 ease-in-out"
+                    style={{
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        opacity: 0,
+                    }}
+                />
 
-            {/* Slider container */}
-            <div ref={sliderRef} className="relative mx-auto h-64 w-full max-w-2xl overflow-hidden">
-                {testimonials.map((testimonial, index) => (
+                {/* Loading state */}
+                {!isLoaded && (
                     <div
-                        key={index}
-                        ref={(el) => setSlideRef(el, index)}
-                        className="absolute inset-0 flex items-center justify-center px-6 text-center"
+                        className={`absolute inset-0 z-30 flex items-center justify-center ${darkMode ? 'bg-gray-800' : 'bg-gray-200'} animate-pulse`}
                     >
-                        <TiltCard darkMode={darkMode}>
-                            <div className="p-8">
-                                <div className="mb-4 text-center">
-                                    <svg className="mx-auto h-12 w-12 text-blue-500/80" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"></path>
-                                    </svg>
-                                </div>
-                                <p className="mb-4 text-lg italic text-gray-600 dark:text-gray-300">{testimonial.text}</p>
-                                <div className="font-medium text-gray-800 dark:text-white">{testimonial.author}</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</div>
+                        <div className="flex flex-col items-center space-y-4">
+                            <div className="flex space-x-2">
+                                <div className={`h-3 w-3 animate-bounce rounded-full ${darkMode ? 'bg-blue-400' : 'bg-blue-600'}`}></div>
+                                <div
+                                    className={`h-3 w-3 animate-bounce rounded-full ${darkMode ? 'bg-purple-400' : 'bg-purple-600'}`}
+                                    style={{ animationDelay: '0.1s' }}
+                                ></div>
+                                <div
+                                    className={`h-3 w-3 animate-bounce rounded-full ${darkMode ? 'bg-emerald-400' : 'bg-emerald-600'}`}
+                                    style={{ animationDelay: '0.2s' }}
+                                ></div>
                             </div>
-                        </TiltCard>
+                            <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading testimonials...</p>
+                        </div>
                     </div>
-                ))}
+                )}
+
+                {/* Multiple overlay layers for smooth fading effect */}
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                <div className="absolute inset-0 z-10 bg-gradient-to-br from-blue-900/30 via-transparent to-purple-900/30 mix-blend-overlay"></div>
+                <div className="absolute inset-0 z-10 bg-gradient-to-r from-transparent via-black/10 to-transparent"></div>
+
+                {/* Content overlay */}
+                <div className="absolute inset-0 z-20 flex flex-col justify-between p-6 sm:p-8 md:p-10 lg:p-12">
+                    {/* Top section */}
+                    <div className="flex items-start justify-between">
+                        {/* Live indicator with fade animation */}
+                        <div className="inline-flex items-center gap-3 rounded-full border border-white/30 bg-black/40 px-4 py-2 shadow-lg backdrop-blur-md">
+                            <div className="relative">
+                                <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400"></div>
+                                <div className="absolute inset-0 h-2 w-2 animate-ping rounded-full bg-emerald-400 opacity-75"></div>
+                            </div>
+                            <span className="text-sm font-medium text-white drop-shadow-sm">Live Testimonial</span>
+                        </div>
+
+                        {/* Image counter with fade */}
+                        <div className="rounded-full border border-white/30 bg-black/40 px-4 py-2 shadow-lg backdrop-blur-md">
+                            <span className="text-sm font-medium text-white drop-shadow-sm">
+                                {currentIndex + 1} / {testimonialImages.length}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Bottom section */}
+                    <div className="text-center">
+                        <h2 className="mb-4 text-2xl font-bold text-white drop-shadow-lg sm:text-3xl md:text-4xl lg:text-5xl">
+                            <span className="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                                Client Success Stories
+                            </span>
+                        </h2>
+                        <p className="mx-auto mb-6 max-w-2xl rounded-lg bg-black/20 p-3 text-sm text-white/90 drop-shadow-md backdrop-blur-sm sm:text-base md:text-lg">
+                            Real testimonials from satisfied clients showcasing successful project deliveries
+                        </p>
+
+                        {/* Progress indicators with smooth hover effects */}
+                        <div className="flex justify-center space-x-3">
+                            {testimonialImages.map((_, index) => (
+                                <button
+                                    key={index}
+                                    className={`relative h-3 w-3 transform rounded-full transition-all duration-500 hover:scale-125 focus:ring-2 focus:ring-white/50 focus:outline-none ${
+                                        index === currentIndex ? 'scale-125 bg-white shadow-lg' : 'bg-white/40 hover:bg-white/70'
+                                    }`}
+                                    onClick={() => handleDotClick(index)}
+                                >
+                                    {index === currentIndex && <div className="absolute inset-0 animate-ping rounded-full bg-white opacity-75"></div>}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Animated progress bar */}
+                <div className="absolute bottom-0 left-0 z-20 h-1 w-full bg-white/20">
+                    <div
+                        className="h-full bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 shadow-lg transition-all duration-2000 ease-linear"
+                        style={{
+                            width: `${((currentIndex + 1) / testimonialImages.length) * 100}%`,
+                            boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)',
+                        }}
+                    ></div>
+                </div>
+
+                {/* Subtle vignette effect */}
+                <div className="bg-radial-gradient absolute inset-0 z-10 from-transparent via-transparent to-black/20"></div>
             </div>
 
-            {/* Navigation buttons */}
-            <div className="mt-8 flex justify-center space-x-4">
-                <button
-                    onClick={prevSlide}
-                    className={`rounded-full p-2 ${
-                        darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-100'
-                    } shadow-md transition-colors`}
-                    aria-label="Previous testimonial"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            {/* Bottom info with fade effect */}
+            <div className="mt-6 text-center sm:mt-8">
+                <div className="inline-flex items-center gap-3 rounded-full border border-blue-500/20 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-emerald-500/10 px-6 py-3 shadow-lg backdrop-blur-sm">
+                    <svg className="h-4 w-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                </button>
-                <button
-                    onClick={nextSlide}
-                    className={`rounded-full p-2 ${
-                        darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-100'
-                    } shadow-md transition-colors`}
-                    aria-label="Next testimonial"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                    <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        Smooth transitions every 2 seconds • Click dots to navigate
+                    </span>
+                </div>
             </div>
 
-            {/* Indicator dots */}
-            <div className="mt-4 flex justify-center space-x-2">
-                {testimonials.map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => setCurrentSlide(index)}
-                        className={`h-2 w-2 rounded-full transition-colors ${
-                            index === currentSlide
-                                ? 'bg-blue-500'
-                                : darkMode
-                                ? 'bg-gray-600 hover:bg-gray-500'
-                                : 'bg-gray-300 hover:bg-gray-400'
-                        }`}
-                        aria-label={`Go to slide ${index + 1}`}
-                    />
-                ))}
+            {/* Enhanced background decoration */}
+            <div className="absolute inset-0 -z-10 overflow-hidden">
+                <div
+                    className={`absolute -top-32 -right-32 h-64 w-64 rounded-full blur-3xl ${
+                        darkMode ? 'bg-blue-500/8' : 'bg-blue-500/4'
+                    } animate-pulse opacity-60`}
+                ></div>
+                <div
+                    className={`absolute -bottom-32 -left-32 h-64 w-64 rounded-full blur-3xl ${
+                        darkMode ? 'bg-purple-500/8' : 'bg-purple-500/4'
+                    } animate-pulse opacity-60`}
+                    style={{ animationDelay: '1s' }}
+                ></div>
+                <div
+                    className={`absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 transform rounded-full blur-3xl ${
+                        darkMode ? 'bg-emerald-500/5' : 'bg-emerald-500/3'
+                    } animate-pulse opacity-40`}
+                    style={{ animationDelay: '2s' }}
+                ></div>
             </div>
         </div>
     );

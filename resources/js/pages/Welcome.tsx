@@ -1,14 +1,15 @@
 import Analytics from '@/components/landing/analytics';
 import ChatBot from '@/components/landing/chat-bot';
 import Footer from '@/components/landing/footer';
+import GitHub from '@/components/landing/github';
 import ProjectShowcase from '@/components/landing/project-showcase';
+import { ThemeProvider } from '@/components/landing/theme-provider';
 import { Head } from '@inertiajs/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { useEffect, useRef, useState } from 'react';
-import { ThemeProvider } from '@/components/landing/theme-provider';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, TextPlugin, SplitText);
@@ -16,9 +17,6 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin, SplitText);
 // Import components from their new locations
 import ParallaxBackground from '@/components/landing/animations/ParallaxBackground';
 import ParticleBackground from '@/components/landing/animations/ParticleBackground';
-import SmoothScrollSection from '@/components/landing/animations/SmoothScrollSection';
-import TextScramble from '@/components/landing/animations/TextScramble';
-import InteractiveCard from '@/components/landing/cards/InteractiveCard';
 import IntroVideo from '@/components/landing/sections/IntroVideo';
 import PageLoader from '@/components/landing/sections/PageLoader';
 import TestimonialSlider from '@/components/landing/sections/TestimonialSlider';
@@ -215,136 +213,10 @@ const Welcome = (props: WelcomeProps) => {
 
                 {/* Main Content */}
                 <main ref={mainRef} className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-                    {/* Hero Section */}
-                    <section ref={heroRef} className="mb-16 text-center">
-                        <div className="overflow-hidden">
-                            <TextScramble
-                                text="Our Portfolio"
-                                className="mb-4 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl md:text-5xl"
-                            />
-                            <p ref={descriptionRef} className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg dark:text-gray-300">
-                                Explore our showcase projects. Click to learn more and access test credentials.
-                            </p>
-                        </div>
-                    </section>
-
-                    {/* Services section with interactive cards */}
-                    <section className="mb-20">
-                        <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
-                            <TextScramble
-                                text="Our Services"
-                                className="mb-8 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent sm:text-3xl md:text-4xl"
-                            />
-
-                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-                                <InteractiveCard
-                                    darkMode={darkMode}
-                                    title="Web Development"
-                                    description="Custom web development solutions tailored to your needs."
-                                    icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="float h-10 w-10"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                                <InteractiveCard
-                                    darkMode={darkMode}
-                                    title="UI/UX Design"
-                                    description="Beautiful, intuitive interfaces that enhance user experience."
-                                    icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="float h-10 w-10"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                                <InteractiveCard
-                                    darkMode={darkMode}
-                                    title="Mobile App Development"
-                                    description="Cross-platform mobile applications with responsive design."
-                                    icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="float h-10 w-10"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                                <InteractiveCard
-                                    darkMode={darkMode}
-                                    title="POS Custom Made System"
-                                    description="Tailored point-of-sale systems for your business needs."
-                                    icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="float h-10 w-10"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                                <InteractiveCard
-                                    darkMode={darkMode}
-                                    title="IoT System"
-                                    description="Internet of Things solutions connecting devices and data."
-                                    icon={
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="float h-10 w-10"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
-                                            />
-                                        </svg>
-                                    }
-                                />
-                            </div>
-                        </div>
-                    </section>
+                    {/* GitHub section */}
+                    <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
+                        <GitHub darkMode={darkMode} />
+                    </div>
 
                     {/* Testimonial slider section */}
                     <section className="mb-20">
@@ -352,9 +224,6 @@ const Welcome = (props: WelcomeProps) => {
                             <TestimonialSlider darkMode={darkMode} />
                         </div>
                     </section>
-
-                    {/* Smooth scroll text section */}
-                    <SmoothScrollSection />
 
                     {/* Project Showcase */}
                     <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
@@ -374,9 +243,7 @@ const Welcome = (props: WelcomeProps) => {
                 </main>
 
                 {/* Enhanced Footer */}
-                <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
-                    <Footer darkMode={darkMode} />
-                </div>
+                <Footer darkMode={darkMode} />
             </div>
 
             {/* Chat Bot */}
