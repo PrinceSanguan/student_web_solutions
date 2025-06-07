@@ -9,9 +9,9 @@
 
     <!-- SEO Meta Tags -->
     <meta name="description"
-        content="Student Web Solutions offers professional web design, website creation, computer systems, mobile apps, POS solutions and more to grow your business online.">
+        content="Capstone Philippines - Expert website maker and Philippines programmer specializing in paggawa capstone projects. Professional capstone make services for students and businesses.">
     <meta name="keywords"
-        content="web design, website creation, computer systems, mobile apps, POS solutions, business growth, web development">
+        content="capstone philippines, paggawa capstone, capstone make, website maker, philippines programmer, philippines capstone, capstone, web development philippines, student capstone projects">
     <meta name="author" content="Student Web Solutions">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
@@ -19,17 +19,19 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="Student Web Solutions | Professional Web & System Development">
+    <meta property="og:title"
+        content="Capstone Philippines | Website Maker & Philippines Programmer | Paggawa Capstone">
     <meta property="og:description"
-        content="Professional web design, website creation, computer systems, mobile apps, and POS solutions to grow your business.">
+        content="Expert capstone philippines services. Professional website maker and philippines programmer for paggawa capstone projects.">
     <meta property="og:image" content="{{ asset('assets/images/logo.png') }}">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="Student Web Solutions | Professional Web & System Development">
+    <meta name="twitter:title"
+        content="Capstone Philippines | Website Maker & Philippines Programmer | Paggawa Capstone">
     <meta name="twitter:description"
-        content="Professional web design, website creation, computer systems, mobile apps, and POS solutions to grow your business.">
+        content="Expert capstone philippines services. Professional website maker and philippines programmer for paggawa capstone projects.">
     <meta name="twitter:image" content="{{ asset('assets/images/logo.png') }}">
 
     <!-- Favicon -->
@@ -57,22 +59,37 @@
     </style>
 
     <!-- Title -->
-    <title>Professional Web & System Development</title>
+    <title>Capstone Philippines | Website Maker & Philippines Programmer | Paggawa Capstone</title>
 
     <!-- Schema.org markup for Google -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Organization",
-        "name": "Student Web Solutions",
-        "description": "Professional web design, website creation, computer systems, mobile applications, POS solutions and more for businesses",
+        "name": "Capstone Philippines - Website Maker & Philippines Programmer",
+        "description": "Expert capstone philippines services, website maker, and philippines programmer specializing in paggawa capstone projects and capstone make solutions",
         "url": "{{ url('/') }}",
         "logo": "{{ asset('assets/images/logo.png') }}",
+        "keywords": ["capstone philippines", "paggawa capstone", "capstone make", "website maker", "philippines programmer", "philippines capstone", "capstone"],
         "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer support"
         }
     }
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c, l, a, r, i, t, y) {
+            c[a] = c[a] || function() {
+                (c[a].q = c[a].q || []).push(arguments)
+            };
+            t = l.createElement(r);
+            t.async = 1;
+            t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0];
+            y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "rvk16k915r");
     </script>
 
     <!-- Inertia.js & Vite Integration -->

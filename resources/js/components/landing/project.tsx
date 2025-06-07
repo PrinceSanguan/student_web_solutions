@@ -156,6 +156,20 @@ export const projects: Project[] = [
         },
         liveUrl: 'https://ammers-academy-main-98ey9j.laravel.cloud/',
     },
+    {
+        id: 11,
+        title: 'Ultra Flex Website',
+        description:
+            'This is a fitness website that i created for my client. It is a simple website that contains the information about the fitness, such as the date, time, and location of the fitness. It also contains a contact form that allows clients to contact the fitness.',
+        image: '/assets/images/project-11.png',
+        video: '/assets/videos/ultra.mp4',
+        category: 'client',
+        credentials: {
+            username: 'No test Credential for this project',
+            password: 'No test Credential for this project',
+        },
+        liveUrl: 'https://ultra-flex-2-main-zh9wuc.laravel.cloud/',
+    },
 ];
 
 // Project Card Component

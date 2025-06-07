@@ -37,6 +37,8 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
 
   Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
 
+  Route::get('/api/clarity-analytics', [HomeController::class, 'getAnalytics']);
+
   /*
     |------------------------------------------
     | ChatBot route (separate throttle rule)

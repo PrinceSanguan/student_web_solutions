@@ -1,5 +1,5 @@
-import Analytics from '@/components/landing/analytics';
 import ChatBot from '@/components/landing/chat-bot';
+import Clarity from '@/components/landing/clarity';
 import Footer from '@/components/landing/footer';
 import GitHub from '@/components/landing/github';
 import ProjectShowcase from '@/components/landing/project-showcase';
@@ -230,15 +230,9 @@ const Welcome = (props: WelcomeProps) => {
                         <ProjectShowcase />
                     </div>
 
-                    {/* Analytics Dashboard Section */}
+                    {/* Clarity Dashboard Section */}
                     <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
-                        <Analytics
-                            darkMode={darkMode}
-                            dailyVisitors={props.dailyVisitors}
-                            monthlyVisitors={props.monthlyVisitors}
-                            dailyVisitorsData={props.dailyVisitorsData}
-                            monthlyVisitorsData={props.monthlyVisitorsData}
-                        />
+                        <Clarity darkMode={darkMode} />
                     </div>
                 </main>
 
