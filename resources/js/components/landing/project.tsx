@@ -639,7 +639,7 @@ export const ProjectsContainer = () => {
             {mobileProjects.length > 0 && (
                 <div className="mb-16">
                     <div className="mb-6 flex items-center">
-                        <h2 className="text-3xl font-bold">Mobile Websites</h2>
+                        <h2 className="text-3xl font-bold">Mobile Website</h2>
                         <div className="ml-4 flex-grow border-b-4 border-orange-500 dark:border-orange-400"></div>
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
