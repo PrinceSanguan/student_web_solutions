@@ -170,6 +170,20 @@ export const projects: Project[] = [
         },
         liveUrl: 'https://ultra-flex-2-main-zh9wuc.laravel.cloud/',
     },
+    {
+        id: 12,
+        title: 'Tagalog to English Translator',
+        description:
+            'This is a translation website that i created for SAAS. It is a simple website that allows users to translate text from Tagalog to English and vice versa. It also contains a contact form that allows clients to contact the translator.',
+        image: '/assets/images/project-12.png',
+        video: '/assets/videos/translator.mp4',
+        category: 'saas',
+        credentials: {
+            username: 'No test Credential for this project',
+            password: 'No test Credential for this project',
+        },
+        liveUrl: 'https://translator.psanguan.com',
+    },
 ];
 
 // Project Card Component

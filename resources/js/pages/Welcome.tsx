@@ -1,5 +1,4 @@
 import ChatBot from '@/components/landing/chat-bot';
-import Clarity from '@/components/landing/clarity';
 import Footer from '@/components/landing/footer';
 import GitHub from '@/components/landing/github';
 import ProjectShowcase from '@/components/landing/project-showcase';
@@ -228,11 +227,6 @@ const Welcome = (props: WelcomeProps) => {
                     {/* Project Showcase */}
                     <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
                         <ProjectShowcase />
-                    </div>
-
-                    {/* Clarity Dashboard Section */}
-                    <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
-                        <Clarity darkMode={darkMode} />
                     </div>
                 </main>
 
