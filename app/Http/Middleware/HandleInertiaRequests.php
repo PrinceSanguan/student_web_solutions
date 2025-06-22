@@ -37,8 +37,6 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        // Generate a random inspiring quote
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
         return [
             // Include parent shared data
@@ -46,8 +44,8 @@ class HandleInertiaRequests extends Middleware
             // Your custom shared data
             'name' => config('app.name'),
             'quote' => [
-                'message' => trim($message),
-                'author'  => trim($author),
+                'message' => 'Excellence is never an accident.',
+                'author' => 'Aristotle',
             ],
             'auth' => [
                 'user' => $request->user(),
