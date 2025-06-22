@@ -17,7 +17,6 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin, SplitText);
 import ParallaxBackground from '@/components/landing/animations/ParallaxBackground';
 import ParticleBackground from '@/components/landing/animations/ParticleBackground';
 import IntroVideo from '@/components/landing/sections/IntroVideo';
-import PageLoader from '@/components/landing/sections/PageLoader';
 import TestimonialSlider from '@/components/landing/sections/TestimonialSlider';
 
 interface WelcomeProps {
@@ -40,7 +39,6 @@ interface WelcomeProps {
 const Welcome = (props: WelcomeProps) => {
     const [darkMode, setDarkMode] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
-    const [isLoading, setIsLoading] = useState(true);
 
     const heroRef = useRef<HTMLElement>(null);
     const headingRef = useRef<HTMLHeadingElement>(null);
@@ -63,7 +61,7 @@ const Welcome = (props: WelcomeProps) => {
 
     // Set up GSAP animations
     useEffect(() => {
-        if (!showIntro && !isLoading && mainRef.current) {
+        if (!showIntro && mainRef.current) {
             // Stagger animation for the header elements
             const tl = gsap.timeline();
 
@@ -124,15 +122,15 @@ const Welcome = (props: WelcomeProps) => {
                 },
             });
         }
-    }, [showIntro, isLoading]);
+    }, [showIntro]);
 
     // Toggle dark mode function
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
     };
 
-    // Handle video completion
     const handleVideoComplete = () => {
+        localStorage.setItem('introVideoWatched', 'true');
         setShowIntro(false);
     };
 
@@ -150,14 +148,11 @@ const Welcome = (props: WelcomeProps) => {
                 <div className="scroll-progress h-full w-full origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-600"></div>
             </div>
 
-            {/* Page loader */}
-            <PageLoader isLoading={isLoading} setIsLoading={setIsLoading} />
-
-            {!isLoading && showIntro && <IntroVideo onVideoComplete={handleVideoComplete} />}
+            {showIntro && <IntroVideo onVideoComplete={handleVideoComplete} />}
 
             <div
                 className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} relative transition-colors duration-300`}
-                style={{ visibility: isLoading ? 'hidden' : 'visible' }}
+                style={{ visibility: 'visible' }}
             >
                 <ParallaxBackground />
                 <ParticleBackground darkMode={darkMode} />
@@ -235,7 +230,7 @@ const Welcome = (props: WelcomeProps) => {
             </div>
 
             {/* Chat Bot */}
-            {!isLoading && <ChatBot darkMode={darkMode} />}
+            {<ChatBot darkMode={darkMode} />}
         </ThemeProvider>
     );
 };
