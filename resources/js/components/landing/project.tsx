@@ -7,7 +7,7 @@ export interface Project {
     title: string;
     description: string;
     image: string;
-    video: string;
+    // video: string; // Removed for performance
     category: 'capstone' | 'client' | 'founder' | 'mobile' | 'saas';
     credentials: {
         username: string;
@@ -24,7 +24,6 @@ export const projects: Project[] = [
         description:
             'This is the premier chess school in Thailand, dedicated to nurturing future chess champions. Our website offers a seamless registration system that helps them easily identify and manage new sign-ups. Once a student registers, the school receives an instant notification—ensuring no one is missed and every application is tracked efficiently. The site features a responsive design that works flawlessly on all devices, integrated payment processing for course registrations, and an elegant user interface that reflects the strategic nature of chess.\n\nKey features include:\n• Modern, responsive design optimized for all devices\n• Streamlined registration process with automated notifications\n• Secure payment integration\n• Course catalog with detailed information\n• Instructor profiles and scheduling system\n• Interactive chess-themed elements throughout the site\n• SEO optimization for better visibility',
         image: '/assets/images/project-1.png',
-        video: '/assets/videos/DoubleBishopChess.mp4',
         category: 'client',
         credentials: {
             username: 'No test Credential for this project',
@@ -38,7 +37,6 @@ export const projects: Project[] = [
         description:
             'The PNP E-Mapping System is an internal web application designed to streamline user account management and regional data mapping within the Philippine National Police. The system allows administrators and regional users to securely log in, manage information, and coordinate across divisions efficiently. It includes user role assignments, secure password hashing, and role-based access control to ensure data privacy and operational clarity.\n\nKey features include:\n• Role-based user access (admin and regional users)\n• Secure password encryption\n• Seamless user registration and account creation\n• Responsive design for desktop and mobile use\n• Email-based user identification\n• Scalable for additional region support',
         image: '/assets/images/project-2.png',
-        video: '/assets/videos/pnp.mp4',
         category: 'capstone',
         credentials: {
             username: 'APCSLADMIN',
@@ -52,7 +50,6 @@ export const projects: Project[] = [
         description:
             'This is the website wedding that i created for my wedding. It is a simple website that contains the information about the wedding, such as the date, time, and location of the wedding. It also contains a RSVP form that allows guests to RSVP for the wedding. The website is built using Laravel and blade.',
         image: '/assets/images/project-3.png',
-        video: '/assets/videos/wedding.mp4',
         category: 'client',
         credentials: {
             username: 'No test Credential for this project',
@@ -65,7 +62,6 @@ export const projects: Project[] = [
         title: 'Candy Shop Website',
         description: 'This is a candy shop website that i created for my client. It is a simple website in three Js, Typescript and laravel',
         image: '/assets/images/project-4.png',
-        video: '/assets/videos/candy.mp4',
         category: 'client',
         credentials: {
             username: 'No test Credential for this project',
@@ -79,7 +75,6 @@ export const projects: Project[] = [
         description:
             'This is a web application that allows coaches to track the performance of their athletes. It includes features such as athlete profiles, performance tracking, and reporting.',
         image: '/assets/images/project-5.png',
-        video: '/assets/videos/tracking.mp4',
         category: 'client',
         credentials: {
             username: 'No test Credential for this project',
@@ -93,7 +88,6 @@ export const projects: Project[] = [
         description:
             'Personal portfolio website showcasing founder journey and achievements. Built with modern design principles and interactive elements.',
         image: '/assets/images/project-7.png',
-        video: '/assets/videos/founder.mp4',
         category: 'founder',
         credentials: {
             username: 'No test Credential for this project',
@@ -106,7 +100,6 @@ export const projects: Project[] = [
         title: 'Seraphina App',
         description: 'An mobile that you can earn money. Using with React native in frontend and laravel in backend.',
         image: '/assets/images/project-6.png',
-        video: '/assets/videos/Seraphina.mp4',
         category: 'mobile',
         credentials: {
             username: 'No test Credential for this project',
@@ -120,7 +113,6 @@ export const projects: Project[] = [
         description:
             'A comprehensive SAAS platform for creating professional resumes. It features a user-friendly interface, customizable templates, and real-time editing capabilities. Users can easily build, edit, and download their resumes in various formats.',
         image: '/assets/images/project-8.png',
-        video: '/assets/videos/saas.mp4',
         category: 'saas',
         credentials: {
             username: 'Go to the website and click on the "google connect" button to create an account.',
@@ -134,7 +126,6 @@ export const projects: Project[] = [
         description:
             'Lawyer website that i created for my client. It is a simple website that contains the information about the lawyer, such as the date, time, and location of the lawyer. It also contains a contact form that allows clients to contact the lawyer.',
         image: '/assets/images/project-9.png',
-        video: '/assets/videos/arma.mp4',
         category: 'client',
         credentials: {
             username: 'No test Credential for this project',
@@ -148,7 +139,6 @@ export const projects: Project[] = [
         description:
             'Football website that i created for my client. It is a simple website that contains the information about the football team, such as the date, time, and location of the football team. It also contains a contact form that allows clients to contact the football team.',
         image: '/assets/images/project-10.png',
-        video: '/assets/videos/ammers.mp4',
         category: 'client',
         credentials: {
             username: 'No test Credential for this project',
@@ -162,7 +152,6 @@ export const projects: Project[] = [
         description:
             'This is a fitness website that i created for my client. It is a simple website that contains the information about the fitness, such as the date, time, and location of the fitness. It also contains a contact form that allows clients to contact the fitness.',
         image: '/assets/images/project-11.png',
-        video: '/assets/videos/ultra.mp4',
         category: 'client',
         credentials: {
             username: 'No test Credential for this project',
@@ -176,7 +165,6 @@ export const projects: Project[] = [
         description:
             'This is a translation website that i created for SAAS. It is a simple website that allows users to translate text from Tagalog to English and vice versa. It also contains a contact form that allows clients to contact the translator.',
         image: '/assets/images/project-12.png',
-        video: '/assets/videos/translator.mp4',
         category: 'saas',
         credentials: {
             username: 'No test Credential for this project',
@@ -189,19 +177,7 @@ export const projects: Project[] = [
 // Project Card Component
 export const ProjectCard = ({ project }: { project: Project }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
-
-    useEffect(() => {
-        if (isHovered && videoRef.current) {
-            videoRef.current.play().catch(() => {
-                // Silent catch for browsers that prevent autoplay
-            });
-        } else if (!isHovered && videoRef.current) {
-            videoRef.current.pause();
-            videoRef.current.currentTime = 0;
-        }
-    }, [isHovered]);
 
     const handleClick = () => {
         // Play audio when card is clicked
@@ -230,12 +206,8 @@ export const ProjectCard = ({ project }: { project: Project }) => {
                 <img
                     src={project.image}
                     alt={project.title}
-                    className={`h-full w-full object-cover transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}
+                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                 />
-
-                {isHovered && (
-                    <video ref={videoRef} src={project.video} className="absolute inset-0 h-full w-full object-cover" muted loop playsInline />
-                )}
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
@@ -245,7 +217,9 @@ export const ProjectCard = ({ project }: { project: Project }) => {
                 </div>
 
                 <div
-                    className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+                    className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
+                        isHovered ? 'opacity-100' : 'opacity-0'
+                    }`}
                 >
                     <span className="rounded-lg bg-white/90 px-4 py-2 font-medium text-gray-900 shadow-lg">View Project</span>
                 </div>
@@ -319,11 +293,13 @@ export const ConfirmationDialog = ({
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className={`rounded-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                            <div className="mb-4 flex justify-center">
-                                <div className={`rounded-full p-4 ${darkMode ? 'bg-gray-700' : 'bg-blue-100'}`}>
+                            <div className="mb-4 text-center">
+                                <div
+                                    className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${darkMode ? 'bg-blue-600' : 'bg-blue-500'}`}
+                                >
                                     <svg
-                                        className={`h-10 w-10 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}
                                         xmlns="http://www.w3.org/2000/svg"
+                                        className="h-6 w-6 text-white"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -332,19 +308,16 @@ export const ConfirmationDialog = ({
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth={2}
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
                                 </div>
+                                <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Connect with Us</h3>
+                                <p className={`mt-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                    You're about to visit our Facebook page. This will open in a new tab.
+                                </p>
                             </div>
-
-                            <h3 className={`mb-2 text-center text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Leaving This Site</h3>
-
-                            <p className={`mb-6 text-center ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                You will now go to my Facebook page to message me. Would you like to continue?
-                            </p>
-
-                            <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3">
+                            <div className="flex gap-3">
                                 <button
                                     onClick={onClose}
                                     className={`flex-1 rounded-lg px-4 py-3 font-medium transition-colors ${
@@ -385,7 +358,6 @@ export const ProjectDetailModal = ({
     className?: string;
 }) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
     const [copied, setCopied] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -430,24 +402,6 @@ export const ProjectDetailModal = ({
         };
     }, []);
 
-    // Play video with sound when modal opens and clean up when closed
-    useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.muted = false;
-            videoRef.current.play().catch(() => {
-                // Silent catch for browsers that prevent autoplay
-            });
-        }
-
-        // Stop video when component unmounts
-        return () => {
-            if (videoRef.current) {
-                videoRef.current.pause();
-                videoRef.current.currentTime = 0;
-            }
-        };
-    }, []);
-
     const copyCredentials = () => {
         const text = `Username: ${project.credentials.username}\nPassword: ${project.credentials.password}`;
         navigator.clipboard.writeText(text);
@@ -459,11 +413,6 @@ export const ProjectDetailModal = ({
     };
 
     const handleCloseModal = () => {
-        // Stop the video
-        if (videoRef.current) {
-            videoRef.current.pause();
-            videoRef.current.currentTime = 0;
-        }
         onClose();
     };
 
@@ -493,10 +442,10 @@ export const ProjectDetailModal = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
             >
-                {/* Left side - Video */}
+                {/* Left side - Image */}
                 <div className="relative h-48 w-full md:h-auto md:w-1/2">
-                    <div className="absolute inset-0 z-10 bg-black/80"></div>
-                    <video ref={videoRef} src={project.video} className="relative z-0 h-full w-full object-cover" autoPlay loop playsInline />
+                    <div className="absolute inset-0 z-10 bg-black/20"></div>
+                    <img src={project.image} alt={project.title} className="relative z-0 h-full w-full object-cover" />
                     <button
                         onClick={handleCloseModal}
                         className="absolute top-4 right-4 z-20 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
@@ -607,21 +556,7 @@ export const ProjectsContainer = () => {
     const saasProjects = projects.filter((project) => project.category === 'saas');
 
     return (
-        <div className="container mx-auto px-4 py-12">
-            {founderProjects.length > 0 && (
-                <div className="mb-16">
-                    <div className="mb-6 flex items-center">
-                        <h2 className="text-3xl font-bold">Founder Websites</h2>
-                        <div className="ml-4 flex-grow border-b-4 border-purple-500 dark:border-purple-400"></div>
-                    </div>
-                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                        {founderProjects.map((project) => (
-                            <ProjectCard key={project.id} project={project} />
-                        ))}
-                    </div>
-                </div>
-            )}
-
+        <div className="w-full">
             {capstoneProjects.length > 0 && (
                 <div className="mb-16">
                     <div className="mb-6 flex items-center">
@@ -636,10 +571,24 @@ export const ProjectsContainer = () => {
                 </div>
             )}
 
+            {founderProjects.length > 0 && (
+                <div className="mb-16">
+                    <div className="mb-6 flex items-center">
+                        <h2 className="text-3xl font-bold">Founder Projects</h2>
+                        <div className="ml-4 flex-grow border-b-4 border-purple-500 dark:border-purple-400"></div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                        {founderProjects.map((project) => (
+                            <ProjectCard key={project.id} project={project} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {clientProjects.length > 0 && (
                 <div className="mb-16">
                     <div className="mb-6 flex items-center">
-                        <h2 className="text-3xl font-bold">Client Websites</h2>
+                        <h2 className="text-3xl font-bold">Client Projects</h2>
                         <div className="ml-4 flex-grow border-b-4 border-green-500 dark:border-green-400"></div>
                     </div>
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
