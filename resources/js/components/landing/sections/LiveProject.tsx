@@ -83,7 +83,7 @@ const LiveProject = ({ darkMode }: LiveProjectProps) => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
-                className="mt-16 text-center"
+                className="mt-8 text-center"
             >
                 <div className="inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-gradient-to-r from-green-500/5 via-blue-500/5 to-purple-500/5 px-6 py-3 shadow-lg backdrop-blur-sm">
                     <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

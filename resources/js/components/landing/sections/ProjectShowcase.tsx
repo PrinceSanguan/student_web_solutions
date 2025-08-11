@@ -12,18 +12,14 @@ interface ProjectShowcaseProps {
 const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
     // Simple image data for showcase
     const projectImages = [
-        '/assets/images/project-1.png',
-        '/assets/images/project-2.png',
-        '/assets/images/project-3.png',
-        '/assets/images/project-4.png',
-        '/assets/images/project-5.png',
-        '/assets/images/project-6.png',
-        '/assets/images/project-7.png',
-        '/assets/images/project-8.png',
-        '/assets/images/project-9.png',
-        '/assets/images/project-10.png',
-        '/assets/images/project-11.png',
-        '/assets/images/project-12.png',
+        '/assets/videos/project-1.mp4',
+        '/assets/videos/project-2.mp4',
+        '/assets/videos/project-3.mp4',
+        '/assets/videos/project-1.mp4',
+        '/assets/videos/project-1.mp4',
+        '/assets/videos/project-1.mp4',
+        '/assets/videos/project-1.mp4',
+        '/assets/videos/project-1.mp4',
     ];
 
     return (
@@ -49,17 +45,29 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                             delay: 0,
                             disableOnInteraction: false,
                         }}
-                        speed={5000}
+                        speed={3000}
                         allowTouchMove={false}
                         className="!overflow-hidden"
                     >
                         {projectImages.map((image, index) => (
                             <SwiperSlide key={`top-${index}`} className="!w-auto">
-                                <img
-                                    src={image}
-                                    alt={`Project ${index + 1}`}
-                                    className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
-                                />
+                                {image.endsWith('.mp4') ? (
+                                    <video
+                                        src={image}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                    />
+                                ) : (
+                                    <img
+                                        src={image}
+                                        alt={`Project ${index + 1}`}
+                                        loading="lazy"
+                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                    />
+                                )}
                             </SwiperSlide>
                         ))}
                     </Swiper>
@@ -82,12 +90,24 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                         className="!overflow-hidden"
                     >
                         {projectImages.map((image, index) => (
-                            <SwiperSlide key={`bottom-${index}`} className="!w-auto">
-                                <img
-                                    src={image}
-                                    alt={`Project ${index + 1}`}
-                                    className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
-                                />
+                            <SwiperSlide key={`top-${index}`} className="!w-auto">
+                                {image.endsWith('.mp4') ? (
+                                    <video
+                                        src={image}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                    />
+                                ) : (
+                                    <img
+                                        src={image}
+                                        alt={`Project ${index + 1}`}
+                                        loading="lazy"
+                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                    />
+                                )}
                             </SwiperSlide>
                         ))}
                     </Swiper>

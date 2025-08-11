@@ -1,6 +1,7 @@
 import { ThreeDMarquee } from '@/components/ui/3d-marquee';
 import { BackgroundLines } from '@/components/ui/background-lines';
 import { Cover } from '@/components/ui/cover';
+import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect';
 import { motion } from 'framer-motion';
 
 interface HeroLandingProps {
@@ -39,33 +40,35 @@ const HeroLanding = ({ darkMode }: HeroLandingProps) => {
                     <h1
                         className={`relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold md:text-4xl lg:text-7xl ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
                     >
-                        {['Build', 'your', 'capstone', 'not', 'in', 'months', 'but', 'in', 'a'].map((word, index) => (
+                        <div className="flex flex-wrap items-center justify-center gap-2">
+                            <TypewriterEffectSmooth
+                                words={[
+                                    { text: 'Build' },
+                                    { text: 'your' },
+                                    { text: 'capstone' },
+                                    { text: 'not' },
+                                    { text: 'in' },
+                                    { text: 'months' },
+                                    { text: 'but' },
+                                    { text: 'in' },
+                                    { text: 'a' },
+                                ]}
+                                className="text-3xl font-bold md:text-6xl lg:text-8xl xl:text-9xl"
+                                cursorClassName={darkMode ? 'bg-slate-300' : 'bg-slate-700'}
+                            />
                             <motion.span
-                                key={index}
                                 initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
                                 animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
                                 transition={{
                                     duration: 0.3,
-                                    delay: index * 0.1,
+                                    delay: 3.5, // Increased delay since typewriter effect will take longer
                                     ease: 'easeInOut',
                                 }}
-                                className="mr-2 inline-block"
+                                className="inline-block"
                             >
-                                {word}
+                                <Cover>few days.</Cover>
                             </motion.span>
-                        ))}
-                        <motion.span
-                            initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
-                            animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                            transition={{
-                                duration: 0.3,
-                                delay: 9 * 0.1, // Continue the sequence
-                                ease: 'easeInOut',
-                            }}
-                            className="inline-block"
-                        >
-                            <Cover>few days</Cover>
-                        </motion.span>
+                        </div>
                     </h1>
                     <motion.p
                         initial={{ opacity: 0 }}
