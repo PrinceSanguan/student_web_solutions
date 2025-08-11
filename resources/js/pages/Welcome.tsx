@@ -1,4 +1,4 @@
-import ChatBotify from '@/components/landing/chat-bot';
+import ChatBot from '@/components/landing/chat-bot';
 import Footer from '@/components/landing/footer';
 import GitHub from '@/components/landing/github';
 import { Head } from '@inertiajs/react';
@@ -44,8 +44,8 @@ const Welcome = () => {
                 <Footer />
             </div>
 
-            {/* Enhanced Chat Bot */}
-            <ChatBotify />
+            {/* Chat Bot */}
+            <ChatBot />
         </>
     );
 };
