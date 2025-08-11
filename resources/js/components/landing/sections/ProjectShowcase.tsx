@@ -37,7 +37,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                 <div className="mb-8">
                     <Swiper
                         modules={[Autoplay]}
-                        spaceBetween={30}
+                        spaceBetween={20}
                         slidesPerView="auto"
                         loop={true}
                         autoplay={{
@@ -56,7 +56,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                                     muted
                                     loop
                                     playsInline
-                                    className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                    className="h-48 w-[400px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110 sm:h-64 sm:w-[500px] md:h-80 md:w-[650px]"
                                 />
                             </SwiperSlide>
                         ))}
@@ -67,7 +67,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                 <div className="mb-8">
                     <Swiper
                         modules={[Autoplay]}
-                        spaceBetween={30}
+                        spaceBetween={20}
                         slidesPerView="auto"
                         loop={true}
                         autoplay={{
@@ -87,7 +87,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                                     muted
                                     loop
                                     playsInline
-                                    className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                    className="h-48 w-[400px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110 sm:h-64 sm:w-[500px] md:h-80 md:w-[650px]"
                                 />
                             </SwiperSlide>
                         ))}

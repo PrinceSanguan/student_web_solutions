@@ -73,7 +73,7 @@ const LiveProject = ({ darkMode }: LiveProjectProps) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="relative mx-auto flex h-[20rem] w-full max-w-5xl flex-col items-start justify-start [perspective:1000px] md:h-[40rem]"
+                className="relative mx-auto flex h-[15rem] w-full max-w-5xl flex-col items-start justify-start [perspective:1000px] sm:h-[20rem] md:h-[40rem]"
             >
                 <Tabs tabs={tabs} />
             </motion.div>
@@ -89,9 +89,6 @@ const LiveProject = ({ darkMode }: LiveProjectProps) => {
                     <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                        All projects are live and fully functional - Click any tab to visit
-                    </span>
                 </div>
             </motion.div>
 

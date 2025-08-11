@@ -124,7 +124,7 @@ const TestimonialSlider = ({ darkMode }: TestimonialSliderProps) => {
             {/* Image Modal */}
             {selectedImage && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={closeModal}>
-                    <div className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-2xl shadow-2xl">
+                    <div className="relative max-h-[85vh] max-w-[95vw] overflow-hidden rounded-2xl shadow-2xl sm:max-h-[90vh] sm:max-w-[90vw]">
                         <img src={selectedImage} alt="Enlarged testimonial" className="h-auto max-h-[90vh] w-auto max-w-[90vw] object-contain" />
 
                         {/* Close button */}

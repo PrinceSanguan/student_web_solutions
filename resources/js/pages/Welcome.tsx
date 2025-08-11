@@ -93,7 +93,7 @@ const Welcome = () => {
                 style={{ visibility: 'visible' }}
             >
                 {/* Enhanced Header with Mobile Support */}
-                <header className="sticky top-0 z-40 w-full bg-white/70 px-4 py-4 shadow-sm backdrop-blur-md dark:bg-gray-900/70">
+                <header className="sticky top-0 z-40 w-full bg-white/70 px-3 py-3 shadow-sm backdrop-blur-md sm:px-4 sm:py-4 dark:bg-gray-900/70">
                     <div className="mx-auto flex max-w-7xl items-center justify-between">
                         <div className="flex items-center gap-3">
                             <img
@@ -102,7 +102,7 @@ const Welcome = () => {
                                 className="float h-10 w-10 rounded-full shadow-md sm:h-12 sm:w-12"
                             />
                             <div>
-                                <h1 className="text-lg font-bold sm:text-xl">Student Web Solutions</h1>
+                                <h1 className="text-base font-bold sm:text-lg md:text-xl">Student Web Solutions</h1>
                                 <p className="hidden text-xs text-gray-500 sm:block dark:text-gray-400">Professional Web Development</p>
                             </div>
                         </div>
@@ -144,7 +144,7 @@ const Welcome = () => {
                 <HeroLanding darkMode={darkMode} />
 
                 {/* Main Content */}
-                <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <main className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
                     {/* Project Showcase */}
                     <section>
                         <div data-gsap="reveal" style={{ opacity: 0, transform: 'translateY(30px)' }}>
