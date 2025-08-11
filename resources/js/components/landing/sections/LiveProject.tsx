@@ -8,9 +8,9 @@ interface LiveProjectProps {
 const LiveProject = ({ darkMode }: LiveProjectProps) => {
     const liveProjects = [
         {
-            title: 'E-commerce Platform',
-            url: 'https://example-store.com',
-            image: '/assets/images/testimonial-1.png',
+            title: 'Website Builder UK Company',
+            url: 'https://choros.io',
+            image: '/assets/images/project-1.webp',
         },
         {
             title: 'Restaurant Management',
