@@ -8,7 +8,7 @@ interface LiveProjectProps {
 const LiveProject = ({ darkMode }: LiveProjectProps) => {
     const liveProjects = [
         {
-            title: 'Website Builder UK Company',
+            title: 'Choros.io',
             url: 'https://choros.io',
             image: '/assets/images/project-1.webp',
         },
@@ -35,25 +35,12 @@ const LiveProject = ({ darkMode }: LiveProjectProps) => {
         content: (
             <a href={project.url} target="_blank" rel="noopener noreferrer" className="group block h-full w-full cursor-pointer">
                 <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-br from-purple-700 to-violet-900 transition-all duration-300 hover:from-purple-600 hover:to-violet-800">
-                    {/* Content */}
-                    <div className="relative z-10 flex h-full flex-col justify-between p-10">
-                        <div>
-                            <h3 className="mb-4 text-2xl font-bold text-white transition-colors duration-300 group-hover:text-green-300 md:text-4xl">
-                                {project.title}
-                            </h3>
-                            <p className="text-base text-gray-200 md:text-lg">{project.url}</p>
-                        </div>
-                    </div>
-
                     {/* Project Image */}
                     <img
                         src={project.image}
                         alt={project.title}
-                        className="absolute inset-x-0 -bottom-10 mx-auto h-[60%] w-[90%] rounded-xl object-cover object-top shadow-2xl transition-transform duration-500 group-hover:scale-105 md:h-[70%]"
+                        className="absolute inset-0 h-full w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-purple-900/50 via-transparent to-transparent"></div>
                 </div>
             </a>
         ),
