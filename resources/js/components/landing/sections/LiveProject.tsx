@@ -1,0 +1,129 @@
+import { Tabs } from '@/components/ui/tabs';
+import { motion } from 'framer-motion';
+
+interface LiveProjectProps {
+    darkMode: boolean;
+}
+
+const LiveProject = ({ darkMode }: LiveProjectProps) => {
+    const liveProjects = [
+        {
+            title: 'E-commerce Platform',
+            url: 'https://example-store.com',
+            image: '/assets/images/testimonial-1.png',
+        },
+        {
+            title: 'Restaurant Management',
+            url: 'https://restaurant-demo.com',
+            image: '/assets/images/testimonial-2.png',
+        },
+        {
+            title: 'Portfolio Website',
+            url: 'https://portfolio-demo.com',
+            image: '/assets/images/testimonial-1.png',
+        },
+        {
+            title: 'Learning Management',
+            url: 'https://lms-demo.com',
+            image: '/assets/images/testimonial-2.png',
+        },
+    ];
+
+    const tabs = liveProjects.map((project, index) => ({
+        title: project.title,
+        value: project.title.toLowerCase().replace(/\s+/g, '-'),
+        content: (
+            <a href={project.url} target="_blank" rel="noopener noreferrer" className="group block h-full w-full cursor-pointer">
+                <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-br from-purple-700 to-violet-900 transition-all duration-300 hover:from-purple-600 hover:to-violet-800">
+                    {/* Content */}
+                    <div className="relative z-10 flex h-full flex-col justify-between p-10">
+                        <div>
+                            <h3 className="mb-4 text-2xl font-bold text-white transition-colors duration-300 group-hover:text-green-300 md:text-4xl">
+                                {project.title}
+                            </h3>
+                            <p className="text-base text-gray-200 md:text-lg">{project.url}</p>
+                        </div>
+                    </div>
+
+                    {/* Project Image */}
+                    <img
+                        src={project.image}
+                        alt={project.title}
+                        className="absolute inset-x-0 -bottom-10 mx-auto h-[60%] w-[90%] rounded-xl object-cover object-top shadow-2xl transition-transform duration-500 group-hover:scale-105 md:h-[70%]"
+                    />
+
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-purple-900/50 via-transparent to-transparent"></div>
+                </div>
+            </a>
+        ),
+    }));
+
+    return (
+        <div className="relative overflow-hidden py-12 sm:py-16 md:py-20">
+            {/* Section Header */}
+            <div className="mb-12 text-center">
+                <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="mb-4 bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl"
+                >
+                    Live Projects
+                </motion.h2>
+                <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className={`mx-auto max-w-2xl ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
+                >
+                    Explore our deployed projects and see them in action. Click on any tab to visit the live websites.
+                </motion.p>
+            </div>
+
+            {/* Projects Tabs */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="relative mx-auto flex h-[20rem] w-full max-w-5xl flex-col items-start justify-start [perspective:1000px] md:h-[40rem]"
+            >
+                <Tabs tabs={tabs} />
+            </motion.div>
+
+            {/* Call to Action */}
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="mt-16 text-center"
+            >
+                <div className="inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-gradient-to-r from-green-500/5 via-blue-500/5 to-purple-500/5 px-6 py-3 shadow-lg backdrop-blur-sm">
+                    <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        All projects are live and fully functional - Click any tab to visit
+                    </span>
+                </div>
+            </motion.div>
+
+            {/* Background Decoration */}
+            <div className="absolute inset-0 -z-10 overflow-hidden">
+                <div
+                    className={`absolute -top-24 -right-24 h-48 w-48 rounded-full blur-3xl ${
+                        darkMode ? 'bg-green-500/6' : 'bg-green-500/3'
+                    } animate-pulse opacity-50`}
+                ></div>
+                <div
+                    className={`absolute -bottom-24 -left-24 h-48 w-48 rounded-full blur-3xl ${
+                        darkMode ? 'bg-blue-500/6' : 'bg-blue-500/3'
+                    } animate-pulse opacity-50`}
+                    style={{ animationDelay: '3s' }}
+                ></div>
+            </div>
+        </div>
+    );
+};
+
+export default LiveProject;
