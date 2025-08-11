@@ -18,8 +18,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
         '/assets/videos/project-4.mp4',
         '/assets/videos/project-5.mp4',
         '/assets/videos/project-6.mp4',
-        '/assets/videos/project-1.mp4',
-        '/assets/videos/project-1.mp4',
+        '/assets/videos/project-7.mp4',
     ];
 
     return (
@@ -49,25 +48,16 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                         allowTouchMove={false}
                         className="!overflow-hidden"
                     >
-                        {projectImages.map((image, index) => (
+                        {projectImages.map((video, index) => (
                             <SwiperSlide key={`top-${index}`} className="!w-auto">
-                                {image.endsWith('.mp4') ? (
-                                    <video
-                                        src={image}
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
-                                    />
-                                ) : (
-                                    <img
-                                        src={image}
-                                        alt={`Project ${index + 1}`}
-                                        loading="lazy"
-                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
-                                    />
-                                )}
+                                <video
+                                    src={video}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                />
                             </SwiperSlide>
                         ))}
                     </Swiper>
@@ -89,25 +79,16 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                         allowTouchMove={false}
                         className="!overflow-hidden"
                     >
-                        {projectImages.map((image, index) => (
-                            <SwiperSlide key={`top-${index}`} className="!w-auto">
-                                {image.endsWith('.mp4') ? (
-                                    <video
-                                        src={image}
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
-                                    />
-                                ) : (
-                                    <img
-                                        src={image}
-                                        alt={`Project ${index + 1}`}
-                                        loading="lazy"
-                                        className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
-                                    />
-                                )}
+                        {projectImages.map((video, index) => (
+                            <SwiperSlide key={`bottom-${index}`} className="!w-auto">
+                                <video
+                                    src={video}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    className="h-80 w-[650px] rounded-lg object-cover shadow-lg brightness-90 filter transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:brightness-110"
+                                />
                             </SwiperSlide>
                         ))}
                     </Swiper>
