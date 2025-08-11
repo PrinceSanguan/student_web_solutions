@@ -1,11 +1,7 @@
 import { Tabs } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 
-interface LiveProjectProps {
-    darkMode: boolean;
-}
-
-const LiveProject = ({ darkMode }: LiveProjectProps) => {
+const LiveProject = () => {
     const liveProjects = [
         {
             title: 'Choros.io',
@@ -13,19 +9,39 @@ const LiveProject = ({ darkMode }: LiveProjectProps) => {
             image: '/assets/images/project-1.webp',
         },
         {
-            title: 'Restaurant Management',
-            url: 'https://restaurant-demo.com',
-            image: '/assets/images/testimonial-2.png',
+            title: 'IPTT',
+            url: 'https://iptt.laravel.cloud/',
+            image: '/assets/images/project-2.webp',
         },
         {
-            title: 'Portfolio Website',
-            url: 'https://portfolio-demo.com',
-            image: '/assets/images/testimonial-1.png',
+            title: 'SJA Website',
+            url: 'https://sjamartialarts.com/',
+            image: '/assets/images/project-3.webp',
         },
         {
-            title: 'Learning Management',
-            url: 'https://lms-demo.com',
-            image: '/assets/images/testimonial-2.png',
+            title: 'Chess website',
+            url: 'https://doublebishopchess.com/',
+            image: '/assets/images/project-4.webp',
+        },
+        {
+            title: 'Choros Plus',
+            url: 'https://choros-plus-main-2s4qrk.laravel.cloud/',
+            image: '/assets/images/project-5.webp',
+        },
+        {
+            title: 'Bijou',
+            url: 'https://bijou.laravel.cloud/',
+            image: '/assets/images/project-6.webp',
+        },
+        {
+            title: 'BWC',
+            url: 'https://bwc.laravel.cloud/',
+            image: '/assets/images/project-7.webp',
+        },
+        {
+            title: 'ARMA',
+            url: 'https://arma-website-main-gbgm6t.laravel.cloud/',
+            image: '/assets/images/project-8.webp',
         },
     ];
 
@@ -62,7 +78,7 @@ const LiveProject = ({ darkMode }: LiveProjectProps) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className={`mx-auto max-w-2xl ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
+                    className={`'text-gray-300' : 'text-gray-600'} mx-auto max-w-2xl`}
                 >
                     Explore our deployed projects and see them in action. Click on any tab to visit the live websites.
                 </motion.p>
@@ -95,14 +111,10 @@ const LiveProject = ({ darkMode }: LiveProjectProps) => {
             {/* Background Decoration */}
             <div className="absolute inset-0 -z-10 overflow-hidden">
                 <div
-                    className={`absolute -top-24 -right-24 h-48 w-48 rounded-full blur-3xl ${
-                        darkMode ? 'bg-green-500/6' : 'bg-green-500/3'
-                    } animate-pulse opacity-50`}
+                    className={`'bg-green-500/6' : 'bg-green-500/3' } absolute -top-24 -right-24 h-48 w-48 animate-pulse rounded-full opacity-50 blur-3xl`}
                 ></div>
                 <div
-                    className={`absolute -bottom-24 -left-24 h-48 w-48 rounded-full blur-3xl ${
-                        darkMode ? 'bg-blue-500/6' : 'bg-blue-500/3'
-                    } animate-pulse opacity-50`}
+                    className={`'bg-blue-500/6' : 'bg-blue-500/3' } absolute -bottom-24 -left-24 h-48 w-48 animate-pulse rounded-full opacity-50 blur-3xl`}
                     style={{ animationDelay: '3s' }}
                 ></div>
             </div>

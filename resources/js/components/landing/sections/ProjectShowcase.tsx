@@ -5,11 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
 import 'swiper/css';
 
-interface ProjectShowcaseProps {
-    darkMode: boolean;
-}
-
-const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
+const ProjectShowcase = () => {
     // Simple image data for showcase
     const projectImages = [
         '/assets/videos/project-1.mp4',
@@ -19,6 +15,8 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
         '/assets/videos/project-5.mp4',
         '/assets/videos/project-6.mp4',
         '/assets/videos/project-7.mp4',
+        '/assets/videos/project-8.mp4',
+        '/assets/videos/project-9.mp4',
     ];
 
     return (
@@ -28,7 +26,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                     <h2 className="mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
                         Featured Projects
                     </h2>
-                    <p className={`mx-auto max-w-2xl ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <p className={`'text-gray-300' : 'text-gray-600'} mx-auto max-w-2xl`}>
                         Explore my latest work showcasing modern web development with cutting-edge technologies
                     </p>
                 </div>
@@ -44,7 +42,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
                             delay: 0,
                             disableOnInteraction: false,
                         }}
-                        speed={3000}
+                        speed={5000}
                         allowTouchMove={false}
                         className="!overflow-hidden"
                     >

@@ -9,11 +9,7 @@ interface Message {
     isTyping?: boolean;
 }
 
-interface ChatBotProps {
-    darkMode: boolean;
-}
-
-const ChatBot = ({ darkMode }: ChatBotProps) => {
+const ChatBot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -159,7 +155,7 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
     }, [messages, isOpen, minimized]);
 
     // Update the message area to be more responsive
-    <div className={`flex-1 space-y-3 overflow-y-auto p-3 sm:space-y-4 sm:p-4 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}></div>;
+    <div className={`'bg-gray-900' : 'bg-gray-50'} flex-1 space-y-3 overflow-y-auto p-3 sm:space-y-4 sm:p-4`}></div>;
 
     return (
         <>
@@ -179,9 +175,7 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                 )}
                 <button
                     onClick={toggleChat}
-                    className={`relative flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all ${
-                        darkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
-                    }`}
+                    className={`'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600' } relative flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-all`}
                     aria-label="Chat with our AI"
                 >
                     {isOpen ? (
@@ -217,14 +211,12 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                     >
                         <div
-                            className={`flex flex-col ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}
+                            className={`'bg-gray-900 text-white' : 'bg-white text-gray-900'} flex flex-col`}
                             style={{ height: minimized ? 'auto' : '450px' }}
                         >
                             {/* Chat Header */}
                             <div
-                                className={`flex items-center justify-between p-4 ${
-                                    darkMode ? 'bg-gradient-to-r from-blue-700 to-indigo-800' : 'bg-gradient-to-r from-blue-500 to-indigo-600'
-                                } text-white`}
+                                className={`'bg-gradient-to-r to-indigo-800' : 'bg-gradient-to-r to-indigo-600' } flex items-center justify-between from-blue-500 from-blue-700 p-4 text-white`}
                             >
                                 <div className="flex items-center">
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white">
@@ -278,7 +270,7 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                             {!minimized && (
                                 <>
                                     {/* Messages */}
-                                    <div className={`flex-1 space-y-4 overflow-y-auto p-4 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+                                    <div className={`'bg-gray-900' : 'bg-gray-50'} flex-1 space-y-4 overflow-y-auto p-4`}>
                                         {messages.map((message) => (
                                             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                                                 {message.sender === 'bot' && (
@@ -302,19 +294,13 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
 
                                                 <div
                                                     className={`max-w-[75%] rounded-2xl px-3 py-2 shadow sm:px-4 ${
-                                                        message.sender === 'user'
-                                                            ? darkMode
-                                                                ? 'bg-blue-600 text-white'
-                                                                : 'bg-blue-500 text-white'
-                                                            : darkMode
-                                                              ? 'bg-gray-800 text-white'
-                                                              : 'bg-white text-gray-800'
+                                                        message.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'
                                                     }`}
                                                 >
                                                     <p className="text-xs break-words whitespace-pre-line sm:text-sm">{message.text}</p>
                                                     <p
                                                         className={`mt-1 text-right text-xs ${
-                                                            message.sender === 'user' ? 'text-blue-200' : darkMode ? 'text-gray-400' : 'text-gray-500'
+                                                            message.sender === 'user' ? 'text-blue-200' : 'text-gray-500'
                                                         }`}
                                                     >
                                                         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -361,18 +347,18 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                                                         />
                                                     </svg>
                                                 </div>
-                                                <div className={`max-w-[75%] rounded-2xl px-4 py-3 shadow ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                                                <div className={`'bg-gray-800' : 'bg-white'} max-w-[75%] rounded-2xl px-4 py-3 shadow`}>
                                                     <div className="flex space-x-1">
                                                         <div
-                                                            className={`h-2 w-2 rounded-full ${darkMode ? 'bg-gray-400' : 'bg-gray-400'} animate-bounce`}
+                                                            className={`'bg-gray-400' : 'bg-gray-400'} h-2 w-2 animate-bounce rounded-full`}
                                                             style={{ animationDelay: '0ms' }}
                                                         ></div>
                                                         <div
-                                                            className={`h-2 w-2 rounded-full ${darkMode ? 'bg-gray-400' : 'bg-gray-400'} animate-bounce`}
+                                                            className={`'bg-gray-400' : 'bg-gray-400'} h-2 w-2 animate-bounce rounded-full`}
                                                             style={{ animationDelay: '150ms' }}
                                                         ></div>
                                                         <div
-                                                            className={`h-2 w-2 rounded-full ${darkMode ? 'bg-gray-400' : 'bg-gray-400'} animate-bounce`}
+                                                            className={`'bg-gray-400' : 'bg-gray-400'} h-2 w-2 animate-bounce rounded-full`}
                                                             style={{ animationDelay: '300ms' }}
                                                         ></div>
                                                     </div>
@@ -384,10 +370,7 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                                     </div>
 
                                     {/* Input Form */}
-                                    <form
-                                        onSubmit={handleSubmit}
-                                        className={`border-t p-3 ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200'}`}
-                                    >
+                                    <form onSubmit={handleSubmit} className={`'border-gray-700 bg-gray-800' : 'border-gray-200'} border-t p-3`}>
                                         <div className="flex items-center gap-2">
                                             <input
                                                 ref={inputRef}
@@ -395,17 +378,11 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                                                 value={inputValue}
                                                 onChange={(e) => setInputValue(e.target.value)}
                                                 placeholder="Ask me anything..."
-                                                className={`flex-1 rounded-full px-3 py-2 text-sm focus:ring-2 focus:outline-none sm:px-4 sm:text-base ${
-                                                    darkMode
-                                                        ? 'bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-600'
-                                                        : 'bg-gray-100 text-gray-900 placeholder-gray-500 focus:ring-blue-500'
-                                                }`}
+                                                className={`'bg-gray-700 focus:ring-blue-600' : 'bg-gray-100 focus:ring-blue-500' } flex-1 rounded-full px-3 py-2 text-sm text-gray-900 text-white placeholder-gray-400 placeholder-gray-500 focus:ring-2 focus:outline-none sm:px-4 sm:text-base`}
                                             />
                                             <button
                                                 type="submit"
-                                                className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                                                    darkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
-                                                }`}
+                                                className={`'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600' } flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors`}
                                                 disabled={inputValue.trim() === ''}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -424,9 +401,7 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                             {/* Footer - only shown when minimized is false */}
                             {!minimized && (
                                 <div
-                                    className={`border-t px-3 py-2 text-center text-xs ${
-                                        darkMode ? 'border-gray-700 bg-gray-800 text-gray-400' : 'border-gray-200 text-gray-500'
-                                    }`}
+                                    className={`'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-500' } border-t bg-gray-800 px-3 py-2 text-center text-xs`}
                                 >
                                     Powered by Student Web Solutions AI
                                 </div>

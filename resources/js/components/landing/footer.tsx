@@ -1,10 +1,6 @@
-interface FooterProps {
-    darkMode: boolean;
-}
-
-const Footer = ({ darkMode }: FooterProps) => {
+const Footer = () => {
     return (
-        <footer className={`py-6 ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'}`}>
+        <footer className={`'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'} py-6`}>
             <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
                 <div className="mb-4 flex justify-center space-x-6">
                     <a
