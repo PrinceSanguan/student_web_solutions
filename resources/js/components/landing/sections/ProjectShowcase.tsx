@@ -17,7 +17,7 @@ const ProjectShowcase = ({ darkMode }: ProjectShowcaseProps) => {
         '/assets/videos/project-3.mp4',
         '/assets/videos/project-4.mp4',
         '/assets/videos/project-5.mp4',
-        '/assets/videos/project-1.mp4',
+        '/assets/videos/project-6.mp4',
         '/assets/videos/project-1.mp4',
         '/assets/videos/project-1.mp4',
     ];
