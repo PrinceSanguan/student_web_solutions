@@ -19,18 +19,8 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        // Track the visitor
-        $this->trackVisitor($request);
 
-        // Get analytics data
-        $analyticsData = [
-            'dailyVisitors' => $this->getDailyVisitors(),
-            'monthlyVisitors' => $this->getMonthlyVisitors(),
-            'monthlyVisitorsData' => $this->getMonthlyVisitorsData(),
-            'dailyVisitorsData' => $this->getDailyVisitorsData(),
-        ];
-
-        return Inertia::render('Welcome', $analyticsData);
+        return Inertia::render('Welcome');
     }
 
     /**
