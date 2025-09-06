@@ -43,6 +43,11 @@ const LiveProject = () => {
             url: 'https://arma-website-main-gbgm6t.laravel.cloud/',
             image: '/assets/images/project-8.webp',
         },
+        {
+            title: 'Sushi Website',
+            url: 'https://butterflysushibars.com',
+            image: '/assets/images/project-9.webp',
+        },
     ];
 
     const tabs = liveProjects.map((project, index) => ({
