@@ -40,7 +40,7 @@
     <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="{{ url()->current() }}" />
 
     <!-- Preload Fonts for Faster Rendering -->
     <link rel="preconnect" href="https://fonts.bunny.net">
