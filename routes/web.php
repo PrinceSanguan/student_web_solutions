@@ -35,6 +35,13 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
 
   Route::get('/', [HomeController::class, 'index'])->name('home');
 
+  Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
+  Route::get('/robots.txt', function () {
+    $content = "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /dashboard\nDisallow: /user/\nDisallow: /login\nDisallow: /register\n\nSitemap: " . url('/sitemap.xml');
+    return response($content, 200)->header('Content-Type', 'text/plain');
+  });
+
   Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
 
   Route::get('/api/clarity-analytics', [HomeController::class, 'getAnalytics']);
