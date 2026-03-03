@@ -28,6 +28,9 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
     const messageEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [minimized, setMinimized] = useState(false);
+    const [lastMessageTime, setLastMessageTime] = useState<number[]>([]);
+    const RATE_LIMIT = 3; // max messages
+    const RATE_WINDOW = 60000; // per 60 seconds
 
     const toggleChat = () => {
         setIsOpen(!isOpen);
@@ -40,6 +43,21 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
 
     const handleSendMessage = async (text: string) => {
         if (text.trim() === '') return;
+
+        const now = Date.now();
+        const recentMessages = lastMessageTime.filter(t => now - t < RATE_WINDOW);
+        if (recentMessages.length >= RATE_LIMIT) {
+            const waitSecs = Math.ceil((RATE_WINDOW - (now - recentMessages[0])) / 1000);
+            const limitMsg: Message = {
+                id: messages.length + 1,
+                text: `⚠️ You're sending too many messages. Please wait ${waitSecs} seconds before trying again.`,
+                sender: 'bot',
+                timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, limitMsg]);
+            return;
+        }
+        setLastMessageTime(prev => [...prev.filter(t => now - t < RATE_WINDOW), now]);
 
         // Add user message
         const userMessage: Message = {
@@ -56,6 +74,9 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
         setIsTyping(true);
 
         try {
+            console.log('[ChatBot] Sending message:', text);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            console.log('[ChatBot] CSRF token found:', !!csrfToken);
             // Use Inertia's router for the request (handles CSRF automatically)
             const response = await fetch('/chatbot', {
                 method: 'POST',
@@ -110,7 +131,8 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                 throw new Error('Failed to get response');
             }
         } catch (error) {
-            console.error('Error sending message:', error);
+            console.error('[ChatBot] Fetch failed with error:', error);
+            console.error('[ChatBot] Error type:', typeof error, error instanceof TypeError ? 'TypeError (likely network/CORS)' : '');
             const errorMessage: Message = {
                 id: messages.length + 2,
                 text: "Sorry, I'm having trouble connecting right now. Please try again later.",

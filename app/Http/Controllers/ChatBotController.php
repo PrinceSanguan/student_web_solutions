@@ -49,9 +49,12 @@ class ChatBotController extends Controller
         // Get the API key from config
         $apiKey = Config::get('services.gemini.api_key');
 
+        \Log::info('[ChatBot] API Key loaded: ' . (empty($apiKey) ? 'MISSING ❌' : 'Found ✅'));
+        \Log::info('[ChatBot] User message: ' . $userMessage);
+
         try {
             // Make request to Gemini API
-            $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={$apiKey}", [
+            $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={$apiKey}", [
                 'contents' => $messages,
                 'generationConfig' => [
                     'temperature' => 0.7,
@@ -78,11 +81,15 @@ class ChatBotController extends Controller
             }
 
             // Handle error response
+            \Log::error('[ChatBot] Gemini API failed. Status: ' . $response->status());
+            \Log::error('[ChatBot] Gemini response body: ' . $response->body());
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, I couldn\'t process your request. Please try again later.'
             ], 500);
         } catch (\Exception $e) {
+            \Log::error('[ChatBot] Exception: ' . $e->getMessage());
+            \Log::error('[ChatBot] Stack trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while processing your request.'
