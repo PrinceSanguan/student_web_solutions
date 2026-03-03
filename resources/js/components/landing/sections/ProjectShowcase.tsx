@@ -8,15 +8,15 @@ import 'swiper/css';
 const ProjectShowcase = () => {
     // Simple image data for showcase
     const projectImages = [
-        '/assets/videos/project-1.mp4',
-        '/assets/videos/project-2.mp4',
-        '/assets/videos/project-3.mp4',
-        '/assets/videos/project-4.mp4',
-        '/assets/videos/project-5.mp4',
-        '/assets/videos/project-6.mp4',
-        '/assets/videos/project-7.mp4',
-        '/assets/videos/project-8.mp4',
-        '/assets/videos/project-9.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-1.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-2.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-3.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-4.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-5.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-6.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-7.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-8.mp4',
+        'https://media.biyaherongchesscoach.com/studentwebsolution/project-9.mp4',
     ];
 
     return (

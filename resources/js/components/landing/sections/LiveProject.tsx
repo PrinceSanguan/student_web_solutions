@@ -6,47 +6,47 @@ const LiveProject = () => {
         {
             title: 'Choros.io',
             url: 'https://choros.io',
-            image: '/assets/images/project-1.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-1.webp',
         },
         {
             title: 'IPTT',
             url: 'https://iptt.laravel.cloud/',
-            image: '/assets/images/project-2.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-2.webp',
         },
         {
             title: 'SJA Website',
             url: 'https://sjamartialarts.com/',
-            image: '/assets/images/project-3.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-3.webp',
         },
         {
             title: 'Chess website',
             url: 'https://doublebishopchess.com/',
-            image: '/assets/images/project-4.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-4.webp',
         },
         {
             title: 'Choros Plus',
             url: 'https://choros-plus-main-2s4qrk.laravel.cloud/',
-            image: '/assets/images/project-5.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-5.webp',
         },
         {
             title: 'Bijou',
             url: 'https://bijou.laravel.cloud/',
-            image: '/assets/images/project-6.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-6.webp',
         },
         {
             title: 'BWC',
             url: 'https://bwc.laravel.cloud/',
-            image: '/assets/images/project-7.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-7.webp',
         },
         {
             title: 'ARMA',
             url: 'https://arma-website-main-gbgm6t.laravel.cloud/',
-            image: '/assets/images/project-8.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-8.webp',
         },
         {
             title: 'Sushi Website',
             url: 'https://butterflysushibars.com',
-            image: '/assets/images/project-9.webp',
+            image: 'https://media.biyaherongchesscoach.com/studentwebsolution/project-9.webp',
         },
     ];
 
