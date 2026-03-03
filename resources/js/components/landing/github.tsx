@@ -204,6 +204,8 @@ const GitHub = () => {
                                     alt="GitHub Contribution Graph"
                                     className="w-full rounded-lg"
                                     style={{ minWidth: '640px' }}
+                                    crossOrigin="anonymous"
+                                    referrerPolicy="strict-origin-when-cross-origin"
                                 />
                             </div>
                             <p className={`'text-gray-400' : 'text-gray-500'} mt-3 text-center text-sm`}>

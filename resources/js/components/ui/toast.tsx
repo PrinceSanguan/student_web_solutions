@@ -73,14 +73,6 @@ const DEFAULT_DURATIONS: Record<ToastType, number> = {
   error: 7000,
 }
 
-// Sound effects for toasts
-const TOAST_SOUNDS: Record<ToastType, string> = {
-  success: "/sounds/success.mp3",
-  error: "/sounds/error.mp3",
-  warning: "/sounds/warning.mp3",
-  info: "/sounds/info.mp3",
-}
-
 const ToastProvider = ToastPrimitives.Provider
 
 export function ToastProviderComponent({ children }: { children: React.ReactNode }) {
@@ -114,32 +106,8 @@ export function ToastProviderComponent({ children }: { children: React.ReactNode
 
   // Initialize audio elements
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const currentAudioRefs: Record<ToastType, HTMLAudioElement | null> = {
-        success: null,
-        error: null,
-        warning: null,
-        info: null,
-      }
-
-      Object.keys(TOAST_SOUNDS).forEach((type) => {
-        const audioElement = new Audio(TOAST_SOUNDS[type as ToastType])
-        audioElement.preload = "auto"
-        currentAudioRefs[type as ToastType] = audioElement
-      })
-
-      audioRefs.current = currentAudioRefs
-
-      // Use the local variable in cleanup function
-      return () => {
-        Object.values(currentAudioRefs).forEach((audio) => {
-          if (audio) {
-            audio.pause()
-            audio.src = ""
-          }
-        })
-      }
-    }
+    // Audio files not available - skip preloading to avoid 404 console errors
+    return () => {}
   }, [])
 
   // Play sound effect
