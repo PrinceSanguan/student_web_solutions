@@ -74,10 +74,6 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
         setIsTyping(true);
 
         try {
-            console.log('[ChatBot] Sending message:', text);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-            console.log('[ChatBot] CSRF token found:', !!csrfToken);
-            // Use Inertia's router for the request (handles CSRF automatically)
             const response = await fetch('/chatbot', {
                 method: 'POST',
                 headers: {
@@ -131,8 +127,6 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                 throw new Error('Failed to get response');
             }
         } catch (error) {
-            console.error('[ChatBot] Fetch failed with error:', error);
-            console.error('[ChatBot] Error type:', typeof error, error instanceof TypeError ? 'TypeError (likely network/CORS)' : '');
             const errorMessage: Message = {
                 id: messages.length + 2,
                 text: "Sorry, I'm having trouble connecting right now. Please try again later.",
@@ -333,7 +327,23 @@ const ChatBot = ({ darkMode }: ChatBotProps) => {
                                                               : 'bg-white text-gray-800'
                                                     }`}
                                                 >
-                                                    <p className="text-xs break-words whitespace-pre-line sm:text-sm">{message.text}</p>
+                                                  <p className="text-xs break-words whitespace-pre-line sm:text-sm">
+                                                        {message.text.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
+                                                            /^https?:\/\//.test(part) ? (
+                                                                <a
+                                                                    key={i}
+                                                                    href={part}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="underline text-blue-400 hover:text-blue-300 break-all"
+                                                                >
+                                                                    {part}
+                                                                </a>
+                                                            ) : (
+                                                                <span key={i}>{part}</span>
+                                                            )
+                                                        )}
+                                                    </p>
                                                     <p
                                                         className={`mt-1 text-right text-xs ${
                                                             message.sender === 'user' ? 'text-blue-200' : darkMode ? 'text-gray-400' : 'text-gray-500'
