@@ -1,27 +1,27 @@
 {
-  "_button-CLkzhvQL.js": {
-    "file": "assets/button-CLkzhvQL.js",
+  "_button-f8iMxFHq.js": {
+    "file": "assets/button-f8iMxFHq.js",
     "name": "button",
     "imports": [
       "resources/js/app.tsx",
       "_utils-D-KgF5mV.js"
     ]
   },
-  "_label-Md0iawjN.js": {
-    "file": "assets/label-Md0iawjN.js",
+  "_label-CmASBs33.js": {
+    "file": "assets/label-CmASBs33.js",
     "name": "label",
     "imports": [
       "resources/js/app.tsx",
       "_utils-D-KgF5mV.js",
-      "_button-CLkzhvQL.js"
+      "_button-f8iMxFHq.js"
     ]
   },
-  "_separator-BGOVFv6i.js": {
-    "file": "assets/separator-BGOVFv6i.js",
+  "_separator-DyLOR2AM.js": {
+    "file": "assets/separator-DyLOR2AM.js",
     "name": "separator",
     "imports": [
       "resources/js/app.tsx",
-      "_button-CLkzhvQL.js",
+      "_button-f8iMxFHq.js",
       "_utils-D-KgF5mV.js"
     ]
   },
@@ -30,12 +30,12 @@
     "name": "utils"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BoOPdeaV.css",
+    "file": "assets/app-xpqCsjA8.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.tsx": {
-    "file": "assets/app-CR7Vhzza.js",
+    "file": "assets/app-Cot_nu48.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
@@ -47,59 +47,59 @@
       "resources/js/pages/Welcome.tsx"
     ],
     "css": [
-      "assets/app-BoOPdeaV.css"
+      "assets/app-xpqCsjA8.css"
     ]
   },
   "resources/js/pages/Admin/Dashboard.tsx": {
-    "file": "assets/Dashboard-bb22XfUA.js",
+    "file": "assets/Dashboard-CZwOCQHu.js",
     "name": "Dashboard",
     "src": "resources/js/pages/Admin/Dashboard.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_separator-BGOVFv6i.js",
-      "_button-CLkzhvQL.js",
+      "_separator-DyLOR2AM.js",
+      "_button-f8iMxFHq.js",
       "_utils-D-KgF5mV.js"
     ]
   },
   "resources/js/pages/Auth/Login.tsx": {
-    "file": "assets/Login-BR68WZ1W.js",
+    "file": "assets/Login-0YE3sgOV.js",
     "name": "Login",
     "src": "resources/js/pages/Auth/Login.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_button-CLkzhvQL.js",
+      "_button-f8iMxFHq.js",
       "_utils-D-KgF5mV.js",
-      "_label-Md0iawjN.js"
+      "_label-CmASBs33.js"
     ]
   },
   "resources/js/pages/Auth/Register.tsx": {
-    "file": "assets/Register-Bj2Kgaqx.js",
+    "file": "assets/Register-DA7dmHMy.js",
     "name": "Register",
     "src": "resources/js/pages/Auth/Register.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_button-CLkzhvQL.js",
-      "_label-Md0iawjN.js",
+      "_button-f8iMxFHq.js",
+      "_label-CmASBs33.js",
       "_utils-D-KgF5mV.js"
     ]
   },
   "resources/js/pages/User/Dashboard.tsx": {
-    "file": "assets/Dashboard-BJSKMxwb.js",
+    "file": "assets/Dashboard-DhxztFLC.js",
     "name": "Dashboard",
     "src": "resources/js/pages/User/Dashboard.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_separator-BGOVFv6i.js",
-      "_button-CLkzhvQL.js",
+      "_separator-DyLOR2AM.js",
+      "_button-f8iMxFHq.js",
       "_utils-D-KgF5mV.js"
     ]
   },
   "resources/js/pages/Welcome.tsx": {
-    "file": "assets/Welcome-BIzxblhx.js",
+    "file": "assets/Welcome-K6CdI6TC.js",
     "name": "Welcome",
     "src": "resources/js/pages/Welcome.tsx",
     "isDynamicEntry": true,
