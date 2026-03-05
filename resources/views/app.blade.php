@@ -7,6 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="application-name" content="Student Web Solutions">
 
+    <!-- Best Practices -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#ffffff">
+
     <!-- SEO Meta Tags -->
     <meta name="description"
         content="Student Web Solutions - #1 capstone system maker in the Philippines. We build capstone projects, thesis systems, library systems, POS, school management systems delivered in 1-2 days. Affordable rates starting ₱10,000. Trusted by Filipino students and businesses.">
@@ -20,6 +26,9 @@
     <meta name="language" content="English, Filipino">
     <meta name="revisit-after" content="7 days">
     <meta name="rating" content="general">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -48,22 +57,18 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="{{ url()->current() }}" />
-
-    <!-- Preload Fonts for Faster Rendering -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-
-    <!-- Optimized Styling -->
+    <!-- Minimal critical style + system font stack (no external fonts) -->
     <style>
         html {
-            background-color: oklch(1 0 0);
+            background-color: #ffffff;
         }
 
-        /* Ensuring dark mode does not override styles */
         html.dark {
-            background-color: oklch(1 0 0);
+            background-color: #ffffff;
+        }
+
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
         }
     </style>
 
@@ -147,27 +152,6 @@
     }
     </script>
 
-    <!-- Security Meta Tags -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-
-    <!-- Microsoft Clarity - deferred to avoid blocking -->
-    <script>
-        window.addEventListener('load', function() {
-            (function(c, l, a, r, i, t, y) {
-                c[a] = c[a] || function() {
-                    (c[a].q = c[a].q || []).push(arguments)
-                };
-                t = l.createElement(r);
-                t.async = 1;
-                t.defer = 1;
-                t.src = "https://www.clarity.ms/tag/" + i;
-                y = l.getElementsByTagName(r)[0];
-                y.parentNode.insertBefore(t, y);
-            })(window, document, "clarity", "script", "rvk16k915r");
-        });
-    </script>
-
     <!-- Inertia.js & Vite Integration -->
     @routes
     @viteReactRefresh
@@ -175,7 +159,7 @@
     @inertiaHead
 </head>
 
-<body class="font-sans antialiased">
+<body class="antialiased">
     @inertia
 </body>
 
