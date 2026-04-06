@@ -11,6 +11,8 @@ use App\Http\Middleware\UserMiddleware;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\CapstoneController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SocialAuthController;
@@ -45,6 +47,8 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
 
   Route::get('/capstone', [CapstoneController::class, 'index'])->name('capstone.index');
   Route::get('/capstone/{slug}', [CapstoneController::class, 'show'])->name('capstone.show');
+  Route::post('/capstone/{slug}/checkout', [CheckoutController::class, 'checkout'])->name('capstone.checkout');
+  Route::get('/payment/success', [CheckoutController::class, 'success'])->name('payment.success');
 
   Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
 
@@ -112,3 +116,13 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
     Route::put('user/settings/password', [UserSettingsController::class, 'updatePassword'])->name('user.settings.updatePassword');
   });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Chessuno Webhook — outside web group (no CSRF, no throttle)
+| Signature verified via HMAC-SHA256 inside WebhookController
+|--------------------------------------------------------------------------
+*/
+Route::post('/chessuno/webhook', [WebhookController::class, 'handle'])
+    ->middleware('web')
+    ->name('chessuno.webhook');
