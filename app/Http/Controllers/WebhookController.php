@@ -52,18 +52,20 @@ class WebhookController extends Controller
 
     private function handlePaymentPaid(array $payload): void
     {
-        $reference     = $payload['reference'] ?? $payload['data']['reference'] ?? null;
-        $transactionId = $payload['transaction_id'] ?? $payload['data']['transaction_id'] ?? null;
+        // Chessuno sends back their own reference (EXT_1_...), not our SWS-* reference.
+        // We saved their reference as gateway_reference when creating the payment.
+        $gatewayReference = $payload['reference'] ?? $payload['data']['reference'] ?? null;
+        $transactionId    = $payload['transaction_id'] ?? $payload['data']['transaction_id'] ?? null;
 
-        if (! $reference) {
+        if (! $gatewayReference) {
             Log::error('Chessuno webhook: missing reference in payload', $payload);
             return;
         }
 
-        $order = Order::where('reference', $reference)->first();
+        $order = Order::where('gateway_reference', $gatewayReference)->first();
 
         if (! $order) {
-            Log::error('Chessuno webhook: order not found', ['reference' => $reference]);
+            Log::error('Chessuno webhook: order not found', ['gateway_reference' => $gatewayReference]);
             return;
         }
 

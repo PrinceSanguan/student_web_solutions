@@ -124,7 +124,14 @@ class CheckoutController extends Controller
             return back()->withErrors(['payment' => 'Payment gateway did not return a payment URL. Please try again.']);
         }
 
-        $order->update(['payment_url' => $paymentUrl]);
+        // Save Chessuno's own reference ID — the webhook fires back with this,
+        // not our internal SWS-* reference.
+        $gatewayReference = $data['reference'] ?? null;
+
+        $order->update([
+            'payment_url'       => $paymentUrl,
+            'gateway_reference' => $gatewayReference,
+        ]);
 
         // Store the reference in session so the success page can find the order
         // even if Chessuno does not pass ?ref= back in the redirect URL.
@@ -156,8 +163,9 @@ class CheckoutController extends Controller
             ->where('reference', $ref)
             ->first();
 
-        // Clear the session key once the order is found to prevent stale lookups.
-        if ($order) {
+        // Keep the session key alive until the order is paid so Inertia's
+        // re-navigation (which hits this endpoint a second time) still finds it.
+        if ($order?->isPaid()) {
             session()->forget('pending_order_ref');
         }
 

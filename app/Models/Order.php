@@ -10,6 +10,7 @@ class Order extends Model
     protected $fillable = [
         'capstone_id',
         'reference',
+        'gateway_reference',
         'customer_name',
         'customer_email',
         'amount',
