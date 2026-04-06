@@ -9,7 +9,10 @@ class CapstoneController extends Controller
 {
     public function index()
     {
-        $capstones = Capstone::orderBy('price')->get();
+        // Only show projects still available for purchase.
+        $capstones = Capstone::where('is_available', true)
+            ->orderBy('price')
+            ->get();
 
         return Inertia::render('Capstone/Index', [
             'capstones' => $capstones,

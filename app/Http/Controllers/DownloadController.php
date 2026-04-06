@@ -6,6 +6,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadController extends Controller
@@ -28,17 +29,49 @@ class DownloadController extends Controller
             abort(410, 'This download link has expired.');
         }
 
-        $downloadUrl = $order->capstone?->download_url;
+        $capstone      = $order->capstone;
+        $downloadFile  = $capstone?->download_file;
+        $downloadUrl   = $capstone?->download_url;
 
-        if (! $downloadUrl) {
-            Log::error('Download attempted but capstone has no download_url', [
+        if (! $downloadFile && ! $downloadUrl) {
+            Log::error('Download attempted but capstone has no file or URL', [
                 'order_reference' => $order->reference,
                 'capstone_id'     => $order->capstone_id,
             ]);
             abort(503, 'File is not available. Please contact support.');
         }
 
-        // Fetch file server-side — the real origin URL never leaves the server.
+        $cleanTitle = $this->sanitizeFilename($capstone->title);
+
+        // Priority: uploaded file on disk → external URL proxy
+        if ($downloadFile) {
+            if (! Storage::disk('local')->exists('capstone-downloads/' . $downloadFile)) {
+                Log::error('Download file missing from storage', [
+                    'file'            => $downloadFile,
+                    'order_reference' => $order->reference,
+                ]);
+                abort(503, 'File is not available. Please contact support.');
+            }
+
+            $extension = pathinfo($downloadFile, PATHINFO_EXTENSION) ?: 'bin';
+            $filename  = $cleanTitle . '.' . $extension;
+            $fullPath  = storage_path('app/capstone-downloads/' . $downloadFile);
+
+            return response()->streamDownload(
+                function () use ($fullPath) {
+                    readfile($fullPath);
+                },
+                $filename,
+                [
+                    'Content-Type'        => 'application/octet-stream',
+                    'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                    'X-Robots-Tag'        => 'noindex',
+                    'Cache-Control'       => 'no-store, no-cache, must-revalidate',
+                ]
+            );
+        }
+
+        // Proxy from external URL — real URL never leaves the server.
         $upstream = Http::timeout(30)->get($downloadUrl);
 
         if (! $upstream->successful()) {
@@ -51,10 +84,8 @@ class DownloadController extends Controller
 
         $contentType = $upstream->header('Content-Type') ?? 'application/octet-stream';
         $fileBody    = $upstream->body();
-
-        // Build a clean filename from the capstone title, not the real URL path.
-        $extension = $this->guessExtension($contentType, $downloadUrl);
-        $filename  = $this->sanitizeFilename($order->capstone->title) . '.' . $extension;
+        $extension   = $this->guessExtension($contentType, $downloadUrl);
+        $filename    = $cleanTitle . '.' . $extension;
 
         return response()->streamDownload(
             function () use ($fileBody) {

@@ -11,6 +11,7 @@ interface Capstone {
     thumbnail: string | null;
     category: string | null;
     technologies: string[] | null;
+    is_available: boolean;
 }
 
 interface Props {
@@ -129,20 +130,44 @@ export default function CapstoneShow({ capstone }: Props) {
                             )}
 
                             {/* Price */}
-                            <div className="mb-6 rounded-2xl border border-green-100 bg-green-50 px-5 py-4">
+                            <div className={`mb-6 rounded-2xl border px-5 py-4 ${capstone.is_available ? 'border-green-100 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-bold text-green-600">
+                                    <span className={`text-4xl font-bold ${capstone.is_available ? 'text-green-600' : 'text-gray-400'}`}>
                                         ₱{Number(capstone.price).toLocaleString()}
                                     </span>
-                                    <span className="text-sm text-green-500">one-time payment</span>
+                                    <span className={`text-sm ${capstone.is_available ? 'text-green-500' : 'text-gray-400'}`}>one-time payment</span>
                                 </div>
-                                <p className="mt-1 text-xs text-green-600">
-                                    💚 Pay via GCash — download your ZIP file instantly after payment.
-                                </p>
+                                {capstone.is_available ? (
+                                    <p className="mt-1 text-xs text-green-600">💚 Pay via GCash — download your ZIP file instantly after payment.</p>
+                                ) : (
+                                    <p className="mt-1 text-xs text-red-500">This project has already been sold and is no longer available.</p>
+                                )}
                             </div>
 
                             {/* Checkout form or buttons */}
-                            {!showForm ? (
+                            {!capstone.is_available ? (
+                                <div className="flex flex-col gap-3">
+                                    {capstone.demo_url && (
+                                        <a
+                                            href={capstone.demo_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50"
+                                        >
+                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                            View Demo
+                                        </a>
+                                    )}
+                                    <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-600">
+                                        Sold Out — No Longer Available
+                                    </div>
+                                    <Link href="/capstone" className="text-center text-sm text-gray-500 hover:underline">
+                                        Browse other projects →
+                                    </Link>
+                                </div>
+                            ) : !showForm ? (
                                 <div className="flex flex-col gap-3 sm:flex-row">
                                     {capstone.demo_url && (
                                         <a

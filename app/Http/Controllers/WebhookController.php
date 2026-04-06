@@ -92,5 +92,12 @@ class WebhookController extends Controller
         $order->update(['download_token' => Str::random(64)]);
 
         Log::info('Download token generated', ['reference' => $order->reference]);
+
+        // Remove the project from the public catalog — it has been sold.
+        $order->load('capstone');
+        if ($order->capstone) {
+            $order->capstone->update(['is_available' => false]);
+            Log::info('Capstone marked as sold', ['capstone_id' => $order->capstone_id]);
+        }
     }
 }

@@ -34,17 +34,19 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            // Check user role and redirect accordingly
-            if (Auth::user()->user_role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('user.dashboard');
+            // Only admin accounts are allowed to log in.
+            if (Auth::user()->user_role !== 'admin') {
+                Auth::logout();
+                $request->session()->invalidate();
+                throw ValidationException::withMessages([
+                    'auth' => 'Access denied. Admin accounts only.',
+                ]);
             }
+
+            $request->session()->regenerate();
+            return redirect()->route('admin.dashboard');
         }
 
-        // Authentication failed
         throw ValidationException::withMessages([
             'auth' => 'The provided credentials do not match our records.',
         ]);

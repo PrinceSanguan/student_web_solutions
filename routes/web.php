@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\CapstoneController as AdminCapstoneController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\UserSettingsController;
 
@@ -85,14 +86,7 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
   Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
   Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
-  /*
-    |------------------------------------------
-    | Registration
-    |------------------------------------------
-    */
-  Route::get('register', [RegisterController::class, 'index'])
-    ->middleware(GuestMiddleware::class)
-    ->name('auth.register');
+  // Registration is disabled — the system is admin-only.
 
   /*
     |------------------------------------------
@@ -104,6 +98,14 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
     Route::get('admin/settings', [SettingsController::class, 'index'])->name('admin.settings');
     Route::put('admin/settings/profile', [SettingsController::class, 'updateProfile'])->name('admin.settings.updateProfile');
     Route::put('admin/settings/password', [SettingsController::class, 'updatePassword'])->name('admin.settings.updatePassword');
+
+    // Capstone project management
+    Route::get('admin/capstones', [AdminCapstoneController::class, 'index'])->name('admin.capstones.index');
+    Route::get('admin/capstones/create', [AdminCapstoneController::class, 'create'])->name('admin.capstones.create');
+    Route::post('admin/capstones', [AdminCapstoneController::class, 'store'])->name('admin.capstones.store');
+    Route::get('admin/capstones/{capstone}/edit', [AdminCapstoneController::class, 'edit'])->name('admin.capstones.edit');
+    Route::post('admin/capstones/{capstone}', [AdminCapstoneController::class, 'update'])->name('admin.capstones.update');
+    Route::delete('admin/capstones/{capstone}', [AdminCapstoneController::class, 'destroy'])->name('admin.capstones.destroy');
   });
 
   /*
