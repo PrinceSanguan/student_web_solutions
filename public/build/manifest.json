@@ -1,27 +1,27 @@
 {
-  "_button-B3FvFF3e.js": {
-    "file": "assets/button-B3FvFF3e.js",
+  "_button-D0IbRTeF.js": {
+    "file": "assets/button-D0IbRTeF.js",
     "name": "button",
     "imports": [
       "resources/js/app.tsx",
       "_utils-D-KgF5mV.js"
     ]
   },
-  "_label-DND6-2_c.js": {
-    "file": "assets/label-DND6-2_c.js",
+  "_label-Xjcl8CSZ.js": {
+    "file": "assets/label-Xjcl8CSZ.js",
     "name": "label",
     "imports": [
       "resources/js/app.tsx",
       "_utils-D-KgF5mV.js",
-      "_button-B3FvFF3e.js"
+      "_button-D0IbRTeF.js"
     ]
   },
-  "_separator-C4IwnRxa.js": {
-    "file": "assets/separator-C4IwnRxa.js",
+  "_separator-Cd3b3eX0.js": {
+    "file": "assets/separator-Cd3b3eX0.js",
     "name": "separator",
     "imports": [
       "resources/js/app.tsx",
-      "_button-B3FvFF3e.js",
+      "_button-D0IbRTeF.js",
       "_utils-D-KgF5mV.js"
     ]
   },
@@ -30,12 +30,12 @@
     "name": "utils"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BaLbHt8n.css",
+    "file": "assets/app-otoRTaYR.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.tsx": {
-    "file": "assets/app-CdyNhRNT.js",
+    "file": "assets/app-Dl5DmnCx.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
@@ -50,47 +50,47 @@
       "resources/js/pages/Welcome.tsx"
     ],
     "css": [
-      "assets/app-BaLbHt8n.css"
+      "assets/app-otoRTaYR.css"
     ]
   },
   "resources/js/pages/Admin/Dashboard.tsx": {
-    "file": "assets/Dashboard-DKRBKFOj.js",
+    "file": "assets/Dashboard-CpOjedzu.js",
     "name": "Dashboard",
     "src": "resources/js/pages/Admin/Dashboard.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_separator-C4IwnRxa.js",
-      "_button-B3FvFF3e.js",
+      "_separator-Cd3b3eX0.js",
+      "_button-D0IbRTeF.js",
       "_utils-D-KgF5mV.js"
     ]
   },
   "resources/js/pages/Auth/Login.tsx": {
-    "file": "assets/Login-DFODZYBz.js",
+    "file": "assets/Login-VU7UeMe2.js",
     "name": "Login",
     "src": "resources/js/pages/Auth/Login.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_button-B3FvFF3e.js",
+      "_button-D0IbRTeF.js",
       "_utils-D-KgF5mV.js",
-      "_label-DND6-2_c.js"
+      "_label-Xjcl8CSZ.js"
     ]
   },
   "resources/js/pages/Auth/Register.tsx": {
-    "file": "assets/Register-DeI6auTs.js",
+    "file": "assets/Register-By8CLQUa.js",
     "name": "Register",
     "src": "resources/js/pages/Auth/Register.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_button-B3FvFF3e.js",
-      "_label-DND6-2_c.js",
+      "_button-D0IbRTeF.js",
+      "_label-Xjcl8CSZ.js",
       "_utils-D-KgF5mV.js"
     ]
   },
   "resources/js/pages/Capstone/Index.tsx": {
-    "file": "assets/Index-fw1Drf3I.js",
+    "file": "assets/Index-CVWYwWvc.js",
     "name": "Index",
     "src": "resources/js/pages/Capstone/Index.tsx",
     "isDynamicEntry": true,
@@ -99,7 +99,7 @@
     ]
   },
   "resources/js/pages/Capstone/Show.tsx": {
-    "file": "assets/Show-y6UDGMQP.js",
+    "file": "assets/Show-B2cE-7YH.js",
     "name": "Show",
     "src": "resources/js/pages/Capstone/Show.tsx",
     "isDynamicEntry": true,
@@ -108,7 +108,7 @@
     ]
   },
   "resources/js/pages/Payment/ThankYou.tsx": {
-    "file": "assets/ThankYou-_McjOcKT.js",
+    "file": "assets/ThankYou-BE5zSVPr.js",
     "name": "ThankYou",
     "src": "resources/js/pages/Payment/ThankYou.tsx",
     "isDynamicEntry": true,
@@ -117,19 +117,19 @@
     ]
   },
   "resources/js/pages/User/Dashboard.tsx": {
-    "file": "assets/Dashboard-BXuGQGG-.js",
+    "file": "assets/Dashboard-DhNatHIJ.js",
     "name": "Dashboard",
     "src": "resources/js/pages/User/Dashboard.tsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.tsx",
-      "_separator-C4IwnRxa.js",
-      "_button-B3FvFF3e.js",
+      "_separator-Cd3b3eX0.js",
+      "_button-D0IbRTeF.js",
       "_utils-D-KgF5mV.js"
     ]
   },
   "resources/js/pages/Welcome.tsx": {
-    "file": "assets/Welcome-CZMH6z5s.js",
+    "file": "assets/Welcome-zT9SU87V.js",
     "name": "Welcome",
     "src": "resources/js/pages/Welcome.tsx",
     "isDynamicEntry": true,
