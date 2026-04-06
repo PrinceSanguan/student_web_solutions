@@ -13,6 +13,7 @@ use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\CapstoneController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SocialAuthController;
@@ -49,6 +50,7 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
   Route::get('/capstone/{slug}', [CapstoneController::class, 'show'])->name('capstone.show');
   Route::post('/capstone/{slug}/checkout', [CheckoutController::class, 'checkout'])->name('capstone.checkout');
   Route::get('/payment/success', [CheckoutController::class, 'success'])->name('payment.success');
+  Route::get('/payment/status', [CheckoutController::class, 'status'])->name('payment.status');
 
   Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
 
@@ -126,3 +128,13 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
 Route::post('/chessuno/webhook', [WebhookController::class, 'handle'])
     ->middleware('web')
     ->name('chessuno.webhook');
+
+/*
+|--------------------------------------------------------------------------
+| Secure File Download — signed token, proxied server-side
+| Real origin URL never exposed to the client
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['web', 'throttle:5,1'])
+    ->get('/download/{token}', [DownloadController::class, 'download'])
+    ->name('download.file');

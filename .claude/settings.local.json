@@ -6,7 +6,8 @@
       "Bash(npx shadcn@latest:*)",
       "Bash(php artisan:*)",
       "Bash(xargs grep:*)",
-      "Bash(grep -E \"\\\\.php$\")"
+      "Bash(grep -E \"\\\\.php$\")",
+      "Bash(xargs ls:*)"
     ]
   }
 }

@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Order {
     reference: string;
@@ -7,6 +8,7 @@ interface Order {
     customer_name: string;
     capstone_title: string | null;
     capstone_slug: string | null;
+    download_token: string | null;
 }
 
 interface Props {
@@ -14,7 +16,38 @@ interface Props {
 }
 
 export default function ThankYou({ order }: Props) {
-    const isPaid = order?.status === 'paid';
+    const [localStatus, setLocalStatus] = useState(order?.status ?? 'pending');
+    const [localToken, setLocalToken] = useState(order?.download_token ?? null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    const isPaid = localStatus === 'paid';
+
+    // Poll /payment/status every 5 seconds when order is still pending.
+    // Stops automatically once paid, or when the component unmounts.
+    useEffect(() => {
+        if (isPaid || !order?.reference) return;
+
+        intervalRef.current = setInterval(async () => {
+            try {
+                const res = await fetch(`/payment/status?ref=${encodeURIComponent(order.reference)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const data = await res.json();
+
+                if (data.status === 'paid') {
+                    setLocalStatus('paid');
+                    setLocalToken(data.download_token ?? null);
+                    if (intervalRef.current) clearInterval(intervalRef.current);
+                }
+            } catch {
+                // Silent fail — polling is best-effort
+            }
+        }, 5000);
+
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -35,7 +68,7 @@ export default function ThankYou({ order }: Props) {
 
                     <p className="mb-8 text-gray-500">
                         {isPaid
-                            ? "Your payment was received. We're preparing your download."
+                            ? "Your payment was received. Download your source code below."
                             : 'Your order has been received and is being processed.'}
                     </p>
 
@@ -72,12 +105,28 @@ export default function ThankYou({ order }: Props) {
                         </div>
                     )}
 
-                    {/* Download note */}
-                    <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
-                        {isPaid
-                            ? '📥 Your download link will be sent to your email shortly.'
-                            : '💚 Once your GCash payment is confirmed, you\'ll receive your download link via email.'}
-                    </div>
+                    {/* Download section */}
+                    {isPaid && localToken ? (
+                        <div className="mb-8">
+                            <a
+                                href={`/download/${localToken}`}
+                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
+                            >
+                                ⬇ Download Source Code
+                            </a>
+                            <p className="mt-2 text-center text-xs text-gray-400">
+                                Link expires 72 hours after payment.
+                            </p>
+                        </div>
+                    ) : isPaid ? (
+                        <div className="mb-8 rounded-xl border border-yellow-100 bg-yellow-50 px-4 py-3 text-sm text-yellow-700">
+                            Payment confirmed — generating your download link…
+                        </div>
+                    ) : (
+                        <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                            Waiting for payment confirmation. This page will update automatically.
+                        </div>
+                    )}
 
                     {/* Actions */}
                     <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">

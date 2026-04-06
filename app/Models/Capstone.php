@@ -12,6 +12,7 @@ class Capstone extends Model
         'description',
         'price',
         'demo_url',
+        'download_url',
         'thumbnail',
         'category',
         'technologies',

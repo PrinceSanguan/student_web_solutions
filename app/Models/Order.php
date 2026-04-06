@@ -18,6 +18,7 @@ class Order extends Model
         'payment_url',
         'webhook_payload',
         'paid_at',
+        'download_token',
     ];
 
     protected $casts = [
@@ -34,6 +35,12 @@ class Order extends Model
     public function isPaid(): bool
     {
         return $this->status === 'paid';
+    }
+
+    public function isDownloadExpired(): bool
+    {
+        return $this->paid_at === null
+            || $this->paid_at->lt(now()->subHours(72));
     }
 
     public static function generateReference(): string

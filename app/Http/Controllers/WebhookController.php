@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class WebhookController extends Controller
 {
@@ -84,7 +85,10 @@ class WebhookController extends Controller
             'capstone_id'    => $order->capstone_id,
         ]);
 
-        // TODO: Trigger automatic ZIP download link generation here
-        // e.g. event(new OrderPaid($order));
+        // Generate a signed download token (64 random chars ≈ 380 bits of entropy).
+        // The idempotency guard above ensures this runs exactly once per order.
+        $order->update(['download_token' => Str::random(64)]);
+
+        Log::info('Download token generated', ['reference' => $order->reference]);
     }
 }

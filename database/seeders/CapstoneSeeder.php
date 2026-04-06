@@ -26,6 +26,7 @@ class CapstoneSeeder extends Seeder
                 'description' => 'Track stock levels, manage suppliers, and generate purchase orders with ease. Features low-stock alerts, product categorization, and detailed inventory reports. Ideal for small to medium businesses.',
                 'price' => 5.00,
                 'demo_url' => 'https://iptt.laravel.cloud/',
+                'download_url' => 'https://media.biyaherongchesscoach.com/studentwebsolution/zip-files/The%20Mountain%20Boot%20Company%20%20-%20GBPEUR%20LHS%20KORF%20%20-%20030226.pdf',
                 'thumbnail' => 'https://media.biyaherongchesscoach.com/studentwebsolution/project-2.webp',
                 'category' => 'Business System',
                 'technologies' => ['Laravel', 'MySQL', 'Tailwind CSS', 'Alpine.js'],

@@ -164,7 +164,32 @@ class CheckoutController extends Controller
                 'customer_name'  => $order->customer_name,
                 'capstone_title' => $order->capstone?->title,
                 'capstone_slug'  => $order->capstone?->slug,
+                'download_token' => $order->isPaid() ? $order->download_token : null,
             ] : null,
+        ]);
+    }
+
+    /**
+     * Lightweight polling endpoint for the ThankYou page.
+     * Returns payment status and download token (only when paid).
+     */
+    public function status(Request $request)
+    {
+        $ref = $request->query('ref');
+
+        if (! $ref) {
+            return response()->json(['error' => 'Missing ref'], 422);
+        }
+
+        $order = Order::where('reference', $ref)->first();
+
+        if (! $order) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        return response()->json([
+            'status'         => $order->status,
+            'download_token' => $order->isPaid() ? $order->download_token : null,
         ]);
     }
 }
