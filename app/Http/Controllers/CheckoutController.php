@@ -126,6 +126,10 @@ class CheckoutController extends Controller
 
         $order->update(['payment_url' => $paymentUrl]);
 
+        // Store the reference in session so the success page can find the order
+        // even if Chessuno does not pass ?ref= back in the redirect URL.
+        session(['pending_order_ref' => $order->reference]);
+
         Log::info('[Checkout] Redirecting to payment URL', [
             'order'       => $order->reference,
             'payment_url' => $paymentUrl,
@@ -142,13 +146,20 @@ class CheckoutController extends Controller
      */
     public function success(Request $request)
     {
-        $ref = $request->query('ref');
+        // Use ?ref= query param if present, otherwise fall back to the session
+        // (Chessuno does not always preserve query params in its redirect URL).
+        $ref = $request->query('ref') ?? session('pending_order_ref');
 
         Log::info('[Payment Success] Redirect received', ['ref' => $ref]);
 
         $order = Order::with('capstone')
             ->where('reference', $ref)
             ->first();
+
+        // Clear the session key once the order is found to prevent stale lookups.
+        if ($order) {
+            session()->forget('pending_order_ref');
+        }
 
         Log::info('[Payment Success] Order lookup', [
             'ref'   => $ref,
