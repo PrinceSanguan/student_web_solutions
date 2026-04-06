@@ -10,6 +10,7 @@ use App\Http\Middleware\UserMiddleware;
 // Controllers
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ChatBotController;
+use App\Http\Controllers\CapstoneController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SocialAuthController;
@@ -41,6 +42,9 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
     $content = "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /dashboard\nDisallow: /user/\nDisallow: /login\nDisallow: /register\n\nSitemap: " . url('/sitemap.xml');
     return response($content, 200)->header('Content-Type', 'text/plain');
   });
+
+  Route::get('/capstone', [CapstoneController::class, 'index'])->name('capstone.index');
+  Route::get('/capstone/{slug}', [CapstoneController::class, 'show'])->name('capstone.show');
 
   Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
 

@@ -20,14 +20,14 @@ const ProjectShowcase = () => {
     ];
 
     return (
-        <section id="projects" className="scroll-mt-20">
+        <section id="capstone-projects" className="scroll-mt-20">
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                 <div className="mb-12 text-center">
                     <h2 className="mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
-                        Featured Projects
+                        Capstone Projects & Systems
                     </h2>
                     <p className={`'text-gray-300' : 'text-gray-600'} mx-auto max-w-2xl`}>
-                        Explore my latest work showcasing modern web development with cutting-edge technologies
+                        Browse our ready-made capstone projects and web systems — fully built, tested, and ready to deploy.
                     </p>
                 </div>
 

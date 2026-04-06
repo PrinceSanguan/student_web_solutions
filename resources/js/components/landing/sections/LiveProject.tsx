@@ -77,7 +77,7 @@ const LiveProject = () => {
                     transition={{ duration: 0.6 }}
                     className="mb-4 bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl"
                 >
-                    Live Projects
+                    Live Deployments
                 </motion.h2>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -85,7 +85,7 @@ const LiveProject = () => {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className={`'text-gray-300' : 'text-gray-600'} mx-auto max-w-2xl`}
                 >
-                    Explore our deployed projects and see them in action. Click on any tab to visit the live websites.
+                    These are real systems we built — fully deployed and running. Every project in our catalog can be delivered just like these.
                 </motion.p>
             </div>
 
