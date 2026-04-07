@@ -1,6 +1,6 @@
 import { Header } from '@/components/admin/header';
 import { Sidebar } from '@/components/admin/sidebar';
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 
 interface User { name: string; email: string; }
 
@@ -15,12 +15,14 @@ interface Stats {
 }
 
 interface PurchaseRecord {
+    id: number;
     reference: string;
     customer_name: string;
     customer_email: string;
     capstone_title: string | null;
     amount: number;
     paid_at: string;
+    email_sent_at: string | null;
 }
 
 interface Props {
@@ -40,12 +42,34 @@ function StatCard({ label, value, sub, color }: { label: string; value: string |
 }
 
 export default function AdminDashboard({ user, stats, allOrders }: Props) {
+    const { props } = usePage<{ flash: { success?: string; error?: string } }>();
+    const flash = props.flash;
+
+    function resendEmail(id: number, reference: string) {
+        if (! confirm(`Resend confirmation email for order ${reference}?`)) return;
+        router.post(route('admin.orders.resend-email', { order: id }), {}, {
+            preserveScroll: true,
+        });
+    }
+
     return (
         <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
             <Sidebar user={user} />
             <div className="flex flex-1 flex-col overflow-hidden">
                 <Header user={user} />
                 <main className="flex-1 overflow-y-auto p-4 md:p-6">
+                    {/* Flash messages */}
+                    {flash?.success && (
+                        <div className="mb-4 rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-700">
+                            {flash.success}
+                        </div>
+                    )}
+                    {flash?.error && (
+                        <div className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+                            {flash.error}
+                        </div>
+                    )}
+
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
                         <p className="text-sm text-gray-500">Welcome back, {user.name}</p>
@@ -94,7 +118,8 @@ export default function AdminDashboard({ user, stats, allOrders }: Props) {
                                             <th className="pb-3 pr-4">Customer Email</th>
                                             <th className="pb-3 pr-4">Project</th>
                                             <th className="pb-3 pr-4 text-right">Amount</th>
-                                            <th className="pb-3">Date &amp; Time</th>
+                                            <th className="pb-3 pr-4">Date &amp; Time</th>
+                                            <th className="pb-3 text-center">Email</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -106,7 +131,7 @@ export default function AdminDashboard({ user, stats, allOrders }: Props) {
                                                 <td className="py-3 pr-4 text-right font-semibold text-green-600">
                                                     ₱{Number(o.amount).toLocaleString()}
                                                 </td>
-                                                <td className="py-3 text-xs text-gray-500">
+                                                <td className="py-3 pr-4 text-xs text-gray-500">
                                                     {new Date(o.paid_at).toLocaleString('en-PH', {
                                                         year: 'numeric',
                                                         month: 'short',
@@ -114,6 +139,28 @@ export default function AdminDashboard({ user, stats, allOrders }: Props) {
                                                         hour: '2-digit',
                                                         minute: '2-digit',
                                                     })}
+                                                </td>
+                                                <td className="py-3 text-center">
+                                                    {o.email_sent_at ? (
+                                                        <div className="flex flex-col items-center gap-0.5">
+                                                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                                                                ✓ Sent
+                                                            </span>
+                                                            <button
+                                                                onClick={() => resendEmail(o.id, o.reference)}
+                                                                className="text-xs text-gray-400 hover:text-blue-600 hover:underline"
+                                                            >
+                                                                Resend
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => resendEmail(o.id, o.reference)}
+                                                            className="rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700 transition hover:bg-orange-100"
+                                                        >
+                                                            Send Now
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}

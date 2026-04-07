@@ -152,15 +152,27 @@ class WebhookController extends Controller
      */
     public static function dispatchConfirmationEmail(Order $order): void
     {
+        $appUrl        = config('app.url');
+        $downloadLink  = $order->download_token ? $appUrl . '/download/' . $order->download_token : null;
+
+        // Critical: APP_URL must be the public-facing domain, not localhost.
+        // If it is localhost the download link in the email will be unreachable
+        // by the buyer and will also trigger spam filters.
+        if (str_contains($appUrl, 'localhost') || str_contains($appUrl, '127.0.0.1')) {
+            Log::warning('[Email] APP_URL is localhost — download link in email will NOT work for external recipients! Update APP_URL in .env to your real domain.', [
+                'app_url'       => $appUrl,
+                'download_link' => $downloadLink,
+            ]);
+        }
+
         Log::info('[Email] Attempting to send purchase confirmation', [
-            'reference'      => $order->reference,
-            'to'             => $order->customer_email,
-            'capstone'       => $order->capstone?->title,
-            'download_token' => $order->download_token ? substr($order->download_token, 0, 8) . '...' : 'NULL — email will have no link',
-            'app_url'        => config('app.url'),
-            'mail_mailer'    => config('mail.default'),
-            'mail_host'      => config('mail.mailers.smtp.host'),
-            'mail_from'      => config('mail.from.address'),
+            'reference'     => $order->reference,
+            'to'            => $order->customer_email,
+            'capstone'      => $order->capstone?->title,
+            'download_link' => $downloadLink,   // exact URL that will be in the email
+            'mail_mailer'   => config('mail.default'),
+            'mail_host'     => config('mail.mailers.smtp.host'),
+            'mail_from'     => config('mail.from.address'),
         ]);
 
         if (! $order->download_token) {
