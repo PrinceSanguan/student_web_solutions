@@ -9,7 +9,10 @@
       "Bash(grep -E \"\\\\.php$\")",
       "Bash(xargs ls:*)",
       "Bash(node -e \"const p = require\\('./node_modules/@inertiajs/react/package.json'\\); console.log\\(p.version\\)\")",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/WebhookController.php)",
+      "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/CheckoutController.php)",
+      "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/CapstoneController.php)"
     ]
   }
 }

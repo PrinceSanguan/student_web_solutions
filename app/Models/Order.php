@@ -20,12 +20,14 @@ class Order extends Model
         'webhook_payload',
         'paid_at',
         'download_token',
+        'email_sent_at',
     ];
 
     protected $casts = [
         'amount'          => 'decimal:2',
         'webhook_payload' => 'array',
         'paid_at'         => 'datetime',
+        'email_sent_at'   => 'datetime',
     ];
 
     public function capstone(): BelongsTo

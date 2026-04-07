@@ -11,6 +11,7 @@ interface Capstone {
     thumbnail: string | null;
     category: string | null;
     technologies: string[] | null;
+    buyers_count: number;
 }
 
 interface Props {
@@ -123,9 +124,19 @@ export default function CapstoneIndex({ capstones }: Props) {
                                     </p>
 
                                     <div className="flex items-center justify-between">
-                                        <span className="text-lg font-bold text-green-600">
-                                            ₱{Number(capstone.price).toLocaleString()}
-                                        </span>
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-lg font-bold text-green-600">
+                                                ₱{Number(capstone.price).toLocaleString()}
+                                            </span>
+                                            {capstone.buyers_count > 0 && (
+                                                <span className="flex items-center gap-1 text-xs text-gray-400">
+                                                    <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                                    </svg>
+                                                    {capstone.buyers_count} {capstone.buyers_count === 1 ? 'buyer' : 'buyers'}
+                                                </span>
+                                            )}
+                                        </div>
                                         <span className="flex items-center gap-1 text-xs font-medium text-blue-600 group-hover:gap-2 transition-all">
                                             View Details
                                             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

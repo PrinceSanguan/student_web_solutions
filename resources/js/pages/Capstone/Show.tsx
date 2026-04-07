@@ -12,6 +12,7 @@ interface Capstone {
     category: string | null;
     technologies: string[] | null;
     is_available: boolean;
+    buyers_count: number;
 }
 
 interface Props {
@@ -148,6 +149,14 @@ export default function CapstoneShow({ capstone }: Props) {
                                     <p className="mt-1 text-xs text-green-600">💚 Pay via GCash — download link sent to your email after payment.</p>
                                 ) : (
                                     <p className="mt-1 text-xs text-red-500">This project has already been sold and is no longer available.</p>
+                                )}
+                                {capstone.buyers_count > 0 && (
+                                    <p className="mt-2 flex items-center gap-1 text-xs text-gray-400">
+                                        <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                        </svg>
+                                        {capstone.buyers_count} {capstone.buyers_count === 1 ? 'person has' : 'people have'} purchased this
+                                    </p>
                                 )}
                             </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\WebhookController;
 use App\Models\Capstone;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -211,6 +212,11 @@ class CheckoutController extends Controller
     /**
      * Lightweight polling endpoint for the ThankYou page.
      * Returns payment status and download token (only when paid).
+     *
+     * Also acts as a fallback email trigger: if the order is paid but the
+     * confirmation email was never sent (e.g. because the Chessuno webhook
+     * could not reach the server — common in local/dev environments where
+     * APP_URL is http://127.0.0.1), we send it here instead.
      */
     public function status(Request $request)
     {
@@ -220,10 +226,21 @@ class CheckoutController extends Controller
             return response()->json(['error' => 'Missing ref'], 422);
         }
 
-        $order = Order::where('reference', $ref)->first();
+        $order = Order::with('capstone')->where('reference', $ref)->first();
 
         if (! $order) {
             return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        // Fallback email trigger: webhook may not have reached the server
+        // (e.g. APP_URL = http://127.0.0.1 in development).
+        // Send here on the first poll that sees a paid order without email_sent_at.
+        if ($order->isPaid() && ! $order->email_sent_at) {
+            Log::info('[Status] Paid order has no email_sent_at — triggering fallback email', [
+                'reference' => $order->reference,
+                'to'        => $order->customer_email,
+            ]);
+            WebhookController::dispatchConfirmationEmail($order);
         }
 
         return response()->json([

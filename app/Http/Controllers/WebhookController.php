@@ -19,34 +19,51 @@ class WebhookController extends Controller
      */
     public function handle(Request $request)
     {
+        // Log every incoming webhook attempt for full visibility
+        Log::info('[Webhook] Incoming request', [
+            'ip'      => $request->ip(),
+            'method'  => $request->method(),
+            'headers' => [
+                'x-chessph-signature' => $request->header('X-Chessph-Signature') ? 'present' : 'MISSING',
+                'content-type'        => $request->header('Content-Type'),
+            ],
+        ]);
+
         // 1. Read raw body for signature verification
         $rawBody  = $request->getContent();
         $received = $request->header('X-Chessph-Signature');
+
+        Log::info('[Webhook] Raw body length', ['bytes' => strlen($rawBody)]);
 
         // 2. Verify signature
         $expected = hash_hmac('sha256', $rawBody, config('services.chessuno.webhook_secret'));
 
         if (! hash_equals($expected, (string) $received)) {
-            Log::warning('Chessuno webhook: invalid signature', [
-                'received' => $received,
+            Log::warning('[Webhook] Signature FAILED — rejected', [
+                'received'        => $received,
+                'expected_prefix' => substr($expected, 0, 10) . '...',
             ]);
             return response('Unauthorized', 401);
         }
+
+        Log::info('[Webhook] Signature verified OK');
 
         // 3. Parse payload
         $payload = json_decode($rawBody, true);
 
         if (! is_array($payload)) {
+            Log::error('[Webhook] Body is not valid JSON');
             return response('Bad Request', 400);
         }
 
-        Log::info('Chessuno webhook received', ['event' => $payload['event'] ?? 'unknown']);
+        $event = $payload['event'] ?? 'unknown';
+        Log::info('[Webhook] Event received', ['event' => $event, 'payload_keys' => array_keys($payload)]);
 
         // 4. Handle payment.paid event
-        $event = $payload['event'] ?? null;
-
         if ($event === 'payment.paid') {
             $this->handlePaymentPaid($payload);
+        } else {
+            Log::info('[Webhook] Event not handled — ignoring', ['event' => $event]);
         }
 
         return response('OK', 200);
@@ -59,20 +76,43 @@ class WebhookController extends Controller
         $gatewayReference = $payload['reference'] ?? $payload['data']['reference'] ?? null;
         $transactionId    = $payload['transaction_id'] ?? $payload['data']['transaction_id'] ?? null;
 
+        Log::info('[Webhook] handlePaymentPaid called', [
+            'gateway_reference' => $gatewayReference,
+            'transaction_id'    => $transactionId,
+        ]);
+
         if (! $gatewayReference) {
-            Log::error('Chessuno webhook: missing reference in payload', $payload);
+            Log::error('[Webhook] Missing gateway_reference in payload', ['payload_keys' => array_keys($payload)]);
             return;
         }
 
         $order = Order::where('gateway_reference', $gatewayReference)->first();
 
         if (! $order) {
-            Log::error('Chessuno webhook: order not found', ['gateway_reference' => $gatewayReference]);
+            Log::error('[Webhook] Order NOT FOUND for gateway_reference', [
+                'gateway_reference' => $gatewayReference,
+            ]);
             return;
         }
 
+        Log::info('[Webhook] Order found', [
+            'order_id'   => $order->id,
+            'reference'  => $order->reference,
+            'status'     => $order->status,
+            'email'      => $order->customer_email,
+        ]);
+
         if ($order->isPaid()) {
-            // Idempotent — already processed
+            // Idempotent — already processed, but still check if email needs sending
+            Log::info('[Webhook] Order already paid — checking if email still needs to be sent', [
+                'reference'     => $order->reference,
+                'email_sent_at' => $order->email_sent_at,
+            ]);
+
+            if (! $order->email_sent_at) {
+                $order->load('capstone');
+                static::dispatchConfirmationEmail($order);
+            }
             return;
         }
 
@@ -83,44 +123,86 @@ class WebhookController extends Controller
             'webhook_payload' => $payload,
         ]);
 
-        Log::info('Order marked as paid', [
+        Log::info('[Webhook] Order marked as paid', [
             'reference'      => $order->reference,
             'transaction_id' => $transactionId,
-            'capstone_id'    => $order->capstone_id,
         ]);
 
-        // Generate a signed download token (64 random chars ≈ 380 bits of entropy).
-        // The idempotency guard above ensures this runs exactly once per order.
         $downloadToken = Str::random(64);
         $order->update(['download_token' => $downloadToken]);
 
-        Log::info('Download token generated', ['reference' => $order->reference]);
+        Log::info('[Webhook] Download token generated', [
+            'reference'    => $order->reference,
+            'token_length' => strlen($downloadToken),
+        ]);
 
-        // Load capstone for email content
+        // Load capstone for email content and dispatch confirmation
         $order->load('capstone');
+        static::dispatchConfirmationEmail($order);
+    }
 
-        // Dispatch purchase confirmation email via queue.
-        // Failure here must never block the webhook response — the order is
-        // already fully paid and the token is persisted.
+    /**
+     * Send the purchase confirmation email for a paid order.
+     *
+     * Shared by WebhookController (webhook-triggered) and CheckoutController::status()
+     * (polling fallback for localhost/dev where the webhook URL is unreachable).
+     *
+     * Marks order.email_sent_at on success. Idempotent — callers should check
+     * email_sent_at is null before calling.
+     */
+    public static function dispatchConfirmationEmail(Order $order): void
+    {
+        Log::info('[Email] Attempting to send purchase confirmation', [
+            'reference'      => $order->reference,
+            'to'             => $order->customer_email,
+            'capstone'       => $order->capstone?->title,
+            'download_token' => $order->download_token ? substr($order->download_token, 0, 8) . '...' : 'NULL — email will have no link',
+            'app_url'        => config('app.url'),
+            'mail_mailer'    => config('mail.default'),
+            'mail_host'      => config('mail.mailers.smtp.host'),
+            'mail_from'      => config('mail.from.address'),
+        ]);
+
+        if (! $order->download_token) {
+            Log::error('[Email] Skipping — order has no download_token yet', [
+                'reference' => $order->reference,
+            ]);
+            return;
+        }
+
         try {
-            Mail::to($order->customer_email)->queue(
+            Mail::to($order->customer_email)->send(
                 new PurchaseConfirmationMail(
                     customerName:  $order->customer_name,
                     customerEmail: $order->customer_email,
                     reference:     $order->reference,
                     capstoneTitle: $order->capstone?->title ?? 'Your Project',
                     amount:        (string) $order->amount,
-                    downloadToken: $downloadToken,
+                    downloadToken: $order->download_token,
                     appUrl:        config('app.url'),
                     supportEmail:  config('mail.from.address'),
                 )
             );
 
-            Log::info('Purchase confirmation email queued', ['reference' => $order->reference]);
-        } catch (\Throwable $e) {
-            Log::error('Failed to queue purchase confirmation email', [
+            // Mark as sent — prevents duplicate sends via the polling fallback
+            $order->update(['email_sent_at' => now()]);
+
+            Log::info('[Email] Purchase confirmation sent successfully', [
                 'reference' => $order->reference,
-                'error'     => $e->getMessage(),
+                'to'        => $order->customer_email,
+            ]);
+
+        } catch (\Throwable $e) {
+            Log::error('[Email] FAILED to send purchase confirmation', [
+                'reference'  => $order->reference,
+                'to'         => $order->customer_email,
+                'error'      => $e->getMessage(),
+                'class'      => get_class($e),
+                'file'       => $e->getFile() . ':' . $e->getLine(),
+                // Full trace for deep debugging:
+                'trace'      => collect($e->getTrace())->take(6)->map(
+                    fn($f) => ($f['file'] ?? '?') . ':' . ($f['line'] ?? '?') . ' ' . ($f['class'] ?? '') . ($f['type'] ?? '') . ($f['function'] ?? '')
+                )->toArray(),
             ]);
         }
     }

@@ -9,8 +9,8 @@ class CapstoneController extends Controller
 {
     public function index()
     {
-        // Only show projects still available for purchase.
         $capstones = Capstone::where('is_available', true)
+            ->withCount(['orders as buyers_count' => fn($q) => $q->where('status', 'paid')])
             ->orderBy('price')
             ->get();
 
@@ -21,7 +21,9 @@ class CapstoneController extends Controller
 
     public function show(string $slug)
     {
-        $capstone = Capstone::where('slug', $slug)->firstOrFail();
+        $capstone = Capstone::where('slug', $slug)
+            ->withCount(['orders as buyers_count' => fn($q) => $q->where('status', 'paid')])
+            ->firstOrFail();
 
         return Inertia::render('Capstone/Show', [
             'capstone' => $capstone,
