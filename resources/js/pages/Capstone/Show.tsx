@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Capstone {
     id: number;
@@ -35,6 +35,13 @@ const INCLUDED = [
 
 export default function CapstoneShow({ capstone }: Props) {
     const [showForm, setShowForm] = useState(false);
+    const [alreadyBought, setAlreadyBought] = useState(false);
+
+    useEffect(() => {
+        if (localStorage.getItem(`sws_purchased_${capstone.slug}`) === '1') {
+            setAlreadyBought(true);
+        }
+    }, [capstone.slug]);
 
     const { data, setData, post, processing, errors } = useForm<{
         customer_name: string;
@@ -138,14 +145,42 @@ export default function CapstoneShow({ capstone }: Props) {
                                     <span className={`text-sm ${capstone.is_available ? 'text-green-500' : 'text-gray-400'}`}>one-time payment</span>
                                 </div>
                                 {capstone.is_available ? (
-                                    <p className="mt-1 text-xs text-green-600">💚 Pay via GCash — download your ZIP file instantly after payment.</p>
+                                    <p className="mt-1 text-xs text-green-600">💚 Pay via GCash — download link sent to your email after payment.</p>
                                 ) : (
                                     <p className="mt-1 text-xs text-red-500">This project has already been sold and is no longer available.</p>
                                 )}
                             </div>
 
                             {/* Checkout form or buttons */}
-                            {!capstone.is_available ? (
+                            {alreadyBought ? (
+                                <div className="flex flex-col gap-3">
+                                    <div className="rounded-xl border border-green-100 bg-green-50 px-5 py-4 text-sm text-green-800">
+                                        <p className="font-semibold">You already purchased this project.</p>
+                                        <p className="mt-1 text-green-700">
+                                            Check your email for the download link. Links expire 72 hours after payment.
+                                        </p>
+                                        <p className="mt-2 text-xs text-gray-500">
+                                            Didn't receive it?{' '}
+                                            <a href="mailto:princesanguan44@gmail.com" className="underline">
+                                                Contact support
+                                            </a>.
+                                        </p>
+                                    </div>
+                                    {capstone.demo_url && (
+                                        <a
+                                            href={capstone.demo_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50"
+                                        >
+                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                            View Demo
+                                        </a>
+                                    )}
+                                </div>
+                            ) : !capstone.is_available ? (
                                 <div className="flex flex-col gap-3">
                                     {capstone.demo_url && (
                                         <a

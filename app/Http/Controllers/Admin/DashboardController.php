@@ -17,30 +17,30 @@ class DashboardController extends Controller
         $stats = [
             'total_projects'   => Capstone::count(),
             'available'        => Capstone::where('is_available', true)->count(),
-            'sold'             => Capstone::where('is_available', false)->count(),
+            'unlisted'         => Capstone::where('is_available', false)->count(),
             'total_orders'     => Order::count(),
             'paid_orders'      => Order::where('status', 'paid')->count(),
             'pending_orders'   => Order::where('status', 'pending')->count(),
             'total_revenue'    => Order::where('status', 'paid')->sum('amount'),
         ];
 
-        $recentOrders = Order::with('capstone')
+        $allOrders = Order::with('capstone')
             ->where('status', 'paid')
             ->orderByDesc('paid_at')
-            ->limit(5)
             ->get()
             ->map(fn($o) => [
                 'reference'      => $o->reference,
                 'customer_name'  => $o->customer_name,
+                'customer_email' => $o->customer_email,
                 'capstone_title' => $o->capstone?->title,
                 'amount'         => $o->amount,
-                'paid_at'        => $o->paid_at?->diffForHumans(),
+                'paid_at'        => $o->paid_at?->toISOString(),
             ]);
 
         return Inertia::render('Admin/Dashboard', [
-            'user'         => ['name' => $user->name, 'email' => $user->email],
-            'stats'        => $stats,
-            'recentOrders' => $recentOrders,
+            'user'      => ['name' => $user->name, 'email' => $user->email],
+            'stats'     => $stats,
+            'allOrders' => $allOrders,
         ]);
     }
 }

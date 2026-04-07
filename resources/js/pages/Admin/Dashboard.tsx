@@ -7,16 +7,17 @@ interface User { name: string; email: string; }
 interface Stats {
     total_projects: number;
     available: number;
-    sold: number;
+    unlisted: number;
     total_orders: number;
     paid_orders: number;
     pending_orders: number;
     total_revenue: number;
 }
 
-interface RecentOrder {
+interface PurchaseRecord {
     reference: string;
     customer_name: string;
+    customer_email: string;
     capstone_title: string | null;
     amount: number;
     paid_at: string;
@@ -25,7 +26,7 @@ interface RecentOrder {
 interface Props {
     user: User;
     stats: Stats;
-    recentOrders: RecentOrder[];
+    allOrders: PurchaseRecord[];
 }
 
 function StatCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
@@ -38,7 +39,7 @@ function StatCard({ label, value, sub, color }: { label: string; value: string |
     );
 }
 
-export default function AdminDashboard({ user, stats, recentOrders }: Props) {
+export default function AdminDashboard({ user, stats, allOrders }: Props) {
     return (
         <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
             <Sidebar user={user} />
@@ -55,7 +56,7 @@ export default function AdminDashboard({ user, stats, recentOrders }: Props) {
                         <StatCard
                             label="Total Projects"
                             value={stats.total_projects}
-                            sub={`${stats.available} available · ${stats.sold} sold`}
+                            sub={`${stats.available} active · ${stats.unlisted} unlisted`}
                             color="border-gray-200 bg-white text-gray-800"
                         />
                         <StatCard
@@ -77,28 +78,47 @@ export default function AdminDashboard({ user, stats, recentOrders }: Props) {
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        {/* Recent sales */}
-                        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+                        {/* Purchase analytics table — spans both columns */}
+                        <div className="col-span-1 overflow-x-auto rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
                             <div className="mb-4 flex items-center justify-between">
-                                <h2 className="font-semibold text-gray-800">Recent Sales</h2>
-                                <Link href={route('admin.capstones.index')} className="text-xs text-blue-500 hover:underline">
-                                    View all
-                                </Link>
+                                <h2 className="font-semibold text-gray-800">All Purchases</h2>
+                                <span className="text-xs text-gray-400">{allOrders.length} total</span>
                             </div>
-                            {recentOrders.length === 0 ? (
+                            {allOrders.length === 0 ? (
                                 <p className="py-8 text-center text-sm text-gray-400">No paid orders yet.</p>
                             ) : (
-                                <div className="space-y-3">
-                                    {recentOrders.map((o) => (
-                                        <div key={o.reference} className="flex items-center justify-between text-sm">
-                                            <div>
-                                                <p className="font-medium text-gray-800">{o.customer_name}</p>
-                                                <p className="text-xs text-gray-400">{o.capstone_title} · {o.paid_at}</p>
-                                            </div>
-                                            <span className="font-semibold text-green-600">₱{Number(o.amount).toLocaleString()}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-gray-100 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                            <th className="pb-3 pr-4">Reference</th>
+                                            <th className="pb-3 pr-4">Customer Email</th>
+                                            <th className="pb-3 pr-4">Project</th>
+                                            <th className="pb-3 pr-4 text-right">Amount</th>
+                                            <th className="pb-3">Date &amp; Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {allOrders.map((o) => (
+                                            <tr key={o.reference} className="border-b border-gray-50 hover:bg-gray-50">
+                                                <td className="py-3 pr-4 font-mono text-xs text-gray-600">{o.reference}</td>
+                                                <td className="py-3 pr-4 text-gray-700">{o.customer_email}</td>
+                                                <td className="py-3 pr-4 text-gray-700">{o.capstone_title ?? '—'}</td>
+                                                <td className="py-3 pr-4 text-right font-semibold text-green-600">
+                                                    ₱{Number(o.amount).toLocaleString()}
+                                                </td>
+                                                <td className="py-3 text-xs text-gray-500">
+                                                    {new Date(o.paid_at).toLocaleString('en-PH', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             )}
                         </div>
 

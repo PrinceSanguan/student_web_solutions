@@ -8,7 +8,8 @@
       "Bash(xargs grep:*)",
       "Bash(grep -E \"\\\\.php$\")",
       "Bash(xargs ls:*)",
-      "Bash(node -e \"const p = require\\('./node_modules/@inertiajs/react/package.json'\\); console.log\\(p.version\\)\")"
+      "Bash(node -e \"const p = require\\('./node_modules/@inertiajs/react/package.json'\\); console.log\\(p.version\\)\")",
+      "Bash(grep:*)"
     ]
   }
 }

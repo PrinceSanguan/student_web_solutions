@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PurchaseConfirmationMail;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class WebhookController extends Controller
@@ -89,15 +91,37 @@ class WebhookController extends Controller
 
         // Generate a signed download token (64 random chars ≈ 380 bits of entropy).
         // The idempotency guard above ensures this runs exactly once per order.
-        $order->update(['download_token' => Str::random(64)]);
+        $downloadToken = Str::random(64);
+        $order->update(['download_token' => $downloadToken]);
 
         Log::info('Download token generated', ['reference' => $order->reference]);
 
-        // Remove the project from the public catalog — it has been sold.
+        // Load capstone for email content
         $order->load('capstone');
-        if ($order->capstone) {
-            $order->capstone->update(['is_available' => false]);
-            Log::info('Capstone marked as sold', ['capstone_id' => $order->capstone_id]);
+
+        // Dispatch purchase confirmation email via queue.
+        // Failure here must never block the webhook response — the order is
+        // already fully paid and the token is persisted.
+        try {
+            Mail::to($order->customer_email)->queue(
+                new PurchaseConfirmationMail(
+                    customerName:  $order->customer_name,
+                    customerEmail: $order->customer_email,
+                    reference:     $order->reference,
+                    capstoneTitle: $order->capstone?->title ?? 'Your Project',
+                    amount:        (string) $order->amount,
+                    downloadToken: $downloadToken,
+                    appUrl:        config('app.url'),
+                    supportEmail:  config('mail.from.address'),
+                )
+            );
+
+            Log::info('Purchase confirmation email queued', ['reference' => $order->reference]);
+        } catch (\Throwable $e) {
+            Log::error('Failed to queue purchase confirmation email', [
+                'reference' => $order->reference,
+                'error'     => $e->getMessage(),
+            ]);
         }
     }
 }

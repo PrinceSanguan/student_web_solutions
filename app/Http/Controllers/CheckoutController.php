@@ -38,6 +38,25 @@ class CheckoutController extends Controller
             'price'       => $capstone->price,
         ]);
 
+        // Guard: admin-disabled products cannot be purchased
+        if (! $capstone->is_available) {
+            return back()->withErrors([
+                'payment' => 'This project is no longer available for purchase.',
+            ]);
+        }
+
+        // Guard: prevent the same email from buying the same capstone twice
+        $existingPaidOrder = Order::where('capstone_id', $capstone->id)
+            ->where('customer_email', $validated['customer_email'])
+            ->where('status', 'paid')
+            ->first();
+
+        if ($existingPaidOrder) {
+            return back()->withErrors([
+                'payment' => 'You have already purchased this project. Check your email for the download link.',
+            ]);
+        }
+
         // Create a pending order
         $order = Order::create([
             'capstone_id'    => $capstone->id,
@@ -181,6 +200,7 @@ class CheckoutController extends Controller
                 'status'         => $order->status,
                 'amount'         => $order->amount,
                 'customer_name'  => $order->customer_name,
+                'customer_email' => $order->customer_email,
                 'capstone_title' => $order->capstone?->title,
                 'capstone_slug'  => $order->capstone?->slug,
                 'download_token' => $order->isPaid() ? $order->download_token : null,

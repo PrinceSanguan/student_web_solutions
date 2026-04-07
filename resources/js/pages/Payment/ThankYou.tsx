@@ -6,6 +6,7 @@ interface Order {
     status: string;
     amount: number;
     customer_name: string;
+    customer_email: string;
     capstone_title: string | null;
     capstone_slug: string | null;
     download_token: string | null;
@@ -17,10 +18,17 @@ interface Props {
 
 export default function ThankYou({ order }: Props) {
     const [localStatus, setLocalStatus] = useState(order?.status ?? 'pending');
-    const [localToken, setLocalToken] = useState(order?.download_token ?? null);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const isPaid = localStatus === 'paid';
+
+    // On initial load: if the order is already paid, persist to localStorage
+    // so the capstone show page can reflect "Already Bought".
+    useEffect(() => {
+        if (order?.status === 'paid' && order.capstone_slug) {
+            localStorage.setItem(`sws_purchased_${order.capstone_slug}`, '1');
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Poll /payment/status every 5 seconds when order is still pending.
     // Stops automatically once paid, or when the component unmounts.
@@ -36,7 +44,12 @@ export default function ThankYou({ order }: Props) {
 
                 if (data.status === 'paid') {
                     setLocalStatus('paid');
-                    setLocalToken(data.download_token ?? null);
+
+                    // Persist purchase to localStorage for the capstone show page
+                    if (order.capstone_slug) {
+                        localStorage.setItem(`sws_purchased_${order.capstone_slug}`, '1');
+                    }
+
                     if (intervalRef.current) clearInterval(intervalRef.current);
                 }
             } catch {
@@ -68,7 +81,7 @@ export default function ThankYou({ order }: Props) {
 
                     <p className="mb-8 text-gray-500">
                         {isPaid
-                            ? "Your payment was received. Download your source code below."
+                            ? 'Check your email for your secure download link.'
                             : 'Your order has been received and is being processed.'}
                     </p>
 
@@ -105,24 +118,18 @@ export default function ThankYou({ order }: Props) {
                         </div>
                     )}
 
-                    {/* Download section */}
-                    {isPaid && localToken ? (
-                        <div className="mb-8">
-                            <a
-                                href={`/download/${localToken}`}
-                                download
-                                rel="noopener noreferrer"
-                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
-                            >
-                                ⬇ Download Source Code
-                            </a>
-                            <p className="mt-2 text-center text-xs text-gray-400">
-                                Link expires 72 hours after payment.
+                    {/* Email confirmation / waiting indicator */}
+                    {isPaid ? (
+                        <div className="mb-8 rounded-xl border border-green-100 bg-green-50 px-5 py-4 text-left text-sm text-green-800">
+                            <p className="font-semibold">📧 Download link sent!</p>
+                            <p className="mt-1">
+                                Your secure download link has been sent to{' '}
+                                <span className="font-medium">{order?.customer_email}</span>.
+                                Please check your inbox (and spam folder).
                             </p>
-                        </div>
-                    ) : isPaid ? (
-                        <div className="mb-8 rounded-xl border border-yellow-100 bg-yellow-50 px-4 py-3 text-sm text-yellow-700">
-                            Payment confirmed — generating your download link…
+                            <p className="mt-2 text-xs text-green-600">
+                                The link expires 72 hours after payment.
+                            </p>
                         </div>
                     ) : (
                         <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
