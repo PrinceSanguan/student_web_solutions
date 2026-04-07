@@ -183,11 +183,13 @@ class CheckoutController extends Controller
             ->where('reference', $ref)
             ->first();
 
-        // Keep the session key alive until the order is paid so Inertia's
-        // re-navigation (which hits this endpoint a second time) still finds it.
-        if ($order?->isPaid()) {
-            session()->forget('pending_order_ref');
-        }
+        // Do NOT clear pending_order_ref here.
+        // Inertia makes a second request to this endpoint immediately after the
+        // first full-page load (to hydrate the SPA). That second request arrives
+        // without the ?ref= query string, so it falls back to the session.
+        // Clearing the session on the first hit would leave the second hit with
+        // ref=null and render a blank ThankYou page. The key expires naturally
+        // with the session (Laravel default: 120 minutes).
 
         Log::info('[Payment Success] Order lookup', [
             'ref'   => $ref,
