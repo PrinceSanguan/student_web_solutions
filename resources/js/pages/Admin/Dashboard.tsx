@@ -1,6 +1,6 @@
 import { Header } from '@/components/admin/header';
 import { Sidebar } from '@/components/admin/sidebar';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 
 interface User { name: string; email: string; }
 
@@ -29,6 +29,9 @@ interface Props {
     user: User;
     stats: Stats;
     allOrders: PurchaseRecord[];
+    appUrl: string;
+    urlIsLocal: boolean;
+    mailFrom: string;
 }
 
 function StatCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
@@ -41,15 +44,22 @@ function StatCard({ label, value, sub, color }: { label: string; value: string |
     );
 }
 
-export default function AdminDashboard({ user, stats, allOrders }: Props) {
+export default function AdminDashboard({ user, stats, allOrders, appUrl, urlIsLocal, mailFrom }: Props) {
     const { props } = usePage<{ flash: { success?: string; error?: string } }>();
     const flash = props.flash;
+
+    const testEmailForm = useForm({ email: '' });
 
     function resendEmail(id: number, reference: string) {
         if (! confirm(`Resend confirmation email for order ${reference}?`)) return;
         router.post(route('admin.orders.resend-email', { order: id }), {}, {
             preserveScroll: true,
         });
+    }
+
+    function sendTestEmail(e: React.FormEvent) {
+        e.preventDefault();
+        testEmailForm.post(route('admin.test-email'), { preserveScroll: true });
     }
 
     return (
@@ -67,6 +77,24 @@ export default function AdminDashboard({ user, stats, allOrders }: Props) {
                     {flash?.error && (
                         <div className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
                             {flash.error}
+                        </div>
+                    )}
+
+                    {/* APP_URL warning — emails contain broken links when this is localhost */}
+                    {urlIsLocal && (
+                        <div className="mb-4 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-800">
+                            <p className="font-semibold">⚠️ APP_URL is set to localhost</p>
+                            <p className="mt-1">
+                                Purchase confirmation emails contain{' '}
+                                <code className="rounded bg-orange-100 px-1 font-mono text-xs">{appUrl}/download/…</code>{' '}
+                                as the download link. This URL is unreachable outside this machine and will cause
+                                emails to be filtered as spam.
+                            </p>
+                            <p className="mt-1 font-medium">
+                                Fix: set <code className="rounded bg-orange-100 px-1 font-mono text-xs">APP_URL=https://yourdomain.com</code> in{' '}
+                                <code className="rounded bg-orange-100 px-1 font-mono text-xs">.env</code> and run{' '}
+                                <code className="rounded bg-orange-100 px-1 font-mono text-xs">php artisan config:clear</code>.
+                            </p>
                         </div>
                     )}
 
@@ -195,6 +223,37 @@ export default function AdminDashboard({ user, stats, allOrders }: Props) {
                                     <span className="text-lg">🌐</span>
                                     View Public Catalog
                                 </Link>
+                            </div>
+
+                            {/* Test email */}
+                            <div className="mt-5 border-t border-gray-100 pt-4">
+                                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                    Test SMTP
+                                </p>
+                                <p className="mb-3 text-xs text-gray-500">
+                                    Sends a plain email to verify your SMTP settings work end-to-end.
+                                    Current sender: <span className="font-medium">{mailFrom}</span>
+                                </p>
+                                <form onSubmit={sendTestEmail} className="flex gap-2">
+                                    <input
+                                        type="email"
+                                        value={testEmailForm.data.email}
+                                        onChange={(e) => testEmailForm.setData('email', e.target.value)}
+                                        placeholder="your@email.com"
+                                        required
+                                        className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={testEmailForm.processing}
+                                        className="rounded-lg bg-gray-800 px-3 py-2 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:opacity-50"
+                                    >
+                                        {testEmailForm.processing ? 'Sending…' : 'Send'}
+                                    </button>
+                                </form>
+                                {testEmailForm.errors.email && (
+                                    <p className="mt-1 text-xs text-red-500">{testEmailForm.errors.email}</p>
+                                )}
                             </div>
                         </div>
                     </div>
