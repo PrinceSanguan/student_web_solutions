@@ -13,7 +13,9 @@
       "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/WebhookController.php)",
       "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/CheckoutController.php)",
       "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/CapstoneController.php)",
-      "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/Admin/DashboardController.php)"
+      "Bash(php -l /d/boilerplate/StudentWebSolutions/app/Http/Controllers/Admin/DashboardController.php)",
+      "Bash(composer require:*)",
+      "Bash(composer show:*)"
     ]
   }
 }
