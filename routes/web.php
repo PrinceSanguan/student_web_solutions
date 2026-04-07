@@ -134,9 +134,11 @@ Route::post('/chessuno/webhook', [WebhookController::class, 'handle'])
 /*
 |--------------------------------------------------------------------------
 | Secure File Download — signed token, proxied server-side
-| Real origin URL never exposed to the client
+| Real origin URL never exposed to the client.
+| Note: 'web' middleware is already applied by withRouting(); only add
+| the stricter download-specific throttle here.
 |--------------------------------------------------------------------------
 */
-Route::middleware(['web', 'throttle:5,1'])
+Route::middleware('throttle:5,1')
     ->get('/download/{token}', [DownloadController::class, 'download'])
     ->name('download.file');

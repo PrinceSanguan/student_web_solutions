@@ -13,6 +13,11 @@ class DownloadController extends Controller
 {
     public function download(Request $request, string $token): StreamedResponse
     {
+        // 1. Validate token format before hitting the DB (64 alphanumeric chars only)
+        if (! preg_match('/^[a-zA-Z0-9]{64}$/', $token)) {
+            abort(404, 'Download link not found.');
+        }
+
         $order = Order::with('capstone')
             ->where('download_token', $token)
             ->first();
@@ -21,9 +26,15 @@ class DownloadController extends Controller
             abort(404, 'Download link not found.');
         }
 
+        // 2. Local database check — order must be paid
         if (! $order->isPaid()) {
             abort(403, 'Payment has not been confirmed for this order.');
         }
+
+        // 3. Remote verification — confirm payment status with Chessuno gateway
+        //    before serving the file. This ensures we cannot be tricked by a
+        //    manually-altered database record.
+        $this->verifyPaymentWithGateway($order);
 
         if ($order->isDownloadExpired()) {
             abort(410, 'This download link has expired.');
@@ -99,6 +110,65 @@ class DownloadController extends Controller
                 'Cache-Control'       => 'no-store, no-cache, must-revalidate',
             ]
         );
+    }
+
+    /**
+     * Verify payment status with the Chessuno gateway in real-time.
+     *
+     * This is a belt-and-suspenders check on top of the webhook-based flow.
+     * If the gateway reports the payment is NOT paid, we abort even if the
+     * local DB says paid (guards against tampered records).
+     *
+     * If the gateway is unreachable we log and allow the local status to stand —
+     * the webhook-verified DB record is authoritative in that case.
+     */
+    private function verifyPaymentWithGateway(Order $order): void
+    {
+        $gatewayRef = $order->gateway_reference;
+
+        if (! $gatewayRef) {
+            // No gateway reference stored — webhook may not have supplied one.
+            // Fall back to trusting the local paid status.
+            return;
+        }
+
+        try {
+            $gatewayUrl = rtrim(config('services.chessuno.gateway_url'), '/');
+            $response   = Http::withHeaders([
+                'X-API-Key'    => config('services.chessuno.api_key'),
+                'X-API-Secret' => config('services.chessuno.api_secret'),
+                'Accept'       => 'application/json',
+            ])->timeout(10)->get("{$gatewayUrl}/api/v1/payments/{$gatewayRef}");
+
+            if (! $response->successful()) {
+                // Gateway error — log and allow local status to stand.
+                Log::warning('Chessuno payment verification returned non-2xx; trusting local record', [
+                    'http_status'      => $response->status(),
+                    'order_reference'  => $order->reference,
+                    'gateway_reference' => $gatewayRef,
+                ]);
+                return;
+            }
+
+            $data          = $response->json();
+            $gatewayStatus = $data['status'] ?? $data['payment_status'] ?? null;
+
+            if ($gatewayStatus !== null && strtolower($gatewayStatus) !== 'paid') {
+                Log::warning('Chessuno reports payment NOT paid at download time', [
+                    'gateway_status'    => $gatewayStatus,
+                    'order_reference'   => $order->reference,
+                    'gateway_reference' => $gatewayRef,
+                ]);
+                abort(403, 'Payment has not been confirmed by the payment gateway.');
+            }
+
+        } catch (\Throwable $e) {
+            // Network / timeout — log and allow local status to stand.
+            Log::warning('Chessuno payment verification request failed; trusting local record', [
+                'error'            => $e->getMessage(),
+                'order_reference'  => $order->reference,
+            ]);
+        }
     }
 
     private function guessExtension(string $contentType, string $url): string

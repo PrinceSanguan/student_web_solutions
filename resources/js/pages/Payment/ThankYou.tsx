@@ -110,6 +110,8 @@ export default function ThankYou({ order }: Props) {
                         <div className="mb-8">
                             <a
                                 href={`/download/${localToken}`}
+                                download
+                                rel="noopener noreferrer"
                                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
                             >
                                 ⬇ Download Source Code
