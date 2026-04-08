@@ -18,18 +18,40 @@ interface Props {
     capstones: Capstone[];
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-    'Business System': 'bg-blue-500/10 text-blue-600 border-blue-200',
-    'School System': 'bg-purple-500/10 text-purple-600 border-purple-200',
-    'Government System': 'bg-orange-500/10 text-orange-600 border-orange-200',
-    'Healthcare': 'bg-red-500/10 text-red-600 border-red-200',
-    'Hospitality': 'bg-teal-500/10 text-teal-600 border-teal-200',
+const CATEGORY_META: Record<string, { dot: string; pill: string }> = {
+    'Business System':   { dot: '#60a5fa', pill: 'rgba(96,165,250,0.12)_/_rgba(96,165,250,0.18)_/_#3b82f6' },
+    'School System':     { dot: '#a78bfa', pill: 'rgba(167,139,250,0.12)_/_rgba(167,139,250,0.18)_/_#8b5cf6' },
+    'Government System': { dot: '#fbbf24', pill: 'rgba(251,191,36,0.12)_/_rgba(251,191,36,0.18)_/_#f59e0b' },
+    'Healthcare':        { dot: '#f87171', pill: 'rgba(248,113,113,0.12)_/_rgba(248,113,113,0.18)_/_#ef4444' },
+    'Hospitality':       { dot: '#34d399', pill: 'rgba(52,211,153,0.12)_/_rgba(52,211,153,0.18)_/_#10b981' },
+};
+
+const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
+    'Business System':   { bg: 'rgba(59,130,246,0.1)',  text: '#93c5fd', border: 'rgba(59,130,246,0.2)' },
+    'School System':     { bg: 'rgba(139,92,246,0.1)',  text: '#c4b5fd', border: 'rgba(139,92,246,0.2)' },
+    'Government System': { bg: 'rgba(245,158,11,0.1)',  text: '#fcd34d', border: 'rgba(245,158,11,0.2)' },
+    'Healthcare':        { bg: 'rgba(239,68,68,0.1)',   text: '#fca5a5', border: 'rgba(239,68,68,0.2)' },
+    'Hospitality':       { bg: 'rgba(16,185,129,0.1)',  text: '#6ee7b7', border: 'rgba(16,185,129,0.2)' },
+};
+
+const CATEGORY_DOTS: Record<string, string> = {
+    'Business System':   '#60a5fa',
+    'School System':     '#a78bfa',
+    'Government System': '#fbbf24',
+    'Healthcare':        '#f87171',
+    'Hospitality':       '#34d399',
 };
 
 const CATEGORIES = ['All', 'Business System', 'School System', 'Government System', 'Healthcare', 'Hospitality'];
 
+const PAGE_BG   = '#07091c';
+const CARD_BG   = '#0d1526';
+const BORDER    = 'rgba(255,255,255,0.06)';
+const NAV_BG    = 'rgba(7,9,28,0.88)';
+
 export default function CapstoneIndex({ capstones }: Props) {
     const [activeCategory, setActiveCategory] = useState('All');
+    const [hoveredId, setHoveredId] = useState<number | null>(null);
 
     const filtered = activeCategory === 'All'
         ? capstones
@@ -38,128 +60,187 @@ export default function CapstoneIndex({ capstones }: Props) {
     return (
         <>
             <Head title="Capstone Projects | Student Web Solutions">
-                <meta name="description" content="Browse ready-made capstone projects and web systems. Starting at ₱499." />
+                <meta name="description" content="Browse ready-made capstone projects and web systems for Filipino students. Starting at ₱499. Pay via GCash, download instantly." />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
             </Head>
 
-            <div className="min-h-screen bg-white">
-                {/* Nav */}
-                <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-sm">
+            <div className="flex min-h-screen flex-col" style={{ background: PAGE_BG, fontFamily: "'DM Sans', sans-serif" }}>
+
+                {/* ── Nav ── */}
+                <nav style={{ background: NAV_BG, backdropFilter: 'blur(16px)', borderBottom: `1px solid ${BORDER}` }}
+                    className="sticky top-0 z-50">
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-                        <Link href="/" className="flex items-center gap-2 text-sm text-gray-500 transition hover:text-gray-800">
+                        <Link href="/" className="flex items-center gap-2 text-sm transition"
+                            style={{ color: '#64748b' }}
+                            onMouseEnter={e => (e.currentTarget.style.color = '#f1f5f9')}
+                            onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}>
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                             </svg>
                             Back to Home
                         </Link>
-                        <span className="text-sm font-semibold text-gray-800">Student Web Solutions</span>
+                        <span className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif", letterSpacing: '0.01em' }}>
+                            Student Web Solutions
+                        </span>
                     </div>
                 </nav>
 
-                {/* Header */}
-                <header className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6 lg:px-8">
-                    <h1 className="mb-3 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
-                        Capstone Projects
+                {/* ── Hero ── */}
+                <header className="mx-auto w-full max-w-7xl px-4 pb-10 pt-16 sm:px-6 lg:px-8">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium"
+                        style={{ background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.18)', color: '#7dd3fc' }}>
+                        <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#38bdf8' }} />
+                        Instant download after payment
+                    </div>
+
+                    <h1 style={{ fontFamily: "'Syne', sans-serif", lineHeight: 1.05 }}
+                        className="text-5xl font-extrabold text-white sm:text-6xl lg:text-7xl">
+                        Capstone
+                        <br />
+                        <span style={{ background: 'linear-gradient(120deg, #38bdf8 0%, #818cf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            Projects
+                        </span>
                     </h1>
-                    <p className="max-w-xl text-gray-500">
-                        Ready-made, fully documented capstone systems. Pick one, pay via GCash, and download instantly.
-                        Starting at <span className="font-bold text-green-600">₱499</span>.
+
+                    <p className="mt-5 max-w-md text-base" style={{ color: '#64748b', lineHeight: 1.75 }}>
+                        Ready-made, fully documented web systems built for Filipino students.
+                        Pay via GCash, get your download link in minutes. Starting at{' '}
+                        <span className="font-semibold" style={{ color: '#34d399' }}>₱499</span>.
                     </p>
                 </header>
 
-                {/* Category filter */}
-                <div className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+                {/* ── Filter pills ── */}
+                <div className="mx-auto w-full max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
                     <div className="flex flex-wrap gap-2">
-                        {CATEGORIES.map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-all ${
-                                    activeCategory === cat
-                                        ? 'border-blue-600 bg-blue-600 text-white'
-                                        : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600'
-                                }`}
-                            >
-                                {cat}
-                            </button>
-                        ))}
+                        {CATEGORIES.map((cat) => {
+                            const active = activeCategory === cat;
+                            return (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className="rounded-full px-4 py-1.5 text-sm font-medium transition-all"
+                                    style={active ? {
+                                        background: 'linear-gradient(120deg, #38bdf8, #818cf8)',
+                                        color: '#fff',
+                                        border: '1px solid transparent',
+                                        boxShadow: '0 0 20px rgba(56,189,248,0.25)',
+                                    } : {
+                                        background: 'rgba(255,255,255,0.04)',
+                                        color: '#64748b',
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                    }}
+                                >
+                                    {cat}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
-                {/* Grid */}
-                <main className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {filtered.map((capstone) => (
-                            <Link
-                                key={capstone.id}
-                                href={`/capstone/${capstone.slug}`}
-                                className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                            >
-                                {/* Thumbnail */}
-                                <div className="aspect-video overflow-hidden bg-gray-100">
-                                    {capstone.thumbnail ? (
-                                        <img
-                                            src={capstone.thumbnail}
-                                            alt={capstone.title}
-                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                    ) : (
-                                        <div className="flex h-full w-full items-center justify-center text-4xl text-gray-300">🖥️</div>
-                                    )}
-                                </div>
+                {/* ── Grid ── */}
+                <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 sm:px-6 lg:px-8">
+                    {filtered.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-32" style={{ color: '#334155' }}>
+                            <svg className="mb-4 h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className="text-sm">No projects found in this category.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                            {filtered.map((capstone) => {
+                                const catStyle = capstone.category ? CATEGORY_STYLES[capstone.category] : null;
+                                const catDot   = capstone.category ? CATEGORY_DOTS[capstone.category] : null;
+                                const isHovered = hoveredId === capstone.id;
 
-                                {/* Card body */}
-                                <div className="flex flex-1 flex-col p-5">
-                                    {/* Category */}
-                                    {capstone.category && (
-                                        <span className={`mb-3 inline-flex w-fit rounded-full border px-2.5 py-0.5 text-xs font-medium ${CATEGORY_COLORS[capstone.category] ?? 'bg-gray-100 text-gray-600 border-gray-200'}`}>
-                                            {capstone.category}
-                                        </span>
-                                    )}
-
-                                    <h2 className="mb-2 text-base font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                        {capstone.title}
-                                    </h2>
-                                    <p className="mb-4 line-clamp-2 flex-1 text-sm text-gray-500">
-                                        {capstone.description}
-                                    </p>
-
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex flex-col gap-0.5">
-                                            <span className="text-lg font-bold text-green-600">
-                                                ₱{Number(capstone.price).toLocaleString()}
-                                            </span>
-                                            {capstone.buyers_count > 0 && (
-                                                <span className="flex items-center gap-1 text-xs text-gray-400">
-                                                    <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                return (
+                                    <Link
+                                        key={capstone.id}
+                                        href={`/capstone/${capstone.slug}`}
+                                        className="group flex flex-col overflow-hidden rounded-2xl"
+                                        style={{
+                                            background: CARD_BG,
+                                            border: isHovered ? '1px solid rgba(56,189,248,0.22)' : `1px solid ${BORDER}`,
+                                            transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                                            boxShadow: isHovered ? '0 24px 48px rgba(56,189,248,0.08), 0 4px 16px rgba(0,0,0,0.4)' : 'none',
+                                            transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                                        }}
+                                        onMouseEnter={() => setHoveredId(capstone.id)}
+                                        onMouseLeave={() => setHoveredId(null)}
+                                    >
+                                        {/* Thumbnail */}
+                                        <div className="aspect-video overflow-hidden" style={{ background: '#111a2e' }}>
+                                            {capstone.thumbnail ? (
+                                                <img
+                                                    src={capstone.thumbnail}
+                                                    alt={capstone.title}
+                                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center">
+                                                    <svg className="h-14 w-14" fill="none" stroke="currentColor" strokeWidth={0.75}
+                                                        viewBox="0 0 24 24" style={{ color: '#1e3a5f' }}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                                     </svg>
-                                                    {capstone.buyers_count} {capstone.buyers_count === 1 ? 'buyer' : 'buyers'}
-                                                </span>
+                                                </div>
                                             )}
                                         </div>
-                                        <span className="flex items-center gap-1 text-xs font-medium text-blue-600 group-hover:gap-2 transition-all">
-                                            View Details
-                                            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </span>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
 
-                    {filtered.length === 0 && (
-                        <div className="py-20 text-center text-gray-400">
-                            No projects found in this category.
+                                        {/* Body */}
+                                        <div className="flex flex-1 flex-col p-5">
+                                            {capstone.category && catStyle && (
+                                                <span className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                                    style={{ background: catStyle.bg, color: catStyle.text, border: `1px solid ${catStyle.border}` }}>
+                                                    <span className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+                                                        style={{ background: catDot ?? '#64748b' }} />
+                                                    {capstone.category}
+                                                </span>
+                                            )}
+
+                                            <h2 className="mb-2 text-base font-bold leading-snug text-white"
+                                                style={{ fontFamily: "'Syne', sans-serif" }}>
+                                                {capstone.title}
+                                            </h2>
+
+                                            <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed"
+                                                style={{ color: '#475569' }}>
+                                                {capstone.description}
+                                            </p>
+
+                                            <div className="flex items-end justify-between">
+                                                <div>
+                                                    <span className="text-xl font-bold" style={{ color: '#34d399', fontFamily: "'Syne', sans-serif" }}>
+                                                        ₱{Number(capstone.price).toLocaleString()}
+                                                    </span>
+                                                    {capstone.buyers_count > 0 && (
+                                                        <p className="mt-0.5 text-xs" style={{ color: '#334155' }}>
+                                                            {capstone.buyers_count} {capstone.buyers_count === 1 ? 'buyer' : 'buyers'}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <span className="flex items-center gap-1 text-xs font-medium transition-all"
+                                                    style={{ color: isHovered ? '#38bdf8' : '#334155', gap: isHovered ? '6px' : '4px' }}>
+                                                    View
+                                                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
                         </div>
                     )}
                 </main>
 
-                {/* Footer strip */}
-                <div className="border-t border-gray-100 bg-gray-50 py-6 text-center text-sm text-gray-400">
+                {/* ── Footer ── */}
+                <footer className="py-7 text-center text-sm" style={{ borderTop: `1px solid ${BORDER}`, background: '#060818', color: '#1e293b' }}>
                     © {new Date().getFullYear()} Student Web Solutions. All rights reserved.
-                </div>
+                </footer>
             </div>
         </>
     );

@@ -95,8 +95,6 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
     */
   Route::middleware([AdminMiddleware::class])->group(function () {
     Route::get('admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-    Route::post('admin/orders/{order}/resend-email', [DashboardController::class, 'resendEmail'])->name('admin.orders.resend-email');
-    Route::post('admin/test-email', [DashboardController::class, 'testEmail'])->name('admin.test-email');
     Route::get('admin/settings', [SettingsController::class, 'index'])->name('admin.settings');
     Route::put('admin/settings/profile', [SettingsController::class, 'updateProfile'])->name('admin.settings.updateProfile');
     Route::put('admin/settings/password', [SettingsController::class, 'updatePassword'])->name('admin.settings.updatePassword');

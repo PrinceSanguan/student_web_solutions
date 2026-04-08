@@ -1,6 +1,6 @@
 import { Header } from '@/components/admin/header';
 import { Sidebar } from '@/components/admin/sidebar';
-import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 interface User { name: string; email: string; }
 
@@ -30,8 +30,6 @@ interface Props {
     stats: Stats;
     allOrders: PurchaseRecord[];
     appUrl: string;
-    urlIsLocal: boolean;
-    mailFrom: string;
 }
 
 function StatCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
@@ -44,23 +42,11 @@ function StatCard({ label, value, sub, color }: { label: string; value: string |
     );
 }
 
-export default function AdminDashboard({ user, stats, allOrders, appUrl, urlIsLocal, mailFrom }: Props) {
+export default function AdminDashboard({ user, stats, allOrders, appUrl }: Props) {
     const { props } = usePage<{ flash: { success?: string; error?: string } }>();
     const flash = props.flash;
 
-    const testEmailForm = useForm({ email: '' });
-
-    function resendEmail(id: number, reference: string) {
-        if (! confirm(`Resend confirmation email for order ${reference}?`)) return;
-        router.post(route('admin.orders.resend-email', { order: id }), {}, {
-            preserveScroll: true,
-        });
-    }
-
-    function sendTestEmail(e: React.FormEvent) {
-        e.preventDefault();
-        testEmailForm.post(route('admin.test-email'), { preserveScroll: true });
-    }
+    const urlIsLocal = appUrl.includes('localhost') || appUrl.includes('127.0.0.1');
 
     return (
         <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -80,20 +66,15 @@ export default function AdminDashboard({ user, stats, allOrders, appUrl, urlIsLo
                         </div>
                     )}
 
-                    {/* APP_URL warning — emails contain broken links when this is localhost */}
                     {urlIsLocal && (
                         <div className="mb-4 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-800">
                             <p className="font-semibold">⚠️ APP_URL is set to localhost</p>
                             <p className="mt-1">
                                 Purchase confirmation emails contain{' '}
                                 <code className="rounded bg-orange-100 px-1 font-mono text-xs">{appUrl}/download/…</code>{' '}
-                                as the download link. This URL is unreachable outside this machine and will cause
-                                emails to be filtered as spam.
-                            </p>
-                            <p className="mt-1 font-medium">
-                                Fix: set <code className="rounded bg-orange-100 px-1 font-mono text-xs">APP_URL=https://yourdomain.com</code> in{' '}
-                                <code className="rounded bg-orange-100 px-1 font-mono text-xs">.env</code> and run{' '}
-                                <code className="rounded bg-orange-100 px-1 font-mono text-xs">php artisan config:clear</code>.
+                                as the download link. Update{' '}
+                                <code className="rounded bg-orange-100 px-1 font-mono text-xs">APP_URL</code> in{' '}
+                                <code className="rounded bg-orange-100 px-1 font-mono text-xs">.env</code> to your real domain.
                             </p>
                         </div>
                     )}
@@ -129,8 +110,8 @@ export default function AdminDashboard({ user, stats, allOrders, appUrl, urlIsLo
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        {/* Purchase analytics table — spans both columns */}
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        {/* Purchase table — spans 2 cols */}
                         <div className="col-span-1 overflow-x-auto rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="font-semibold text-gray-800">All Purchases</h2>
@@ -143,10 +124,10 @@ export default function AdminDashboard({ user, stats, allOrders, appUrl, urlIsLo
                                     <thead>
                                         <tr className="border-b border-gray-100 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">
                                             <th className="pb-3 pr-4">Reference</th>
-                                            <th className="pb-3 pr-4">Customer Email</th>
+                                            <th className="pb-3 pr-4">Customer</th>
                                             <th className="pb-3 pr-4">Project</th>
                                             <th className="pb-3 pr-4 text-right">Amount</th>
-                                            <th className="pb-3 pr-4">Date &amp; Time</th>
+                                            <th className="pb-3 pr-4">Date</th>
                                             <th className="pb-3 text-center">Email</th>
                                         </tr>
                                     </thead>
@@ -154,40 +135,32 @@ export default function AdminDashboard({ user, stats, allOrders, appUrl, urlIsLo
                                         {allOrders.map((o) => (
                                             <tr key={o.reference} className="border-b border-gray-50 hover:bg-gray-50">
                                                 <td className="py-3 pr-4 font-mono text-xs text-gray-600">{o.reference}</td>
-                                                <td className="py-3 pr-4 text-gray-700">{o.customer_email}</td>
+                                                <td className="py-3 pr-4">
+                                                    <p className="text-gray-700">{o.customer_name}</p>
+                                                    <p className="text-xs text-gray-400">{o.customer_email}</p>
+                                                </td>
                                                 <td className="py-3 pr-4 text-gray-700">{o.capstone_title ?? '—'}</td>
                                                 <td className="py-3 pr-4 text-right font-semibold text-green-600">
                                                     ₱{Number(o.amount).toLocaleString()}
                                                 </td>
                                                 <td className="py-3 pr-4 text-xs text-gray-500">
                                                     {new Date(o.paid_at).toLocaleString('en-PH', {
-                                                        year: 'numeric',
                                                         month: 'short',
                                                         day: 'numeric',
+                                                        year: 'numeric',
                                                         hour: '2-digit',
                                                         minute: '2-digit',
                                                     })}
                                                 </td>
                                                 <td className="py-3 text-center">
                                                     {o.email_sent_at ? (
-                                                        <div className="flex flex-col items-center gap-0.5">
-                                                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                                                                ✓ Sent
-                                                            </span>
-                                                            <button
-                                                                onClick={() => resendEmail(o.id, o.reference)}
-                                                                className="text-xs text-gray-400 hover:text-blue-600 hover:underline"
-                                                            >
-                                                                Resend
-                                                            </button>
-                                                        </div>
+                                                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                                                            ✓ Sent
+                                                        </span>
                                                     ) : (
-                                                        <button
-                                                            onClick={() => resendEmail(o.id, o.reference)}
-                                                            className="rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700 transition hover:bg-orange-100"
-                                                        >
-                                                            Send Now
-                                                        </button>
+                                                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                                                            Pending
+                                                        </span>
                                                     )}
                                                 </td>
                                             </tr>
@@ -223,37 +196,6 @@ export default function AdminDashboard({ user, stats, allOrders, appUrl, urlIsLo
                                     <span className="text-lg">🌐</span>
                                     View Public Catalog
                                 </Link>
-                            </div>
-
-                            {/* Test email */}
-                            <div className="mt-5 border-t border-gray-100 pt-4">
-                                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                    Test SMTP
-                                </p>
-                                <p className="mb-3 text-xs text-gray-500">
-                                    Sends a plain email to verify your SMTP settings work end-to-end.
-                                    Current sender: <span className="font-medium">{mailFrom}</span>
-                                </p>
-                                <form onSubmit={sendTestEmail} className="flex gap-2">
-                                    <input
-                                        type="email"
-                                        value={testEmailForm.data.email}
-                                        onChange={(e) => testEmailForm.setData('email', e.target.value)}
-                                        placeholder="your@email.com"
-                                        required
-                                        className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                                    />
-                                    <button
-                                        type="submit"
-                                        disabled={testEmailForm.processing}
-                                        className="rounded-lg bg-gray-800 px-3 py-2 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:opacity-50"
-                                    >
-                                        {testEmailForm.processing ? 'Sending…' : 'Send'}
-                                    </button>
-                                </form>
-                                {testEmailForm.errors.email && (
-                                    <p className="mt-1 text-xs text-red-500">{testEmailForm.errors.email}</p>
-                                )}
                             </div>
                         </div>
                     </div>

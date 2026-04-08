@@ -9,7 +9,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, FolderOpen, LayoutDashboard, Settings } from 'lucide-react';
+import { ChevronDown, FolderOpen, LayoutDashboard } from 'lucide-react';
 
 interface User {
     name: string;
@@ -48,15 +48,6 @@ export function Sidebar({ user }: { user: User }) {
                         </Button>
                     </Link>
 
-                    <Link href={route('admin.settings')} className="w-full">
-                        <Button
-                            variant={isActive('/admin/settings') ? 'secondary' : 'ghost'}
-                            className="flex w-full items-center justify-start gap-3 rounded-md px-3 py-2"
-                        >
-                            <Settings size={18} />
-                            Settings
-                        </Button>
-                    </Link>
                 </nav>
             </div>
 
