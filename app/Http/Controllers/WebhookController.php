@@ -142,45 +142,49 @@ class WebhookController extends Controller
     }
 
     /**
-     * Send the purchase confirmation email for a paid order.
+     * Send the purchase confirmation email for a paid order synchronously.
      *
-     * Shared by WebhookController (webhook-triggered) and CheckoutController::status()
-     * (polling fallback for localhost/dev where the webhook URL is unreachable).
-     *
+     * Returns true on successful SMTP delivery, false on failure.
      * Marks order.email_sent_at on success. Idempotent — callers should check
      * email_sent_at is null before calling.
+     *
+     * NOTE: PurchaseConfirmationMail intentionally does NOT implement ShouldQueue.
+     * If it did, Mail::send() would silently push to queue and log "success" even
+     * when the queue worker is down — masking real delivery failures.
      */
-    public static function dispatchConfirmationEmail(Order $order): void
+    public static function dispatchConfirmationEmail(Order $order): bool
     {
         $appUrl        = config('app.url');
         $downloadLink  = $order->download_token ? $appUrl . '/download/' . $order->download_token : null;
 
         // Critical: APP_URL must be the public-facing domain, not localhost.
-        // If it is localhost the download link in the email will be unreachable
-        // by the buyer and will also trigger spam filters.
         if (str_contains($appUrl, 'localhost') || str_contains($appUrl, '127.0.0.1')) {
-            Log::warning('[Email] APP_URL is localhost — download link in email will NOT work for external recipients! Update APP_URL in .env to your real domain.', [
+            Log::warning('[Email] APP_URL is localhost — download link in email will NOT work for external recipients!', [
                 'app_url'       => $appUrl,
                 'download_link' => $downloadLink,
             ]);
         }
 
-        Log::info('[Email] Attempting to send purchase confirmation', [
-            'reference'     => $order->reference,
-            'to'            => $order->customer_email,
-            'capstone'      => $order->capstone?->title,
-            'download_link' => $downloadLink,   // exact URL that will be in the email
-            'mail_mailer'   => config('mail.default'),
-            'mail_host'     => config('mail.mailers.smtp.host'),
-            'mail_from'     => config('mail.from.address'),
-        ]);
-
         if (! $order->download_token) {
             Log::error('[Email] Skipping — order has no download_token yet', [
                 'reference' => $order->reference,
             ]);
-            return;
+            return false;
         }
+
+        Log::info('[Email] Attempting SMTP send (synchronous — errors will appear below if SMTP fails)', [
+            'reference'     => $order->reference,
+            'to'            => $order->customer_email,
+            'capstone'      => $order->capstone?->title,
+            'download_link' => $downloadLink,
+            'mail_mailer'   => config('mail.default'),
+            'mail_host'     => config('mail.mailers.smtp.host'),
+            'mail_port'     => config('mail.mailers.smtp.port'),
+            'mail_scheme'   => config('mail.mailers.smtp.scheme') ?? 'tls',
+            'mail_username' => config('mail.mailers.smtp.username'),
+            'mail_from'     => config('mail.from.address'),
+            'smtp_timeout'  => config('mail.mailers.smtp.timeout'),
+        ]);
 
         try {
             Mail::to($order->customer_email)->send(
@@ -196,26 +200,30 @@ class WebhookController extends Controller
                 )
             );
 
-            // Mark as sent — prevents duplicate sends via the polling fallback
             $order->update(['email_sent_at' => now()]);
 
-            Log::info('[Email] Purchase confirmation sent successfully', [
+            Log::info('[Email] Purchase confirmation delivered via SMTP', [
                 'reference' => $order->reference,
                 'to'        => $order->customer_email,
             ]);
 
+            return true;
+
         } catch (\Throwable $e) {
-            Log::error('[Email] FAILED to send purchase confirmation', [
-                'reference'  => $order->reference,
-                'to'         => $order->customer_email,
-                'error'      => $e->getMessage(),
-                'class'      => get_class($e),
-                'file'       => $e->getFile() . ':' . $e->getLine(),
-                // Full trace for deep debugging:
-                'trace'      => collect($e->getTrace())->take(6)->map(
+            Log::error('[Email] SMTP FAILED — purchase confirmation NOT sent', [
+                'reference'     => $order->reference,
+                'to'            => $order->customer_email,
+                'error'         => $e->getMessage(),
+                'error_class'   => get_class($e),
+                'file'          => $e->getFile() . ':' . $e->getLine(),
+                // Common causes: blocked port 587/465, wrong app password, Gmail 2FA required
+                'diagnose_hint' => 'Run on server: nc -zv smtp.gmail.com 587 — if it hangs, port 587 is blocked by your host. Try MAIL_PORT=465 with MAIL_SCHEME=ssl.',
+                'trace'         => collect($e->getTrace())->take(6)->map(
                     fn($f) => ($f['file'] ?? '?') . ':' . ($f['line'] ?? '?') . ' ' . ($f['class'] ?? '') . ($f['type'] ?? '') . ($f['function'] ?? '')
                 )->toArray(),
             ]);
+
+            return false;
         }
     }
 }

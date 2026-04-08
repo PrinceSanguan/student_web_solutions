@@ -2,16 +2,16 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 
-class PurchaseConfirmationMail extends Mailable implements ShouldQueue
+// NOTE: ShouldQueue intentionally removed. When a Mailable implements ShouldQueue,
+// Laravel queues it even on Mail::send() — so "sent successfully" was only logging
+// "pushed to queue", not actual SMTP delivery. Synchronous sending makes SMTP errors
+// immediately visible in logs and in the catch block.
+class PurchaseConfirmationMail extends Mailable
 {
-    use Queueable, SerializesModels;
 
     public function __construct(
         public readonly string $customerName,

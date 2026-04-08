@@ -69,10 +69,15 @@ class DashboardController extends Controller
         $appUrl  = config('app.url');
         $from    = config('mail.from.address');
 
-        Log::info('[TestEmail] Admin triggered test email', [
-            'to'      => $to,
-            'from'    => $from,
-            'app_url' => $appUrl,
+        Log::info('[TestEmail] Admin triggered test email (synchronous SMTP — will fail fast with 15s timeout)', [
+            'to'          => $to,
+            'from'        => $from,
+            'app_url'     => $appUrl,
+            'mail_host'   => config('mail.mailers.smtp.host'),
+            'mail_port'   => config('mail.mailers.smtp.port'),
+            'mail_scheme' => config('mail.mailers.smtp.scheme') ?? 'tls',
+            'mail_user'   => config('mail.mailers.smtp.username'),
+            'smtp_timeout' => config('mail.mailers.smtp.timeout'),
         ]);
 
         try {
@@ -89,14 +94,16 @@ class DashboardController extends Controller
                 }
             );
 
-            Log::info('[TestEmail] Test email sent successfully', ['to' => $to]);
-            return back()->with('success', "Test email sent to {$to}. Check your inbox (and spam folder).");
+            Log::info('[TestEmail] Test email delivered via SMTP successfully', ['to' => $to]);
+            return back()->with('success', "Test email delivered to {$to}. Check your inbox (and spam folder).");
 
         } catch (\Throwable $e) {
-            Log::error('[TestEmail] FAILED', [
-                'to'    => $to,
-                'error' => $e->getMessage(),
-                'class' => get_class($e),
+            Log::error('[TestEmail] SMTP FAILED', [
+                'to'            => $to,
+                'error'         => $e->getMessage(),
+                'error_class'   => get_class($e),
+                'file'          => $e->getFile() . ':' . $e->getLine(),
+                'diagnose_hint' => 'If error says "Connection timed out" or "Connection refused": port 587 is likely blocked by your hosting provider. Try MAIL_PORT=465 with MAIL_SCHEME=ssl in .env. If error says "authentication failed": your Gmail app password is wrong.',
             ]);
             return back()->with('error', "SMTP error: {$e->getMessage()}");
         }
@@ -114,8 +121,12 @@ class DashboardController extends Controller
         $order->update(['email_sent_at' => null]);
         $order->load('capstone');
 
-        WebhookController::dispatchConfirmationEmail($order);
+        $sent = WebhookController::dispatchConfirmationEmail($order);
 
-        return back()->with('success', "Confirmation email resent to {$order->customer_email}.");
+        if ($sent) {
+            return back()->with('success', "Confirmation email delivered to {$order->customer_email}.");
+        }
+
+        return back()->with('error', "SMTP failed — email was NOT delivered to {$order->customer_email}. Check Laravel logs for the exact error. Common causes: port 587 blocked by host, wrong Gmail app password, or Gmail 2FA not set up.");
     }
 }
