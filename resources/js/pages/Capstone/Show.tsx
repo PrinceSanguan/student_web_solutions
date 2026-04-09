@@ -20,11 +20,11 @@ interface Props {
 }
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-    'Business System':   { bg: 'rgba(59,130,246,0.1)',  text: '#93c5fd', border: 'rgba(59,130,246,0.2)',  dot: '#60a5fa' },
-    'School System':     { bg: 'rgba(139,92,246,0.1)',  text: '#c4b5fd', border: 'rgba(139,92,246,0.2)',  dot: '#a78bfa' },
-    'Government System': { bg: 'rgba(245,158,11,0.1)',  text: '#fcd34d', border: 'rgba(245,158,11,0.2)',  dot: '#fbbf24' },
-    'Healthcare':        { bg: 'rgba(239,68,68,0.1)',   text: '#fca5a5', border: 'rgba(239,68,68,0.2)',   dot: '#f87171' },
-    'Hospitality':       { bg: 'rgba(16,185,129,0.1)',  text: '#6ee7b7', border: 'rgba(16,185,129,0.2)',  dot: '#34d399' },
+    'Business System':   { bg: 'rgba(59,130,246,0.08)',  text: '#1d4ed8', border: 'rgba(59,130,246,0.25)',  dot: '#3b82f6' },
+    'School System':     { bg: 'rgba(139,92,246,0.08)',  text: '#6d28d9', border: 'rgba(139,92,246,0.25)',  dot: '#8b5cf6' },
+    'Government System': { bg: 'rgba(245,158,11,0.08)',  text: '#92400e', border: 'rgba(245,158,11,0.25)',  dot: '#d97706' },
+    'Healthcare':        { bg: 'rgba(239,68,68,0.08)',   text: '#b91c1c', border: 'rgba(239,68,68,0.25)',   dot: '#ef4444' },
+    'Hospitality':       { bg: 'rgba(16,185,129,0.08)',  text: '#065f46', border: 'rgba(16,185,129,0.25)',  dot: '#10b981' },
 };
 
 const INCLUDED = [
@@ -87,12 +87,12 @@ export default function CapstoneShow({ capstone }: Props) {
             <div className="flex min-h-screen flex-col" style={{ background: PAGE_BG, fontFamily: "'DM Sans', sans-serif" }}>
 
                 {/* ── Nav ── */}
-                <nav style={{ background: NAV_BG, backdropFilter: 'blur(16px)', borderBottom: `1px solid ${BORDER}` }}
+                <nav style={{ background: NAV_BG, backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(0,0,0,0.08)' }}
                     className="sticky top-0 z-50">
                     <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                         <Link href="/capstone" className="flex items-center gap-2 text-sm transition"
                             style={{ color: '#64748b' }}
-                            onMouseEnter={e => (e.currentTarget.style.color = '#f1f5f9')}
+                            onMouseEnter={e => (e.currentTarget.style.color = '#0f172a')}
                             onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}>
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
@@ -164,8 +164,8 @@ export default function CapstoneShow({ capstone }: Props) {
                             )}
 
                             {/* Title */}
-                            <h1 className="mb-4 font-extrabold text-white"
-                                style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', lineHeight: 1.1 }}>
+                            <h1 className="mb-4 font-extrabold"
+                                style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', lineHeight: 1.1, color: '#0f172a' }}>
                                 {capstone.title}
                             </h1>
 
@@ -183,7 +183,7 @@ export default function CapstoneShow({ capstone }: Props) {
                                     <div className="flex flex-wrap gap-2">
                                         {capstone.technologies.map((tech) => (
                                             <span key={tech} className="rounded-full px-3 py-1 text-xs font-medium"
-                                                style={{ background: 'rgba(56,189,248,0.08)', color: '#7dd3fc', border: '1px solid rgba(56,189,248,0.15)' }}>
+                                                style={{ background: 'rgba(14,165,233,0.08)', color: '#0369a1', border: '1px solid rgba(14,165,233,0.2)' }}>
                                                 {tech}
                                             </span>
                                         ))}

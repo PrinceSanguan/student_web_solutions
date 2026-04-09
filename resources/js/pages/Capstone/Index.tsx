@@ -27,11 +27,11 @@ const CATEGORY_META: Record<string, { dot: string; pill: string }> = {
 };
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-    'Business System':   { bg: 'rgba(59,130,246,0.1)',  text: '#93c5fd', border: 'rgba(59,130,246,0.2)' },
-    'School System':     { bg: 'rgba(139,92,246,0.1)',  text: '#c4b5fd', border: 'rgba(139,92,246,0.2)' },
-    'Government System': { bg: 'rgba(245,158,11,0.1)',  text: '#fcd34d', border: 'rgba(245,158,11,0.2)' },
-    'Healthcare':        { bg: 'rgba(239,68,68,0.1)',   text: '#fca5a5', border: 'rgba(239,68,68,0.2)' },
-    'Hospitality':       { bg: 'rgba(16,185,129,0.1)',  text: '#6ee7b7', border: 'rgba(16,185,129,0.2)' },
+    'Business System':   { bg: 'rgba(59,130,246,0.08)',  text: '#1d4ed8', border: 'rgba(59,130,246,0.25)' },
+    'School System':     { bg: 'rgba(139,92,246,0.08)',  text: '#6d28d9', border: 'rgba(139,92,246,0.25)' },
+    'Government System': { bg: 'rgba(245,158,11,0.08)',  text: '#92400e', border: 'rgba(245,158,11,0.25)' },
+    'Healthcare':        { bg: 'rgba(239,68,68,0.08)',   text: '#b91c1c', border: 'rgba(239,68,68,0.25)' },
+    'Hospitality':       { bg: 'rgba(16,185,129,0.08)',  text: '#065f46', border: 'rgba(16,185,129,0.25)' },
 };
 
 const CATEGORY_DOTS: Record<string, string> = {
@@ -44,10 +44,10 @@ const CATEGORY_DOTS: Record<string, string> = {
 
 const CATEGORIES = ['All', 'Business System', 'School System', 'Government System', 'Healthcare', 'Hospitality'];
 
-const PAGE_BG   = '#07091c';
+const PAGE_BG   = '#ffffff';
 const CARD_BG   = '#0d1526';
-const BORDER    = 'rgba(255,255,255,0.06)';
-const NAV_BG    = 'rgba(7,9,28,0.88)';
+const BORDER    = 'rgba(0,0,0,0.08)';
+const NAV_BG    = 'rgba(255,255,255,0.95)';
 
 export default function CapstoneIndex({ capstones }: Props) {
     const [activeCategory, setActiveCategory] = useState('All');
@@ -74,14 +74,14 @@ export default function CapstoneIndex({ capstones }: Props) {
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                         <Link href="/" className="flex items-center gap-2 text-sm transition"
                             style={{ color: '#64748b' }}
-                            onMouseEnter={e => (e.currentTarget.style.color = '#f1f5f9')}
+                            onMouseEnter={e => (e.currentTarget.style.color = '#0f172a')}
                             onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}>
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                             </svg>
                             Back to Home
                         </Link>
-                        <span className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif", letterSpacing: '0.01em' }}>
+                        <span className="text-sm font-semibold" style={{ fontFamily: "'Syne', sans-serif", letterSpacing: '0.01em', color: '#0f172a' }}>
                             Student Web Solutions
                         </span>
                     </div>
@@ -90,13 +90,13 @@ export default function CapstoneIndex({ capstones }: Props) {
                 {/* ── Hero ── */}
                 <header className="mx-auto w-full max-w-7xl px-4 pb-10 pt-16 sm:px-6 lg:px-8">
                     <div className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium"
-                        style={{ background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.18)', color: '#7dd3fc' }}>
+                        style={{ background: 'rgba(14,165,233,0.08)', border: '1px solid rgba(14,165,233,0.2)', color: '#0369a1' }}>
                         <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#38bdf8' }} />
                         Instant download after payment
                     </div>
 
-                    <h1 style={{ fontFamily: "'Syne', sans-serif", lineHeight: 1.05 }}
-                        className="text-5xl font-extrabold text-white sm:text-6xl lg:text-7xl">
+                    <h1 style={{ fontFamily: "'Syne', sans-serif", lineHeight: 1.05, color: '#0f172a' }}
+                        className="text-5xl font-extrabold sm:text-6xl lg:text-7xl">
                         Capstone
                         <br />
                         <span style={{ background: 'linear-gradient(120deg, #38bdf8 0%, #818cf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -127,9 +127,9 @@ export default function CapstoneIndex({ capstones }: Props) {
                                         border: '1px solid transparent',
                                         boxShadow: '0 0 20px rgba(56,189,248,0.25)',
                                     } : {
-                                        background: 'rgba(255,255,255,0.04)',
-                                        color: '#64748b',
-                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        background: 'rgba(0,0,0,0.04)',
+                                        color: '#475569',
+                                        border: '1px solid rgba(0,0,0,0.1)',
                                     }}
                                 >
                                     {cat}
@@ -142,7 +142,7 @@ export default function CapstoneIndex({ capstones }: Props) {
                 {/* ── Grid ── */}
                 <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 sm:px-6 lg:px-8">
                     {filtered.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-32" style={{ color: '#334155' }}>
+                        <div className="flex flex-col items-center justify-center py-32" style={{ color: '#94a3b8' }}>
                             <svg className="mb-4 h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -206,7 +206,7 @@ export default function CapstoneIndex({ capstones }: Props) {
                                             </h2>
 
                                             <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed"
-                                                style={{ color: '#475569' }}>
+                                                style={{ color: '#94a3b8' }}>
                                                 {capstone.description}
                                             </p>
 
@@ -216,13 +216,13 @@ export default function CapstoneIndex({ capstones }: Props) {
                                                         ₱{Number(capstone.price).toLocaleString()}
                                                     </span>
                                                     {capstone.buyers_count > 0 && (
-                                                        <p className="mt-0.5 text-xs" style={{ color: '#334155' }}>
+                                                        <p className="mt-0.5 text-xs" style={{ color: '#64748b' }}>
                                                             {capstone.buyers_count} {capstone.buyers_count === 1 ? 'buyer' : 'buyers'}
                                                         </p>
                                                     )}
                                                 </div>
                                                 <span className="flex items-center gap-1 text-xs font-medium transition-all"
-                                                    style={{ color: isHovered ? '#38bdf8' : '#334155', gap: isHovered ? '6px' : '4px' }}>
+                                                    style={{ color: isHovered ? '#38bdf8' : '#64748b', gap: isHovered ? '6px' : '4px' }}>
                                                     View
                                                     <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -238,7 +238,7 @@ export default function CapstoneIndex({ capstones }: Props) {
                 </main>
 
                 {/* ── Footer ── */}
-                <footer className="py-7 text-center text-sm" style={{ borderTop: `1px solid ${BORDER}`, background: '#060818', color: '#1e293b' }}>
+                <footer className="py-7 text-center text-sm" style={{ borderTop: `1px solid ${BORDER}`, background: '#ffffff', color: '#64748b' }}>
                     © {new Date().getFullYear()} Student Web Solutions. All rights reserved.
                 </footer>
             </div>
