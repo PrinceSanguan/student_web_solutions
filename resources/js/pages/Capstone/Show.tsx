@@ -236,7 +236,8 @@ export default function CapstoneShow({ capstone }: Props) {
                                         </p>
                                         <p className="mt-2 text-xs" style={{ color: '#334155' }}>
                                             Didn't receive it?{' '}
-                                            <a href="mailto:princesanguan44@gmail.com"
+                                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=princesanguan44@gmail.com"
+                                                target="_blank" rel="noreferrer"
                                                 className="underline" style={{ color: '#64748b' }}>
                                                 Contact support
                                             </a>.
