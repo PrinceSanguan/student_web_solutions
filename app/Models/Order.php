@@ -48,8 +48,6 @@ class Order extends Model
 
     public static function generateReference(): string
     {
-        $date = now()->format('Ymd');
-        $count = self::whereDate('created_at', today())->count() + 1;
-        return sprintf('SWS-%s-%04d', $date, $count);
+        return 'SWS-' . now()->format('Ymd') . '-' . \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(12));
     }
 }

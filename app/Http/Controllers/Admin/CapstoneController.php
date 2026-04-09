@@ -59,14 +59,11 @@ class CapstoneController extends Controller
             'technologies'  => ['nullable', 'string'],   // comma-separated
             'demo_url'      => ['nullable', 'url', 'max:500'],
             'download_url'  => ['nullable', 'url', 'max:1000'],
-            'thumbnail'     => ['nullable', 'image', 'max:2048'],  // max 2 MB
+            'thumbnail'     => ['nullable', 'url', 'max:1000'],
             'download_file' => ['nullable', 'file', 'mimes:zip,pdf,rar,tar,gz', 'max:102400'], // max 100 MB
         ]);
 
-        $thumbnailPath = null;
-        if ($request->hasFile('thumbnail')) {
-            $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-        }
+        $thumbnailPath = $data['thumbnail'] ?? null;
 
         $downloadFilename = null;
         if ($request->hasFile('download_file')) {
@@ -90,7 +87,7 @@ class CapstoneController extends Controller
             'demo_url'      => $data['demo_url'] ?? null,
             'download_url'  => $downloadFilename ? null : ($data['download_url'] ?? null),
             'download_file' => $downloadFilename,
-            'thumbnail'     => $thumbnailPath ? asset('storage/' . $thumbnailPath) : null,
+            'thumbnail'     => $thumbnailPath,
             'is_available'  => true,
         ]);
 
@@ -131,15 +128,12 @@ class CapstoneController extends Controller
             'technologies'  => ['nullable', 'string'],
             'demo_url'      => ['nullable', 'url', 'max:500'],
             'download_url'  => ['nullable', 'url', 'max:1000'],
-            'thumbnail'     => ['nullable', 'image', 'max:2048'],
+            'thumbnail'     => ['nullable', 'url', 'max:1000'],
             'download_file' => ['nullable', 'file', 'mimes:zip,pdf,rar,tar,gz', 'max:102400'],
             'is_available'  => ['boolean'],
         ]);
 
-        $thumbnailPath = $capstone->thumbnail;
-        if ($request->hasFile('thumbnail')) {
-            $thumbnailPath = asset('storage/' . $request->file('thumbnail')->store('thumbnails', 'public'));
-        }
+        $thumbnailPath = ! empty($data['thumbnail']) ? $data['thumbnail'] : $capstone->thumbnail;
 
         $downloadFilename = $capstone->download_file;
         $downloadUrl      = $capstone->download_url;

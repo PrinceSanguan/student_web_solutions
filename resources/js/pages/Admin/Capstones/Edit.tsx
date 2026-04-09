@@ -1,7 +1,7 @@
 import { Header } from '@/components/admin/header';
 import { Sidebar } from '@/components/admin/sidebar';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 interface User { name: string; email: string; }
 interface PageProps { auth: { user: User }; flash?: { success?: string }; [key: string]: unknown; }
@@ -25,7 +25,6 @@ interface CapstoneData {
 
 export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
     const { auth, flash } = usePage<PageProps>().props;
-    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(capstone.thumbnail);
     const [downloadMode, setDownloadMode] = useState<'url' | 'file'>(capstone.download_file ? 'file' : 'url');
 
     const { data, setData, post, processing, errors } = useForm<{
@@ -38,7 +37,7 @@ export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
         demo_url: string;
         download_url: string;
         is_available: boolean;
-        thumbnail: File | null;
+        thumbnail: string;
         download_file: File | null;
         _method: string;
     }>({
@@ -51,7 +50,7 @@ export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
         demo_url: capstone.demo_url ?? '',
         download_url: capstone.download_url ?? '',
         is_available: capstone.is_available,
-        thumbnail: null,
+        thumbnail: capstone.thumbnail ?? '',
         download_file: null,
         _method: 'PUT',
     });
@@ -62,12 +61,6 @@ export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
             title: value,
             slug: value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
         }));
-    }
-
-    function handleThumbnailChange(e: ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0] ?? null;
-        setData('thumbnail', file);
-        if (file) setThumbnailPreview(URL.createObjectURL(file));
     }
 
     function handleSubmit(e: FormEvent) {
@@ -247,20 +240,21 @@ export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
                                 <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
                                     <h2 className="font-semibold text-gray-800">Thumbnail</h2>
 
-                                    {thumbnailPreview ? (
-                                        <img src={thumbnailPreview} alt="Preview" className="aspect-video w-full rounded-xl object-cover" />
+                                    {data.thumbnail ? (
+                                        <img src={data.thumbnail} alt="Preview" className="aspect-video w-full rounded-xl object-cover" />
                                     ) : (
                                         <div className="flex aspect-video w-full items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 text-4xl text-gray-200">
                                             🖥️
                                         </div>
                                     )}
 
-                                    <Field label="" error={errors.thumbnail} hint="Leave blank to keep current image">
+                                    <Field label="Thumbnail URL" error={errors.thumbnail} hint="Direct image link — leave blank to keep current">
                                         <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleThumbnailChange}
-                                            className="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-blue-600 hover:file:bg-blue-100"
+                                            type="url"
+                                            value={data.thumbnail}
+                                            onChange={(e) => setData('thumbnail', e.target.value)}
+                                            placeholder="https://example.com/image.jpg"
+                                            className={inputCls(errors.thumbnail)}
                                         />
                                     </Field>
                                 </div>

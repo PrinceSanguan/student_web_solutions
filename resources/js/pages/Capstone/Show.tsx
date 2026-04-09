@@ -34,11 +34,11 @@ const INCLUDED = [
     { label: 'Submission-ready format' },
 ];
 
-const PAGE_BG  = '#07091c';
+const PAGE_BG  = '#ffffff';
 const CARD_BG  = '#0d1526';
 const BORDER   = 'rgba(255,255,255,0.06)';
 const BORDER2  = 'rgba(255,255,255,0.08)';
-const NAV_BG   = 'rgba(7,9,28,0.88)';
+const NAV_BG   = 'rgba(255,255,255,0.95)';
 
 const inputStyle: React.CSSProperties = {
     width: '100%',
@@ -99,7 +99,7 @@ export default function CapstoneShow({ capstone }: Props) {
                             </svg>
                             Back to Catalog
                         </Link>
-                        <span className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>
+                        <span className="text-sm font-semibold" style={{ fontFamily: "'Syne', sans-serif", color: '#0f172a' }}>
                             Student Web Solutions
                         </span>
                     </div>
@@ -369,7 +369,7 @@ export default function CapstoneShow({ capstone }: Props) {
                 </main>
 
                 {/* ── Footer (anchored by flex-col + flex-1 on main) ── */}
-                <footer className="py-7 text-center text-sm" style={{ borderTop: `1px solid ${BORDER}`, background: '#060818', color: '#1e293b' }}>
+                <footer className="py-7 text-center text-sm" style={{ borderTop: '1px solid rgba(0,0,0,0.08)', background: '#ffffff', color: '#1e293b' }}>
                     © {new Date().getFullYear()} Student Web Solutions. All rights reserved.
                 </footer>
             </div>
