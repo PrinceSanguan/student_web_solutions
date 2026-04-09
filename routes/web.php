@@ -104,7 +104,7 @@ Route::middleware(['web', 'throttle:10,1'])->group(function () {
     Route::get('admin/capstones/create', [AdminCapstoneController::class, 'create'])->name('admin.capstones.create');
     Route::post('admin/capstones', [AdminCapstoneController::class, 'store'])->name('admin.capstones.store');
     Route::get('admin/capstones/{capstone}/edit', [AdminCapstoneController::class, 'edit'])->name('admin.capstones.edit');
-    Route::post('admin/capstones/{capstone}', [AdminCapstoneController::class, 'update'])->name('admin.capstones.update');
+    Route::put('admin/capstones/{capstone}', [AdminCapstoneController::class, 'update'])->name('admin.capstones.update');
     Route::delete('admin/capstones/{capstone}', [AdminCapstoneController::class, 'destroy'])->name('admin.capstones.destroy');
   });
 
