@@ -199,15 +199,15 @@ export default function CapstoneShow({ capstone }: Props) {
                                 }}>
                                 <div className="flex items-baseline gap-2 mb-2">
                                     <span className="font-extrabold"
-                                        style={{ fontFamily: "'Syne', sans-serif", fontSize: '2.25rem', color: capstone.is_available ? '#34d399' : '#475569' }}>
+                                        style={{ fontFamily: "'Syne', sans-serif", fontSize: '2.25rem', color: capstone.is_available ? '#059669' : '#475569' }}>
                                         ₱{Number(capstone.price).toLocaleString()}
                                     </span>
-                                    <span className="text-sm" style={{ color: capstone.is_available ? '#6ee7b7' : '#334155' }}>
+                                    <span className="text-sm" style={{ color: capstone.is_available ? '#047857' : '#334155' }}>
                                         one-time
                                     </span>
                                 </div>
                                 {capstone.is_available ? (
-                                    <p className="text-xs" style={{ color: '#6ee7b7' }}>
+                                    <p className="text-xs" style={{ color: '#047857' }}>
                                         Pay via GCash — download link sent to your email after payment.
                                     </p>
                                 ) : (
