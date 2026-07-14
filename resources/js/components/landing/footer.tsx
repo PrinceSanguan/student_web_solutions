@@ -4,7 +4,7 @@ const Footer = () => {
             <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
                 <div className="mb-4 flex justify-center space-x-6">
                     <a
-                        href="https://www.facebook.com/profile.php?id=61560390520092"
+                        href="https://www.facebook.com/Grandmaster1997/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="transition-colors hover:text-blue-500"

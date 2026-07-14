@@ -12,15 +12,13 @@ interface Capstone {
     price: number;
     category: string | null;
     is_available: boolean;
-    orders_count: number;
     thumbnail: string | null;
 }
 
 interface Stats {
     total: number;
     available: number;
-    sold: number;
-    revenue: number;
+    unlisted: number;
 }
 
 interface Props {
@@ -60,7 +58,7 @@ export default function CapstoneIndex({ capstones, stats }: Props) {
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
                             <p className="text-sm text-gray-500">
-                                {stats.available} available · {stats.sold} sold · ₱{Number(stats.revenue).toLocaleString()} revenue
+                                {stats.total} total · {stats.available} listed · {stats.unlisted} unlisted
                             </p>
                         </div>
                         <Link
@@ -89,7 +87,6 @@ export default function CapstoneIndex({ capstones, stats }: Props) {
                                         <th className="px-4 py-3 font-semibold text-gray-600">Project</th>
                                         <th className="px-4 py-3 font-semibold text-gray-600">Category</th>
                                         <th className="px-4 py-3 font-semibold text-gray-600">Price</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600">Orders</th>
                                         <th className="px-4 py-3 font-semibold text-gray-600">Status</th>
                                         <th className="px-4 py-3 font-semibold text-gray-600">Actions</th>
                                     </tr>
@@ -114,14 +111,13 @@ export default function CapstoneIndex({ capstones, stats }: Props) {
                                             <td className="px-4 py-3 font-semibold text-green-600">
                                                 ₱{Number(c.price).toLocaleString()}
                                             </td>
-                                            <td className="px-4 py-3 text-gray-600">{c.orders_count}</td>
                                             <td className="px-4 py-3">
                                                 <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
                                                     c.is_available
                                                         ? 'bg-green-100 text-green-700'
-                                                        : 'bg-red-100 text-red-700'
+                                                        : 'bg-gray-100 text-gray-600'
                                                 }`}>
-                                                    {c.is_available ? 'Available' : 'Sold'}
+                                                    {c.is_available ? 'Listed' : 'Unlisted'}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3">

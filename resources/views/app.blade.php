@@ -140,7 +140,7 @@
             ]
         },
         "sameAs": [
-            "https://www.facebook.com/people/StudentwebSolution/61560390520092/",
+            "https://www.facebook.com/Grandmaster1997/",
             "https://github.com/PrinceSanguan"
         ],
         "founder": {

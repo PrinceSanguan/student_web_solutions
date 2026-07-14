@@ -44,11 +44,4 @@ return [
         'api_key' => env('GEMINI_API_KEY'),
     ],
 
-    'chessuno' => [
-        'gateway_url'    => env('CHESSUNO_GATEWAY_URL', 'https://chessuno.com'),
-        'api_key'        => env('CHESSUNO_API_KEY'),
-        'api_secret'     => env('CHESSUNO_API_SECRET'),
-        'webhook_secret' => env('CHESSUNO_WEBHOOK_SECRET'),
-    ],
-
 ];

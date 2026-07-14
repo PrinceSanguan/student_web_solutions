@@ -106,7 +106,7 @@ export default function CapstoneCreate() {
                                     </Field>
 
                                     <div className="grid grid-cols-2 gap-4">
-                                        <Field label="Price (₱)" error={errors.price}>
+                                        <Field label="Price (₱)" error={errors.price} hint="Internal reference — not shown to visitors">
                                             <input
                                                 type="number"
                                                 step="0.01"
@@ -153,8 +153,8 @@ export default function CapstoneCreate() {
 
                                 {/* Download source */}
                                 <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
-                                    <h2 className="font-semibold text-gray-800">Downloadable File</h2>
-                                    <p className="text-xs text-gray-500">The source code delivered to buyers after payment. Choose one method.</p>
+                                    <h2 className="font-semibold text-gray-800">Delivery File (private)</h2>
+                                    <p className="text-xs text-gray-500">Optional source-code file kept privately for this project — you send it to the client manually after a deal is closed. Choose one method.</p>
 
                                     <div className="flex gap-3">
                                         <button
@@ -174,7 +174,7 @@ export default function CapstoneCreate() {
                                     </div>
 
                                     {downloadMode === 'url' ? (
-                                        <Field label="Download URL" error={errors.download_url} hint="The real URL is never shown to buyers — it's proxied server-side">
+                                        <Field label="Download URL" error={errors.download_url} hint="Kept private for your reference — not shown publicly">
                                             <input
                                                 type="url"
                                                 value={data.download_url}

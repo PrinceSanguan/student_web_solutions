@@ -98,7 +98,7 @@ const HeroLanding = () => {
                             🎓 View Capstone Projects Catalog
                         </button>
                         <button
-                            onClick={() => window.open('https://www.facebook.com/profile.php?id=61560390520092')}
+                            onClick={() => window.open('https://www.facebook.com/Grandmaster1997/', '_blank')}
                             className="rounded-lg border border-white/20 px-6 py-2 text-white transition-all duration-300 hover:bg-white/10"
                         >
                             💬 Request Custom System
@@ -190,9 +190,9 @@ const HeroLanding = () => {
                                     <div className="mx-auto max-w-sm space-y-3">
                                         {[
                                             { icon: '🔍', step: '01', title: 'Browse projects', desc: 'Explore our catalog of ready-made capstone systems' },
-                                            { icon: '👁️', step: '02', title: 'Check the live demo', desc: 'See exactly what you\'re getting before you pay' },
-                                            { icon: '💳', step: '03', title: 'Pay via GCash', desc: 'Fast, secure payment — just scan and pay' },
-                                            { icon: '⚡', step: '04', title: 'Download your ZIP', desc: 'Source code + documentation + setup tutorial — instantly' },
+                                            { icon: '👁️', step: '02', title: 'Check the live demo', desc: 'See exactly what you\'re getting before you commit' },
+                                            { icon: '💬', step: '03', title: 'Contact the developer', desc: 'Message us to discuss pricing, scope, and customizations' },
+                                            { icon: '🚀', step: '04', title: 'Receive your system', desc: 'Full source code, documentation & setup guide — delivered' },
                                         ].map((item) => (
                                             <div key={item.step} className="flex items-start gap-4 rounded-xl border border-neutral-100 bg-neutral-50 px-4 py-3">
                                                 <span className="mt-0.5 text-xl">{item.icon}</span>
@@ -207,9 +207,9 @@ const HeroLanding = () => {
                                         ))}
                                     </div>
 
-                                    <div className="mx-auto mt-5 max-w-sm rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-center">
-                                        <p className="text-sm font-medium text-green-700">
-                                            💚 Powered by GCash — just scan and pay. Starting at <span className="font-bold">₱499</span>.
+                                    <div className="mx-auto mt-5 max-w-sm rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-center">
+                                        <p className="text-sm font-medium text-blue-700">
+                                            💬 Contact the developer to discuss pricing — every build is tailored to your needs.
                                         </p>
                                     </div>
                                 </ModalContent>
@@ -224,7 +224,7 @@ const HeroLanding = () => {
                             </ModalBody>
                         </Modal>
                         <button
-                            onClick={() => window.open('https://www.facebook.com/profile.php?id=61560390520092')}
+                            onClick={() => window.open('https://www.facebook.com/Grandmaster1997/', '_blank')}
                             className="w-60 transform rounded-lg border border-white/20 bg-white/10 px-6 py-2 font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/20"
                         >
                             💬 Request Custom System

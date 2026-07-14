@@ -6,25 +6,15 @@ interface Capstone {
     title: string;
     slug: string;
     description: string;
-    price: number;
     demo_url: string | null;
     thumbnail: string | null;
     category: string | null;
     technologies: string[] | null;
-    buyers_count: number;
 }
 
 interface Props {
     capstones: Capstone[];
 }
-
-const CATEGORY_META: Record<string, { dot: string; pill: string }> = {
-    'Business System':   { dot: '#60a5fa', pill: 'rgba(96,165,250,0.12)_/_rgba(96,165,250,0.18)_/_#3b82f6' },
-    'School System':     { dot: '#a78bfa', pill: 'rgba(167,139,250,0.12)_/_rgba(167,139,250,0.18)_/_#8b5cf6' },
-    'Government System': { dot: '#fbbf24', pill: 'rgba(251,191,36,0.12)_/_rgba(251,191,36,0.18)_/_#f59e0b' },
-    'Healthcare':        { dot: '#f87171', pill: 'rgba(248,113,113,0.12)_/_rgba(248,113,113,0.18)_/_#ef4444' },
-    'Hospitality':       { dot: '#34d399', pill: 'rgba(52,211,153,0.12)_/_rgba(52,211,153,0.18)_/_#10b981' },
-};
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
     'Business System':   { bg: 'rgba(59,130,246,0.08)',  text: '#1d4ed8', border: 'rgba(59,130,246,0.25)' },
@@ -60,7 +50,7 @@ export default function CapstoneIndex({ capstones }: Props) {
     return (
         <>
             <Head title="Capstone Projects | Student Web Solutions">
-                <meta name="description" content="Browse ready-made capstone projects and web systems for Filipino students. Starting at ₱499. Pay via GCash, download instantly." />
+                <meta name="description" content="Browse ready-made capstone projects and web systems for Filipino students. Contact the developer to discuss pricing, customizations, and delivery." />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
@@ -92,7 +82,7 @@ export default function CapstoneIndex({ capstones }: Props) {
                     <div className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium"
                         style={{ background: 'rgba(14,165,233,0.08)', border: '1px solid rgba(14,165,233,0.2)', color: '#0369a1' }}>
                         <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#38bdf8' }} />
-                        Instant download after payment
+                        Ready-made systems + custom builds
                     </div>
 
                     <h1 style={{ fontFamily: "'Syne', sans-serif", lineHeight: 1.05, color: '#0f172a' }}
@@ -105,9 +95,9 @@ export default function CapstoneIndex({ capstones }: Props) {
                     </h1>
 
                     <p className="mt-5 max-w-md text-base" style={{ color: '#64748b', lineHeight: 1.75 }}>
-                        Ready-made, fully documented web systems built for Filipino students.
-                        Pay via GCash, get your download link in minutes. Starting at{' '}
-                        <span className="font-semibold" style={{ color: '#34d399' }}>₱499</span>.
+                        Ready-made, fully documented web systems built for Filipino students — or a
+                        custom build made to your exact requirements. Message the developer to discuss
+                        your project and get a quote.
                     </p>
                 </header>
 
@@ -211,16 +201,9 @@ export default function CapstoneIndex({ capstones }: Props) {
                                             </p>
 
                                             <div className="flex items-end justify-between">
-                                                <div>
-                                                    <span className="text-xl font-bold" style={{ color: '#34d399', fontFamily: "'Syne', sans-serif" }}>
-                                                        ₱{Number(capstone.price).toLocaleString()}
-                                                    </span>
-                                                    {capstone.buyers_count > 0 && (
-                                                        <p className="mt-0.5 text-xs" style={{ color: '#64748b' }}>
-                                                            {capstone.buyers_count} {capstone.buyers_count === 1 ? 'buyer' : 'buyers'}
-                                                        </p>
-                                                    )}
-                                                </div>
+                                                <span className="text-xs font-medium" style={{ color: '#64748b' }}>
+                                                    Contact for pricing
+                                                </span>
                                                 <span className="flex items-center gap-1 text-xs font-medium transition-all"
                                                     style={{ color: isHovered ? '#38bdf8' : '#64748b', gap: isHovered ? '6px' : '4px' }}>
                                                     View

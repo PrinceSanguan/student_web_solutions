@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Capstone;
-use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,10 +13,7 @@ class CapstoneController extends Controller
 {
     public function index()
     {
-        $capstones = Capstone::withCount(['orders' => function ($q) {
-            $q->where('status', 'paid');
-        }])
-            ->orderByDesc('created_at')
+        $capstones = Capstone::orderByDesc('created_at')
             ->get()
             ->map(fn($c) => [
                 'id'           => $c->id,
@@ -26,15 +22,13 @@ class CapstoneController extends Controller
                 'price'        => $c->price,
                 'category'     => $c->category,
                 'is_available' => $c->is_available,
-                'orders_count' => $c->orders_count,
                 'thumbnail'    => $c->thumbnail,
             ]);
 
         $stats = [
             'total'     => Capstone::count(),
             'available' => Capstone::where('is_available', true)->count(),
-            'sold'      => Capstone::where('is_available', false)->count(),
-            'revenue'   => Order::where('status', 'paid')->sum('amount'),
+            'unlisted'  => Capstone::where('is_available', false)->count(),
         ];
 
         return Inertia::render('Admin/Capstones/Index', [

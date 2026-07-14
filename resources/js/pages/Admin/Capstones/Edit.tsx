@@ -126,7 +126,7 @@ export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
                                     </Field>
 
                                     <div className="grid grid-cols-2 gap-4">
-                                        <Field label="Price (₱)" error={errors.price}>
+                                        <Field label="Price (₱)" error={errors.price} hint="Internal reference — not shown to visitors">
                                             <input
                                                 type="number"
                                                 step="0.01"
@@ -178,17 +178,18 @@ export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
                                             className="h-4 w-4 rounded border-gray-300 text-blue-600"
                                         />
                                         <label htmlFor="is_available" className="text-sm font-medium text-gray-700">
-                                            Available for purchase
+                                            Show in public catalog
                                         </label>
-                                        <span className={`ml-auto rounded-full px-2.5 py-0.5 text-xs font-semibold ${data.is_available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                            {data.is_available ? 'Active' : 'Hidden'}
+                                        <span className={`ml-auto rounded-full px-2.5 py-0.5 text-xs font-semibold ${data.is_available ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                            {data.is_available ? 'Listed' : 'Hidden'}
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Download source */}
                                 <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
-                                    <h2 className="font-semibold text-gray-800">Downloadable File</h2>
+                                    <h2 className="font-semibold text-gray-800">Delivery File (private)</h2>
+                                    <p className="text-xs text-gray-500">Optional source-code file kept privately for this project — you send it to the client manually after a deal is closed.</p>
 
                                     {capstone.download_file && (
                                         <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
@@ -214,7 +215,7 @@ export default function CapstoneEdit({ capstone }: { capstone: CapstoneData }) {
                                     </div>
 
                                     {downloadMode === 'url' ? (
-                                        <Field label="Download URL" error={errors.download_url} hint="Real URL is proxied — never visible to buyers">
+                                        <Field label="Download URL" error={errors.download_url} hint="Kept private for your reference — not shown publicly">
                                             <input
                                                 type="url"
                                                 value={data.download_url}

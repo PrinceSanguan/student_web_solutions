@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Capstone extends Model
 {
@@ -26,9 +25,4 @@ class Capstone extends Model
         'price'        => 'decimal:2',
         'is_available' => 'boolean',
     ];
-
-    public function orders(): HasMany
-    {
-        return $this->hasMany(Order::class);
-    }
 }

@@ -16,9 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance']);
 
-        // Exclude chessuno webhook from CSRF — it's verified via HMAC signature instead
-        $middleware->validateCsrfTokens(except: ['/chessuno/webhook']);
-
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,

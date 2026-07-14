@@ -3,14 +3,14 @@ import { Terminal } from '@/components/ui/terminal';
 const COMMANDS = [
     'Browse catalog',
     'Select your capstone/system',
-    'Pay via GCash (₱499+)',
-    'Download complete source code (ZIP)',
+    'Message the developer',
+    'Receive complete source code (ZIP)',
 ];
 
 const OUTPUTS: Record<number, string[]> = {
     0: ['✔ Viewing available capstone projects...'],
     1: ['✔ System selected successfully.'],
-    2: ['✔ Payment confirmed via GCash.'],
+    2: ['✔ Connected with the developer.'],
     3: [
         '✔ Download ready!',
         '✔ Includes full source code',
@@ -29,8 +29,8 @@ export default function TerminalSection() {
                         How it works
                     </h2>
                     <p className="mx-auto max-w-xl text-gray-500">
-                        Get a complete, submission-ready capstone project in minutes — starting at only{' '}
-                        <span className="font-bold text-green-500">₱499</span>.
+                        Get a complete, submission-ready capstone project built to your requirements.
+                        Message the developer to discuss pricing and get started.
                     </p>
                 </div>
 

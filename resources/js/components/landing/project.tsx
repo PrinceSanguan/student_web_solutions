@@ -423,7 +423,7 @@ export const ProjectDetailModal = ({
 
     const handleConfirmFacebook = () => {
         setShowConfirmation(false);
-        window.open('https://www.facebook.com/profile.php?id=61560390520092', '_blank');
+        window.open('https://www.facebook.com/Grandmaster1997/', '_blank');
     };
 
     return (

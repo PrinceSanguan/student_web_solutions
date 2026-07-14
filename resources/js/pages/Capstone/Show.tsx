@@ -1,18 +1,14 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
 
 interface Capstone {
     id: number;
     title: string;
     slug: string;
     description: string;
-    price: number;
     demo_url: string | null;
     thumbnail: string | null;
     category: string | null;
     technologies: string[] | null;
-    is_available: boolean;
-    buyers_count: number;
 }
 
 interface Props {
@@ -37,42 +33,9 @@ const INCLUDED = [
 const PAGE_BG  = '#ffffff';
 const CARD_BG  = '#0d1526';
 const BORDER   = 'rgba(255,255,255,0.06)';
-const BORDER2  = 'rgba(255,255,255,0.08)';
 const NAV_BG   = 'rgba(255,255,255,0.95)';
 
-const inputStyle: React.CSSProperties = {
-    width: '100%',
-    background: '#070d1e',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '10px',
-    padding: '10px 14px',
-    fontSize: '14px',
-    color: '#e2e8f0',
-    outline: 'none',
-    transition: 'border-color 0.2s',
-};
-
 export default function CapstoneShow({ capstone }: Props) {
-    const [showForm, setShowForm] = useState(false);
-    const [alreadyBought, setAlreadyBought] = useState(false);
-
-    useEffect(() => {
-        if (localStorage.getItem(`sws_purchased_${capstone.slug}`) === '1') {
-            setAlreadyBought(true);
-        }
-    }, [capstone.slug]);
-
-    const { data, setData, post, processing, errors } = useForm<{
-        customer_name: string;
-        customer_email: string;
-        payment?: string;
-    }>({ customer_name: '', customer_email: '' });
-
-    function handleCheckout(e: React.FormEvent) {
-        e.preventDefault();
-        post(`/capstone/${capstone.slug}/checkout`);
-    }
-
     const catStyle = capstone.category ? CATEGORY_STYLES[capstone.category] : null;
 
     return (
@@ -152,7 +115,7 @@ export default function CapstoneShow({ capstone }: Props) {
                             </div>
                         </div>
 
-                        {/* ── Right: Info + Checkout ── */}
+                        {/* ── Right: Info + Contact ── */}
                         <div className="flex flex-col">
                             {/* Category badge */}
                             {capstone.category && catStyle && (
@@ -191,180 +154,42 @@ export default function CapstoneShow({ capstone }: Props) {
                                 </div>
                             )}
 
-                            {/* Price box */}
-                            <div className="mb-6 rounded-2xl p-5"
-                                style={{
-                                    background: capstone.is_available ? 'rgba(52,211,153,0.06)' : CARD_BG,
-                                    border: capstone.is_available ? '1px solid rgba(52,211,153,0.18)' : `1px solid ${BORDER}`,
-                                }}>
-                                <div className="flex items-baseline gap-2 mb-2">
-                                    <span className="font-extrabold"
-                                        style={{ fontFamily: "'Syne', sans-serif", fontSize: '2.25rem', color: capstone.is_available ? '#059669' : '#475569' }}>
-                                        ₱{Number(capstone.price).toLocaleString()}
-                                    </span>
-                                    <span className="text-sm" style={{ color: capstone.is_available ? '#047857' : '#334155' }}>
-                                        one-time
-                                    </span>
-                                </div>
-                                {capstone.is_available ? (
-                                    <p className="text-xs" style={{ color: '#047857' }}>
-                                        Pay via GCash — download link sent to your email after payment.
-                                    </p>
-                                ) : (
-                                    <p className="text-xs" style={{ color: '#f87171' }}>
-                                        This project has already been sold and is no longer available.
-                                    </p>
-                                )}
-                                {capstone.buyers_count > 0 && (
-                                    <p className="mt-2 flex items-center gap-1.5 text-xs" style={{ color: '#334155' }}>
-                                        <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                        </svg>
-                                        {capstone.buyers_count} {capstone.buyers_count === 1 ? 'person has' : 'people have'} purchased this
-                                    </p>
-                                )}
-                            </div>
+                            {/* ── Contact / pricing CTA ── */}
+                            <div className="mt-auto rounded-2xl p-6" style={{ background: CARD_BG, border: `1px solid ${BORDER}` }}>
+                                <p className="text-base font-bold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>
+                                    Interested in this project?
+                                </p>
+                                <p className="mt-2 text-sm leading-relaxed" style={{ color: '#94a3b8' }}>
+                                    Every system is tailored to your needs. Message the developer directly to discuss
+                                    pricing, customizations, and turnaround — you'll get a personal reply and a quote
+                                    for exactly what you're looking for.
+                                </p>
 
-                            {/* CTA area */}
-                            {alreadyBought ? (
-                                <div className="space-y-3">
-                                    <div className="rounded-2xl p-4 text-sm"
-                                        style={{ background: 'rgba(52,211,153,0.07)', border: '1px solid rgba(52,211,153,0.15)', color: '#6ee7b7' }}>
-                                        <p className="font-semibold text-emerald-300">You already purchased this project.</p>
-                                        <p className="mt-1 text-xs" style={{ color: '#6ee7b7' }}>
-                                            Check your email for the download link. Links expire 72 hours after payment.
-                                        </p>
-                                        <p className="mt-2 text-xs" style={{ color: '#334155' }}>
-                                            Didn't receive it?{' '}
-                                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=princesanguan44@gmail.com"
-                                                target="_blank" rel="noreferrer"
-                                                className="underline" style={{ color: '#64748b' }}>
-                                                Contact support
-                                            </a>.
-                                        </p>
-                                    </div>
-                                    {capstone.demo_url && (
-                                        <DemoButton href={capstone.demo_url} />
-                                    )}
-                                </div>
-
-                            ) : !capstone.is_available ? (
-                                <div className="space-y-3">
-                                    {capstone.demo_url && <DemoButton href={capstone.demo_url} />}
-                                    <div className="rounded-xl px-4 py-3 text-center text-sm font-medium"
-                                        style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.15)', color: '#f87171' }}>
-                                        Sold Out — No Longer Available
-                                    </div>
-                                    <Link href="/capstone" className="block text-center text-sm transition"
-                                        style={{ color: '#334155' }}
-                                        onMouseEnter={e => (e.currentTarget.style.color = '#64748b')}
-                                        onMouseLeave={e => (e.currentTarget.style.color = '#334155')}>
-                                        Browse other projects →
-                                    </Link>
-                                </div>
-
-                            ) : !showForm ? (
-                                <div className="flex flex-col gap-3 sm:flex-row">
+                                <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                                     {capstone.demo_url && <DemoButton href={capstone.demo_url} flex />}
-                                    <button
-                                        onClick={() => setShowForm(true)}
+                                    <a
+                                        href="https://www.facebook.com/Grandmaster1997/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white transition"
                                         style={{ background: 'linear-gradient(120deg, #38bdf8, #818cf8)', boxShadow: '0 0 24px rgba(56,189,248,0.2)' }}
                                         onMouseEnter={e => ((e.currentTarget as HTMLElement).style.boxShadow = '0 0 32px rgba(56,189,248,0.35)')}
                                         onMouseLeave={e => ((e.currentTarget as HTMLElement).style.boxShadow = '0 0 24px rgba(56,189,248,0.2)')}
                                     >
-                                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
                                         </svg>
-                                        Buy via GCash — ₱{Number(capstone.price).toLocaleString()}
-                                    </button>
+                                        Contact the Developer on Facebook
+                                    </a>
                                 </div>
 
-                            ) : (
-                                <form onSubmit={handleCheckout} className="rounded-2xl p-5 space-y-4"
-                                    style={{ background: CARD_BG, border: `1px solid ${BORDER2}` }}>
-                                    <p className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>
-                                        Enter your details to continue
-                                    </p>
-
-                                    <div>
-                                        <label className="mb-1.5 block text-xs font-medium" style={{ color: '#475569' }}>Full Name</label>
-                                        <input
-                                            type="text"
-                                            value={data.customer_name}
-                                            onChange={(e) => setData('customer_name', e.target.value)}
-                                            placeholder="e.g. Juan dela Cruz"
-                                            style={inputStyle}
-                                            onFocus={e => (e.currentTarget.style.borderColor = 'rgba(56,189,248,0.4)')}
-                                            onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
-                                            required
-                                        />
-                                        {errors.customer_name && (
-                                            <p className="mt-1.5 text-xs" style={{ color: '#f87171' }}>{errors.customer_name}</p>
-                                        )}
-                                    </div>
-
-                                    <div>
-                                        <label className="mb-1.5 block text-xs font-medium" style={{ color: '#475569' }}>Email Address</label>
-                                        <input
-                                            type="email"
-                                            value={data.customer_email}
-                                            onChange={(e) => setData('customer_email', e.target.value)}
-                                            placeholder="e.g. juan@email.com"
-                                            style={inputStyle}
-                                            onFocus={e => (e.currentTarget.style.borderColor = 'rgba(56,189,248,0.4)')}
-                                            onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
-                                            required
-                                        />
-                                        {errors.customer_email && (
-                                            <p className="mt-1.5 text-xs" style={{ color: '#f87171' }}>{errors.customer_email}</p>
-                                        )}
-                                    </div>
-
-                                    {errors.payment && (
-                                        <p className="rounded-xl px-3 py-2.5 text-xs"
-                                            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.18)', color: '#fca5a5' }}>
-                                            {errors.payment}
-                                        </p>
-                                    )}
-
-                                    <div className="flex gap-3 pt-1">
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowForm(false)}
-                                            className="flex-1 rounded-xl px-4 py-2.5 text-sm font-medium transition"
-                                            style={{ background: 'rgba(255,255,255,0.04)', color: '#64748b', border: '1px solid rgba(255,255,255,0.08)' }}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            disabled={processing}
-                                            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition"
-                                            style={{
-                                                background: processing ? 'rgba(56,189,248,0.4)' : 'linear-gradient(120deg, #38bdf8, #818cf8)',
-                                                opacity: processing ? 0.7 : 1,
-                                            }}
-                                        >
-                                            {processing ? (
-                                                <>
-                                                    <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                                    </svg>
-                                                    Redirecting…
-                                                </>
-                                            ) : (
-                                                <>Pay ₱{Number(capstone.price).toLocaleString()}</>
-                                            )}
-                                        </button>
-                                    </div>
-
-                                    <p className="text-center text-xs" style={{ color: '#1e293b' }}>
-                                        You'll be redirected to GCash to complete payment securely.
-                                    </p>
-                                </form>
-                            )}
+                                <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs" style={{ color: '#475569' }}>
+                                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Typically replies within a few hours.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </main>
