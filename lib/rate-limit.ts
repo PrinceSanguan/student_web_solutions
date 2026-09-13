@@ -4,7 +4,8 @@
  * Stands in for Laravel's `RateLimiter` / `throttle:` middleware. It is
  * per-process: a single `next start` instance shares one map, but a horizontally
  * scaled deployment would need Redis. That matches how the Laravel app ran
- * (`CACHE_STORE=database` on one box) closely enough for a chatbot guard.
+ * (`CACHE_STORE=database` on one box) closely enough for the login and analytics
+ * guards it backs.
  */
 type Window = { count: number; resetAt: number };
 

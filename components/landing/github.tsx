@@ -23,6 +23,7 @@ const GitHub = () => {
     const [stats, setStats] = useState<GitHubStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [graphFailed, setGraphFailed] = useState(false);
 
     const username = 'princesanguan';
 
@@ -172,21 +173,34 @@ const GitHub = () => {
                             </div>
                         </div>
 
-                        {/* Contribution Graph */}
-                        <div className={`'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-                            <h3 className="mb-4 text-lg font-semibold">Contribution Activity</h3>
-                            <div className="w-full overflow-x-auto">
-                                <img
-                                    src={`https://github-readme-activity-graph.vercel.app/graph?username=${username}&bg_color=ffffff&color=0969da&line=0969da&point=0969da&area=true&hide_border=true`}
-                                    alt="GitHub Contribution Graph"
-                                    className="w-full rounded-lg"
-                                    style={{ minWidth: '640px' }}
-                                />
+                        {/* Contribution Graph.
+
+                            Served by ghchart.rshah.org. The previous source,
+                            github-readme-activity-graph.vercel.app, is gone — its whole Vercel
+                            deployment now answers 402 DEPLOYMENT_DISABLED — which is why this
+                            card showed a broken image.
+
+                            Because that can happen to any free third-party image host, an
+                            `onError` hides the whole card rather than leaving a broken icon on
+                            the landing page. The colour is passed in the path so the chart
+                            keeps the same blue as before. */}
+                        {!graphFailed && (
+                            <div className={`'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
+                                <h3 className="mb-4 text-lg font-semibold">Contribution Activity</h3>
+                                <div className="w-full overflow-x-auto">
+                                    <img
+                                        src={`https://ghchart.rshah.org/0969da/${username}`}
+                                        alt={`GitHub contribution graph for @${username}`}
+                                        className="w-full rounded-lg"
+                                        style={{ minWidth: '640px' }}
+                                        onError={() => setGraphFailed(true)}
+                                    />
+                                </div>
+                                <p className={`'text-gray-400' : 'text-gray-500'} mt-3 text-center text-sm`}>
+                                    Consistent development activity throughout the year
+                                </p>
                             </div>
-                            <p className={`'text-gray-400' : 'text-gray-500'} mt-3 text-center text-sm`}>
-                                Consistent development activity throughout the year
-                            </p>
-                        </div>
+                        )}
                     </motion.div>
                 </div>
             </motion.div>

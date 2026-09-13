@@ -8,8 +8,7 @@ Guidance for Claude Code (claude.ai/code) when working in this repository.
 
 Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS 4 + shadcn/ui (Radix) and a
 handful of Aceternity components. A portfolio and catalog site for "Student Web Solutions" —
-ready-made capstone systems for Filipino students — with a Gemini-backed chatbot and an
-admin-only CMS for the catalog.
+ready-made capstone systems for Filipino students — with an admin-only CMS for the catalog.
 
 **There is no database.** Capstone records and the single admin account are JSON files on disk
 under `data/`, behind `lib/store/`. See [Data](#data) below.
@@ -86,7 +85,6 @@ app/
   admin/
     layout.tsx            requireAdmin() + the Sidebar/Header shell
     */actions.ts          'use server' — the old controllers' mutating methods
-  api/chatbot/            Gemini proxy
   api/clarity-analytics/  Microsoft Clarity proxy
 components/
   ui/                     shadcn + Aceternity primitives — vendored third-party code
@@ -153,8 +151,12 @@ during the port.
 ## Deliberate differences from the Laravel app
 
 - **`throttle:10,1` is not applied globally.** A 10/min per-IP cap on every route would break RSC
-  navigation. Ported as: 3/min on `/api/chatbot` (matching `throttle:chatbot`), 5/min on the
-  login action (matching `LoginRequest`), 10/min on the analytics proxy. See `lib/rate-limit.ts`.
+  navigation. Ported as 5/min on the login action (matching `LoginRequest`) and 10/min on the
+  analytics proxy. See `lib/rate-limit.ts`.
+- **The Gemini chatbot is removed.** Ported and working, then dropped at the owner's request —
+  there is no `GEMINI_API_KEY` to run it. Gone: `components/landing/chat-bot.tsx`,
+  `app/api/chatbot/`, its 3/min limiter, and the env var. The Laravel `ChatBotController` is
+  still the reference if it ever comes back.
 - **`/admin/settings` has a new view.** `SettingsController`'s logic is ported unchanged, but its
   page component never existed — the route returned a 500 while the admin header linked to it.
 - **`sitemap.ts` lists real URLs.** The Blade version emitted twelve hardcoded `/project/{id}`
@@ -187,7 +189,6 @@ during the port.
 |---|---|---|
 | `ADMIN_SESSION_SECRET` | yes | signs the session cookie; without it nobody can log in |
 | `NEXT_PUBLIC_SITE_URL` | yes in production | canonical URL, sitemap, Open Graph |
-| `GEMINI_API_KEY` | for the chatbot | without it `/api/chatbot` returns a clear 503 |
 | `CLARITY_API_TOKEN` | optional | only `/api/clarity-analytics` uses it |
 
 Admin credentials live in `data/admin.json`, not in env.

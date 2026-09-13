@@ -14,8 +14,8 @@ export const LOGO_PATH = '/assets/images/logo.png';
 
 /**
  * LocalBusiness structured data, ported verbatim from the Blade template's
- * JSON-LD block. Google reads this for the rich result, so the prices and service
- * names have to stay in step with what the chatbot quotes.
+ * JSON-LD block. Google reads this for the rich result, so keep the prices and
+ * service names in step with what the site actually charges.
  */
 export function localBusinessJsonLd() {
     return {

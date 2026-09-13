@@ -1,4 +1,3 @@
-import ChatBot from '@/components/landing/chat-bot';
 import Footer from '@/components/landing/footer';
 import GitHub from '@/components/landing/github';
 import HeroLanding from '@/components/landing/sections/HeroLanding';
@@ -42,9 +41,6 @@ export default function HomePage() {
                 {/* Footer */}
                 <Footer />
             </div>
-
-            {/* Chat Bot */}
-            <ChatBot darkMode={false} />
         </>
     );
 }

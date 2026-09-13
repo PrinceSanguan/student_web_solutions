@@ -1,7 +1,7 @@
 # Student Web Solutions
 
 Portfolio and catalog site for Student Web Solutions — ready-made capstone systems for Filipino
-students — with an AI chatbot and an admin-only CMS for the catalog.
+students — with an admin-only CMS for the catalog.
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · no database.
 
@@ -57,7 +57,6 @@ Sign in at `/login`, manage the catalog at `/admin/capstones`.
 | `/admin/dashboard` | stats and quick actions |
 | `/admin/capstones` | list, create, edit, delete |
 | `/admin/settings` | name and password |
-| `/api/chatbot` | Gemini proxy (3 requests/min per IP) |
 | `/api/clarity-analytics` | Microsoft Clarity proxy |
 | `/robots.txt`, `/sitemap.xml` | generated |
 
@@ -94,7 +93,6 @@ URLs, the sitemap and the Open Graph tags.
 |---|---|---|
 | `ADMIN_SESSION_SECRET` | yes | signs the session cookie |
 | `NEXT_PUBLIC_SITE_URL` | yes in production | canonical URL, sitemap, Open Graph |
-| `GEMINI_API_KEY` | for the chatbot | `/api/chatbot` returns 503 without it |
 | `CLARITY_API_TOKEN` | optional | only the analytics proxy uses it |
 
 ## Contributing
