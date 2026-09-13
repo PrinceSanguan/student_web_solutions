@@ -1,3 +1,9 @@
-resources/js/components/ui/*
-resources/js/ziggy.js
-resources/views/mail/*
+.next
+node_modules
+data
+public
+
+# Vendored third-party UI. These are pasted in from shadcn/ui and Aceternity and
+# keep their upstream formatting, so a future `npx shadcn@latest add <x>` produces
+# a clean diff instead of a whole-file reformat.
+components/ui

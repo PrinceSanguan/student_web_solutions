@@ -1,23 +1,27 @@
-/.phpunit.cache
-/bootstrap/ssr
+# dependencies
 /node_modules
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
+
+# next.js
+/.next
+/out
+next-env.d.ts
+*.tsbuildinfo
+
+# JSON store + uploads (per-machine state, never committed)
+/data
+
+# env
 .env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
-/.fleet
+.env.*
+!.env.example
+
+# editors
 /.idea
-/.nova
 /.vscode
 /.zed
+/.fleet
+/.nova
+
+# misc
+.DS_Store
+npm-debug.log*
