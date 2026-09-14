@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { DM_Sans, Inter, Syne } from 'next/font/google';
 
@@ -137,11 +138,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // The payload is built from module constants, never from user input.
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }}
                 />
-                {/* Vercel Web Analytics — visitor and page-view counts.
-                    Injects its script only on a Vercel deployment; locally it is a no-op
-                    that logs to the console, so `npm run dev` stays quiet and no
-                    requests leave the machine. */}
+                {/* Vercel Web Analytics (visitor and page-view counts) and Speed
+                    Insights (real-user Core Web Vitals).
+
+                    Both inject their scripts only on a Vercel deployment; locally they
+                    are no-ops that log to the console, so `npm run dev` stays quiet and
+                    no requests leave the machine. */}
                 <Analytics />
+                <SpeedInsights />
             </body>
         </html>
     );

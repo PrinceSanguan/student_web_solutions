@@ -2,11 +2,22 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { CapstoneDetail } from '@/components/capstone/detail';
-import { findPublicBySlug } from '@/lib/store/capstones';
+import { findPublicBySlug, listSlugs } from '@/lib/capstones';
 
 interface Props {
     params: Promise<{ slug: string }>;
 }
+
+/**
+ * The catalog is static content, so every detail page can be built ahead of time
+ * and served from the CDN. `dynamicParams = false` makes an unknown slug a plain
+ * 404 instead of an on-demand render.
+ */
+export function generateStaticParams() {
+    return listSlugs().map((slug) => ({ slug }));
+}
+
+export const dynamicParams = false;
 
 /**
  * Was `<Head title={...}><meta name="description" …>` inside the page component.
@@ -15,7 +26,7 @@ interface Props {
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params;
-    const capstone = await findPublicBySlug(slug);
+    const capstone = findPublicBySlug(slug);
     if (!capstone) return { title: 'Project Not Found' };
 
     // Descriptions are multi-line, and a meta tag must not carry raw newlines —
@@ -44,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  */
 export default async function CapstoneShowPage({ params }: Props) {
     const { slug } = await params;
-    const capstone = await findPublicBySlug(slug);
+    const capstone = findPublicBySlug(slug);
     if (!capstone) notFound();
 
     return <CapstoneDetail capstone={capstone} />;

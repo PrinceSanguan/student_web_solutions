@@ -8,10 +8,10 @@ Guidance for Claude Code (claude.ai/code) when working in this repository.
 
 Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS 4 + shadcn/ui (Radix) and a
 handful of Aceternity components. A portfolio and catalog site for "Student Web Solutions" —
-ready-made capstone systems for Filipino students — with an admin-only CMS for the catalog.
+ready-made capstone systems for Filipino students.
 
-**There is no database.** Capstone records and the single admin account are JSON files on disk
-under `data/`, behind `lib/store/`. See [Data](#data) below.
+**The site is fully static: no database, no auth, no writes.** The catalog is a JSON file in the
+repo. Everything except one optional API proxy is prerendered at build time.
 
 This is a port of a Laravel 12 + Inertia 2 app that still lives at
 `D:\boilerplate\StudentWebSolutions`. When something here looks arbitrary, that is usually why —
@@ -21,115 +21,69 @@ check the original before "fixing" it.
 
 ```bash
 npm run dev                 # http://localhost:3000
-npm run build               # production build — the only reliable client/server boundary check
+npm run build               # the only reliable client/server boundary check
 npm start                   # serve the production build
-npm run lint                # eslint
-npm run typecheck           # tsc --noEmit
-npm run format              # prettier --write
-
-npm run set-admin-password -- <email> <password> [name]   # provision or reset the admin account
+npm run lint
+npm run typecheck
+npm run format
 ```
 
-There are no tests yet. `npm run build` is the gate that catches the mistakes that matter here —
-`npm run dev` tolerates server/client boundary errors that the build rejects.
+There are no tests. `npm run build` is the gate that catches what matters — `npm run dev`
+tolerates server/client boundary errors the build rejects.
 
-## Data
+## The catalog
 
-```
-data/                                  gitignored — per-machine state
-  capstones.json                       the old `capstones` table
-  admin.json                           name, email, scrypt password hash
-  uploads/capstone-downloads/          private delivery files
-```
+`content/capstones.json` is the whole CMS. `lib/capstones.ts` imports it directly — no
+filesystem, no `server-only` boundary — and exposes three functions:
 
-`lib/store/` is the only thing that touches `data/`. Reads and writes go through
-`json-file.ts`, which makes writes atomic (temp file + rename) and serialises writes to the same
-file through a promise chain — two Server Actions firing at once would otherwise lose a record.
+- `listAvailable()` — the grid and the sitemap
+- `findPublicBySlug(slug)` — the detail page
+- `listSlugs()` — feeds `generateStaticParams`
 
-**The lock is per-process.** One `next dev` or `next start` is one process, which is how this app
-runs. A multi-instance deployment needs a real database instead, and `lib/store/` is the single
-seam to swap.
+`toPublic()` strips `price`, `download_url` and `download_file` before anything reaches a
+component. That projection is the only thing keeping internal fields off the public pages —
+**keep it that way** when adding a field.
 
-**This does not run on Vercel** (or any read-only filesystem). That is the cost of having no
-database; it was the deliberate choice.
+`findPublicBySlug` deliberately ignores `is_available`, so an unlisted project stays reachable by
+its direct URL and only drops out of the grid. That matches the Laravel `firstOrFail()` query.
 
-`data/` does not exist in a fresh clone. `/capstone` renders its empty state and `/login` tells
-you to run `set-admin-password`.
+### Adding a capstone field
 
-## Auth
-
-One admin. No registration, no user accounts, no OAuth — the Laravel app had all three on paper
-but every one of them was unreachable, so none were ported.
-
-- `lib/auth/password.ts` — scrypt via `node:crypto`, stored as `scrypt$<salt>$<hash>`.
-  Deliberately **not** `server-only`: `scripts/set-admin-password.mjs` imports it.
-- `lib/auth/session.ts` — HMAC-SHA256 signed cookie (`sws_admin`, 12 h) using **Web Crypto**,
-  not `node:crypto`, because `proxy.ts` may run on the Edge runtime. Secret from
-  `ADMIN_SESSION_SECRET`.
-- `lib/auth/require-admin.ts` — `requireAdmin()`.
-
-**`proxy.ts` is not the authorization boundary.** It is an optimistic redirect for people
-clicking links. A Server Action is reachable by a direct POST that never passes a page route, so
-**every action calls `requireAdmin()` first**. Do not remove those calls because "the proxy
-already checks".
+`lib/types.ts` then `lib/capstones.ts` (`toPublic`, if it is public) then the components. Adding
+a field to `PublicCapstone` exposes it; leaving it out keeps it internal.
 
 ## Architecture
 
 ```
 app/
-  layout.tsx              html/body, next/font, all the SEO metadata, LocalBusiness JSON-LD
+  layout.tsx              html/body, next/font, all the SEO metadata, LocalBusiness JSON-LD,
+                          Vercel Analytics + Speed Insights
   page.tsx                landing page
   robots.ts sitemap.ts    file conventions — no plugin, no Blade template
-  capstone/               public catalog + detail
-  login/ logout/          sign in, sign out
-  admin/
-    layout.tsx            requireAdmin() + the Sidebar/Header shell
-    */actions.ts          'use server' — the old controllers' mutating methods
+  capstone/               catalog + detail (both prerendered)
   api/clarity-analytics/  Microsoft Clarity proxy
 components/
   ui/                     shadcn + Aceternity primitives — vendored third-party code
-  landing/ capstone/ admin/ auth/
+  landing/ capstone/
+content/capstones.json    the catalog
 lib/
-  store/                  the JSON data layer
-  auth/                   password, session, guard
+  capstones.ts            read-only accessors over the JSON
   routes.ts               every internal path (replaces Ziggy's route())
-  forms.ts                form state shapes shared by actions and client forms
-  flash.ts rate-limit.ts site.ts utils.ts types.ts
-proxy.ts                  Next 16's name for middleware
+  site.ts types.ts rate-limit.ts utils.ts
 ```
 
 ### Pages are Server Components
 
-A page reads the store and passes plain props to a client component. The interactive parts are
-thin and separate: `components/capstone/catalog.tsx` holds the category filter,
-`components/admin/capstones/capstone-form.tsx` holds the create/edit form. Do not move a store
-call into a client component — `lib/store/` is `server-only` and will fail the build.
+A page reads `lib/capstones.ts` and passes plain props to a client component. The interactive
+parts are thin and separate: `components/capstone/catalog.tsx` holds the category filter,
+`components/capstone/detail.tsx` holds the hover animations.
 
-### Forms
+### Everything is prerendered
 
-`useActionState` + Server Actions, not `fetch`. An action returns
-`{ errors, values }`; the error keys match the old Laravel validator's keys, which is why the
-ported markup that reads `errors.slug` needed no changes.
-
-Success travels as `?flash=<key>`, resolved by `lib/flash.ts`. That replaces Laravel's
-`->with('success', …)` session flash — Server Actions have no session to flash into. Unknown keys
-resolve to `null`, so query input is never echoed into the page.
-
-`lib/forms.ts` exists because **a `'use server'` module may only export async functions.** Put a
-shared type or constant in `lib/forms.ts`, never next to the action.
-
-### Adding a capstone field
-
-Touch these, in order: `lib/types.ts` → `lib/store/capstones.ts` (projections) →
-`app/admin/capstones/actions.ts` (`readValues`, `validate`, both writes) →
-`components/admin/capstones/capstone-form.tsx` → the public components if it is public.
-`PublicCapstone` deliberately omits `price`, `download_url` and `download_file`; keep it that way.
-
-### Revalidation
-
-`/capstone` and `/sitemap.xml` are prerendered with a 1 h ISR window. The capstone actions call
-`revalidateCatalog()`, which invalidates both plus the affected slugs. If you add a write path,
-call it — otherwise a new project will not appear until the window lapses.
+`/capstone/[slug]` uses `generateStaticParams` plus `dynamicParams = false`, so all six pages are
+built ahead of time and an unknown slug is a plain 404. There is no ISR window and nothing to
+revalidate — the data cannot change without a rebuild. If the catalog ever becomes dynamic again,
+that is the assumption to revisit.
 
 ### Dark mode is off
 
@@ -139,47 +93,44 @@ tokens stay defined because many components still carry `dark:` variants — the
 
 ### `components/ui/` is vendored
 
-shadcn and Aceternity code, pasted in rather than authored here. Several files carry
-`react-hooks/exhaustive-deps` warnings that would need the animation logic restructured. Prefer
-leaving them alone.
+shadcn and Aceternity code, pasted in rather than authored here. It is excluded from Prettier
+(see `.prettierignore`) so a future `npx shadcn@latest add x` produces a clean diff. Several
+files carry `react-hooks/exhaustive-deps` warnings that would need the animation logic
+restructured; prefer leaving them alone.
 
 One rule does matter there: **never call `Math.random()` in a render body.** The server and the
 client roll different numbers, which is a hydration mismatch, and React may re-render at any
-time. Use `seededRandom(index)` from `lib/utils.ts` — several components were fixed this way
-during the port.
+time. Use `seededRandom(index)` from `lib/utils.ts` — several components were fixed this way.
 
 ## Deliberate differences from the Laravel app
 
-- **`throttle:10,1` is not applied globally.** A 10/min per-IP cap on every route would break RSC
-  navigation. Ported as 5/min on the login action (matching `LoginRequest`) and 10/min on the
-  analytics proxy. See `lib/rate-limit.ts`.
-- **The Gemini chatbot is removed.** Ported and working, then dropped at the owner's request —
-  there is no `GEMINI_API_KEY` to run it. Gone: `components/landing/chat-bot.tsx`,
-  `app/api/chatbot/`, its 3/min limiter, and the env var. The Laravel `ChatBotController` is
-  still the reference if it ever comes back.
-- **`/admin/settings` has a new view.** `SettingsController`'s logic is ported unchanged, but its
-  page component never existed — the route returned a 500 while the admin header linked to it.
+- **No admin panel, no login, no auth.** Removed at the owner's request — the catalog is edited
+  in `content/capstones.json` and deployed. Gone with it: the signed-cookie session, scrypt
+  password hashing, `proxy.ts`, the JSON store's atomic-write layer, file-upload handling, and
+  `scripts/set-admin-password.mjs`. The Laravel controllers remain the reference if a CMS is ever
+  wanted again — it would want a real database, not the old file store.
+- **The Gemini chatbot is removed.** Ported and working, then dropped — there is no
+  `GEMINI_API_KEY` to run it. The Laravel `ChatBotController` is the reference if it comes back.
+- **The contribution graph changed host.** `github-readme-activity-graph.vercel.app` is dead
+  (402 `DEPLOYMENT_DISABLED`), which showed a broken image on the landing page. Now
+  `ghchart.rshah.org`, with an `onError` that hides the card if that host dies too.
 - **`sitemap.ts` lists real URLs.** The Blade version emitted twelve hardcoded `/project/{id}`
   URLs pointing at a page component that did not exist, so all twelve served 500s to crawlers.
 - **Dropped because it was unreachable:** Google OAuth and Socialite, the welcome email,
-  registration, the user (non-admin) dashboard and the `user.*` routes, `/project/{id}`, and
-  visitor tracking (`HomeController::index` never called its own `trackVisitor`).
-- **URL validation is stricter.** `lib/store`-bound URL fields accept only `http:` and `https:`,
-  so `javascript:` payloads are rejected where Laravel's `url` rule let other schemes through.
-- **The download file is still write-only.** The admin form stores it and records the name, but
-  no route serves it — true in Laravel too, once `DownloadController` went away with the orders
-  feature. Sending the file to a client is a manual step.
+  registration, the user dashboard and the `user.*` routes, `/project/{id}`, and visitor tracking
+  (`HomeController::index` never called its own `trackVisitor`).
+- **`throttle:10,1` is not applied globally.** A per-IP cap on every route would break RSC
+  navigation. Only the analytics proxy is limited now, at 10/min. See `lib/rate-limit.ts`.
 
 ## Known rough edges inherited from the source
 
 - `components/landing/footer.tsx`, `github.tsx` and `sections/ProjectShowcase.tsx` have broken
-  leftover ternaries inside `className` template strings, e.g.
-  `` `'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'} py-6` ``. They emit literal quotes
-  as class names. Cosmetic, carried over verbatim, worth a cleanup pass.
+  leftover ternaries inside `className` template strings that emit literal quotes as class names.
+  Cosmetic, carried over verbatim, worth a cleanup pass.
 - `components/ui/terminal.tsx` fetches `/sounds/sound.ogg`, which does not exist. Harmless —
   `terminal-section.tsx` passes `enableSound={false}`, so the fetch never runs.
-- `components/admin/header.tsx` points `AvatarImage` at `/api/placeholder/32/32`, which 404s on
-  every admin page load. The `AvatarFallback` initials render instead.
+- `/api/clarity-analytics` has no caller in the UI; the component that used it was dead code in
+  the Laravel app and was not ported. It works if given a `CLARITY_API_TOKEN`.
 
 ## Environment
 
@@ -187,19 +138,14 @@ during the port.
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `ADMIN_SESSION_SECRET` | yes | signs the session cookie; without it nobody can log in |
-| `NEXT_PUBLIC_SITE_URL` | yes in production | canonical URL, sitemap, Open Graph |
+| `NEXT_PUBLIC_SITE_URL` | yes in production | canonical URLs, sitemap, Open Graph, JSON-LD |
 | `CLARITY_API_TOKEN` | optional | only `/api/clarity-analytics` uses it |
 
-Admin credentials live in `data/admin.json`, not in env.
+**`NEXT_PUBLIC_SITE_URL` is read at build time.** Unset, the site publishes
+`http://localhost:3000` as its canonical URL — which is exactly what the first Vercel deploy did.
+Set it in the host's environment variables and rebuild; changing it after a build has no effect.
 
 ## Deploying
 
-Needs a writable filesystem and a single process — see [Data](#data).
-
-Serve over HTTPS. `sessionCookieOptions()` sets `secure: true` when `NODE_ENV === 'production'`,
-so over plain HTTP a browser refuses to store the session cookie and login appears to do nothing.
-`localhost` is exempt (browsers treat it as a secure context).
-
-`NEXT_PUBLIC_SITE_URL` is read at build time for canonical URLs, the sitemap and Open Graph — set
-it before `npm run build`, not after.
+Static output, so any host works. Vercel Web Analytics and Speed Insights are wired into
+`app/layout.tsx` and report only from a Vercel deployment; locally they are no-ops.

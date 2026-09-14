@@ -9,8 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write app components hooks lib",
-    "format:check": "prettier --check app components hooks lib",
-    "set-admin-password": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/set-admin-password.mjs"
+    "format:check": "prettier --check app components hooks lib"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
@@ -32,6 +31,7 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.9.1",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
@@ -39,7 +39,6 @@
     "next": "^16.3.5",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "server-only": "^0.0.1",
     "simplex-noise": "^4.0.3",
     "swiper": "^14.2.0",
     "tailwind-merge": "^3.3.1"

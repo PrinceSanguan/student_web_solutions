@@ -1,38 +1,19 @@
 # Student Web Solutions
 
 Portfolio and catalog site for Student Web Solutions — ready-made capstone systems for Filipino
-students — with an admin-only CMS for the catalog.
+students.
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · no database.
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · fully static, no database.
 
-This is a port of the Laravel 12 + Inertia 2 app at `D:\boilerplate\StudentWebSolutions`.
+Ported from the Laravel 12 + Inertia 2 app at `D:\boilerplate\StudentWebSolutions`.
 
 ## Getting started
 
 ```bash
 npm install
-cp .env.example .env.local
+cp .env.example .env.local     # then set NEXT_PUBLIC_SITE_URL
+npm run dev                    # http://localhost:3000
 ```
-
-Generate a session secret and put it in `.env.local` as `ADMIN_SESSION_SECRET`:
-
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-```
-
-Create the admin account:
-
-```bash
-npm run set-admin-password -- you@example.com "your-password" "Your Name"
-```
-
-Then:
-
-```bash
-npm run dev        # http://localhost:3000
-```
-
-Sign in at `/login`, manage the catalog at `/admin/capstones`.
 
 ## Scripts
 
@@ -44,59 +25,70 @@ Sign in at `/login`, manage the catalog at `/admin/capstones`.
 | `npm run lint` | eslint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run format` | prettier |
-| `npm run set-admin-password -- <email> <password> [name]` | provision or reset the admin account |
 
 ## Routes
 
 | Path | |
 |---|---|
 | `/` | landing page |
-| `/capstone` | public catalog |
-| `/capstone/[slug]` | project detail |
-| `/login`, `/logout` | admin sign in / out |
-| `/admin/dashboard` | stats and quick actions |
-| `/admin/capstones` | list, create, edit, delete |
-| `/admin/settings` | name and password |
-| `/api/clarity-analytics` | Microsoft Clarity proxy |
+| `/capstone` | catalog |
+| `/capstone/[slug]` | project detail — one prerendered page per project |
+| `/api/clarity-analytics` | Microsoft Clarity proxy (optional, unused by the UI) |
 | `/robots.txt`, `/sitemap.xml` | generated |
 
-## No database
+Everything except the Clarity proxy is prerendered at build time and served as static HTML.
 
-Capstone records and the admin account are JSON files under `data/`, behind `lib/store/`:
+## Editing the catalog
 
+The catalog lives in **`content/capstones.json`** — one object per project. Edit it, commit, and
+redeploy; that is the whole workflow. There is no admin panel and no database.
+
+A project needs at least:
+
+```json
+{
+  "id": 7,
+  "title": "Payroll Management System",
+  "slug": "payroll-management-system",
+  "description": "What it does.\n\nKey Features:\n• Bullet lists work — newlines are preserved.",
+  "price": 0,
+  "category": "Business System",
+  "technologies": ["Laravel 12", "React 19"],
+  "demo_url": "https://demo.example.com",
+  "download_url": null,
+  "download_file": null,
+  "thumbnail": "https://example.com/screenshot.png",
+  "is_available": true,
+  "created_at": "2026-09-14T00:00:00.000Z",
+  "updated_at": "2026-09-14T00:00:00.000Z"
+}
 ```
-data/
-  capstones.json
-  admin.json
-  uploads/capstone-downloads/
-```
 
-Writes are atomic and serialised per file. `data/` is gitignored, so it is per-machine state — a
-fresh clone starts with an empty catalog and no admin account.
-
-**This means the app needs a writable filesystem and a single process.** `next start` on a PC or a
-VPS is fine; Vercel and other read-only serverless hosts are not. `lib/store/` is the one seam to
-replace if that changes.
-
-## Deploying
-
-Serve over **HTTPS**. In production the session cookie is set `Secure`, so a browser will not
-store it over plain HTTP and login will silently fail to stick. (`localhost` is exempt — browsers
-treat it as a secure context, so `npm start` works locally either way.)
-
-Set `NEXT_PUBLIC_SITE_URL` to the real origin before building: it is baked into the canonical
-URLs, the sitemap and the Open Graph tags.
+- `id` must be unique. `slug` becomes the URL and must be lowercase letters, numbers and hyphens.
+- `category` drives the filter pills: `Business System`, `School System`, `Government System`,
+  `Healthcare`, `Hospitality`. Anything else still renders but gets no coloured badge.
+- `is_available: false` hides a project from the grid and the sitemap; its direct URL still works.
+- `created_at` orders the grid, newest first.
+- `price`, `download_url` and `download_file` are internal — they are never rendered publicly.
+- The description supports line breaks and `•` / `-` bullet lists on the detail page.
 
 ## Environment
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `ADMIN_SESSION_SECRET` | yes | signs the session cookie |
-| `NEXT_PUBLIC_SITE_URL` | yes in production | canonical URL, sitemap, Open Graph |
+| `NEXT_PUBLIC_SITE_URL` | **yes in production** | canonical URLs, sitemap, Open Graph, JSON-LD |
 | `CLARITY_API_TOKEN` | optional | only the analytics proxy uses it |
+
+`NEXT_PUBLIC_SITE_URL` is read **at build time**. If it is unset the site falls back to
+`http://localhost:3000` and publishes that to Google — set it in your host's environment
+variables and redeploy.
+
+## Deploying
+
+Static output, so anywhere works — Vercel included. Vercel Web Analytics and Speed Insights are
+already wired into the root layout and start reporting once deployed there.
 
 ## Contributing
 
-`CLAUDE.md` documents the architecture, the conventions, and the places where this port
-deliberately differs from the Laravel original. Read it before changing the data layer, the auth
-flow, or anything under `components/ui/`.
+`CLAUDE.md` documents the architecture and the places where this port deliberately differs from
+the Laravel original.

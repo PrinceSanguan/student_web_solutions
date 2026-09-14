@@ -9,9 +9,9 @@ import * as ToastPrimitives from "@radix-ui/react-toast"
 /**
  * Server-supplied one-shot messages.
  *
- * This used to be read from Inertia's shared props via `usePage()`. In the App
- * Router there is no such global, so the provider takes them as a prop and a
- * Server Component decides what to pass (see `lib/flash.ts`).
+ * These used to be read from Inertia's shared props via `usePage()`. In the App
+ * Router there is no such global, so the provider takes them as a prop and the
+ * caller decides what to pass.
  */
 export interface FlashMessages {
   success?: string

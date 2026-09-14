@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import { CapstoneCatalog } from '@/components/capstone/catalog';
-import { listAvailable } from '@/lib/store/capstones';
+import { listAvailable } from '@/lib/capstones';
 
 /** Was the `<Head>` block in `pages/Capstone/Index.tsx`. */
 export const metadata: Metadata = {
@@ -11,15 +11,7 @@ export const metadata: Metadata = {
     alternates: { canonical: '/capstone' },
 };
 
-/**
- * Revalidate hourly on top of the explicit `revalidatePath` the admin actions
- * already fire. That covers the case the actions cannot see: `data/capstones.json`
- * edited directly, or a build whose `data/` differs from the server's.
- */
-export const revalidate = 3600;
-
 /** Ported from `CapstoneController::index`. */
-export default async function CapstoneIndexPage() {
-    const capstones = await listAvailable();
-    return <CapstoneCatalog capstones={capstones} />;
+export default function CapstoneIndexPage() {
+    return <CapstoneCatalog capstones={listAvailable()} />;
 }

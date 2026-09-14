@@ -7,9 +7,6 @@
 next-env.d.ts
 *.tsbuildinfo
 
-# JSON store + uploads (per-machine state, never committed)
-/data
-
 # env
 .env
 .env.*

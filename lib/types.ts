@@ -1,8 +1,8 @@
 /**
  * Shapes that cross the server/client boundary.
  *
- * `Capstone` mirrors the old `capstones` table one column at a time, so a row
- * exported from the Laravel database drops straight into `data/capstones.json`.
+ * `Capstone` mirrors the old Laravel `capstones` table one column at a time, which
+ * is why `content/capstones.json` can hold rows exported straight from it.
  * Timestamps are ISO strings because JSON has no date type.
  */
 export interface Capstone {
@@ -10,16 +10,17 @@ export interface Capstone {
     title: string;
     slug: string;
     description: string;
-    /** Internal reference only — never sent to the public pages. */
+    /** Internal reference only — never rendered on a public page. */
     price: number;
     category: string | null;
     technologies: string[] | null;
     demo_url: string | null;
-    /** Internal delivery field — never sent to the public pages. */
+    /** Internal delivery field — never rendered on a public page. */
     download_url: string | null;
-    /** Filename inside `data/uploads/capstone-downloads/`. Internal. */
+    /** Internal delivery field — never rendered on a public page. */
     download_file: string | null;
     thumbnail: string | null;
+    /** `false` hides it from the grid and the sitemap; the direct URL still works. */
     is_available: boolean;
     created_at: string;
     updated_at: string;
@@ -31,24 +32,3 @@ export interface Capstone {
  * made in the Laravel app.
  */
 export type PublicCapstone = Pick<Capstone, 'id' | 'title' | 'slug' | 'description' | 'demo_url' | 'thumbnail' | 'category' | 'technologies'>;
-
-/** The row the admin table renders. */
-export type AdminCapstoneRow = Pick<Capstone, 'id' | 'title' | 'slug' | 'price' | 'category' | 'is_available' | 'thumbnail'>;
-
-/** The single admin account, stored in `data/admin.json`. */
-export interface AdminUser {
-    name: string;
-    email: string;
-}
-
-/** `AdminUser` plus the secret — never leaves the server. */
-export interface StoredAdmin extends AdminUser {
-    /** `scrypt$<salt-base64>$<hash-base64>` — see `lib/auth/password.ts`. */
-    passwordHash: string;
-}
-
-export interface CapstoneStats {
-    total: number;
-    available: number;
-    unlisted: number;
-}
