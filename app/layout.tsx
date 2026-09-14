@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata, Viewport } from 'next';
 import { DM_Sans, Inter, Syne } from 'next/font/google';
 
@@ -136,6 +137,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     // The payload is built from module constants, never from user input.
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }}
                 />
+                {/* Vercel Web Analytics — visitor and page-view counts.
+                    Injects its script only on a Vercel deployment; locally it is a no-op
+                    that logs to the console, so `npm run dev` stays quiet and no
+                    requests leave the machine. */}
+                <Analytics />
             </body>
         </html>
     );
