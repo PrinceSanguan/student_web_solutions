@@ -33,7 +33,17 @@ const CATEGORY_DOTS: Record<string, string> = {
     Hospitality: '#34d399',
 };
 
-const CATEGORIES = ['All', 'Business System', 'School System', 'Government System', 'Healthcare', 'Hospitality'];
+/**
+ * "Live Client Project" is not a domain category — it filters on `kind`, not on
+ * `category`. It sits in the same pill row because that is where a visitor looks,
+ * and `filterFor()` below keeps the two axes straight.
+ */
+const CLIENT_FILTER = 'Live Client Project';
+
+const CATEGORIES = ['All', CLIENT_FILTER, 'Business System', 'School System', 'Government System', 'Healthcare', 'Hospitality'];
+
+/** Gold, deliberately unlike the domain-category colours. */
+const CLIENT_STYLE = { bg: 'rgba(202,138,4,0.10)', text: '#854d0e', border: 'rgba(202,138,4,0.30)', dot: '#eab308' };
 
 const PAGE_BG = '#ffffff';
 const CARD_BG = '#0d1526';
@@ -44,7 +54,12 @@ export function CapstoneCatalog({ capstones }: { capstones: PublicCapstone[] }) 
     const [activeCategory, setActiveCategory] = useState('All');
     const [hoveredId, setHoveredId] = useState<number | null>(null);
 
-    const filtered = activeCategory === 'All' ? capstones : capstones.filter((c) => c.category === activeCategory);
+    const filtered =
+        activeCategory === 'All'
+            ? capstones
+            : activeCategory === CLIENT_FILTER
+              ? capstones.filter((c) => c.kind === 'client')
+              : capstones.filter((c) => c.category === activeCategory);
 
     return (
         <div className="flex min-h-screen flex-col" style={{ background: PAGE_BG, fontFamily: 'var(--font-dm-sans)' }}>
@@ -97,8 +112,8 @@ export function CapstoneCatalog({ capstones }: { capstones: PublicCapstone[] }) 
                 </h1>
 
                 <p className="mt-5 max-w-md text-base" style={{ color: '#64748b', lineHeight: 1.75 }}>
-                    Ready-made, fully documented web systems built for Filipino students — or a custom build made to your exact requirements. Message
-                    the developer to discuss your project and get a quote.
+                    Ready-made, fully documented web systems built for Filipino students — or a custom build made to your exact requirements. Some of
+                    these are live client systems running real businesses today. Message the developer to discuss your project and get a quote.
                 </p>
             </header>
 
@@ -151,8 +166,10 @@ export function CapstoneCatalog({ capstones }: { capstones: PublicCapstone[] }) 
                 ) : (
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {filtered.map((capstone) => {
-                            const catStyle = capstone.category ? CATEGORY_STYLES[capstone.category] : null;
-                            const catDot = capstone.category ? CATEGORY_DOTS[capstone.category] : null;
+                            const isClient = capstone.kind === 'client';
+                            const catStyle = isClient ? CLIENT_STYLE : capstone.category ? CATEGORY_STYLES[capstone.category] : null;
+                            const catDot = isClient ? CLIENT_STYLE.dot : capstone.category ? CATEGORY_DOTS[capstone.category] : null;
+                            const badgeLabel = isClient ? CLIENT_FILTER : capstone.category;
                             const isHovered = hoveredId === capstone.id;
 
                             return (
@@ -200,16 +217,16 @@ export function CapstoneCatalog({ capstones }: { capstones: PublicCapstone[] }) 
 
                                     {/* Body */}
                                     <div className="flex flex-1 flex-col p-5">
-                                        {capstone.category && catStyle && (
+                                        {badgeLabel && catStyle && (
                                             <span
                                                 className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium"
                                                 style={{ background: catStyle.bg, color: catStyle.text, border: `1px solid ${catStyle.border}` }}
                                             >
                                                 <span
-                                                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                                    className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${isClient ? 'animate-pulse' : ''}`}
                                                     style={{ background: catDot ?? '#64748b' }}
                                                 />
-                                                {capstone.category}
+                                                {badgeLabel}
                                             </span>
                                         )}
 
@@ -222,8 +239,8 @@ export function CapstoneCatalog({ capstones }: { capstones: PublicCapstone[] }) 
                                         </p>
 
                                         <div className="flex items-end justify-between">
-                                            <span className="text-xs font-medium" style={{ color: '#64748b' }}>
-                                                Contact for pricing
+                                            <span className="text-xs font-medium" style={{ color: isClient ? '#a16207' : '#64748b' }}>
+                                                {isClient ? 'Live in production' : 'Contact for pricing'}
                                             </span>
                                             <span
                                                 className="flex items-center gap-1 text-xs font-medium transition-all"

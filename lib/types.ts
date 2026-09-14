@@ -5,11 +5,24 @@
  * is why `content/capstones.json` can hold rows exported straight from it.
  * Timestamps are ISO strings because JSON has no date type.
  */
+/**
+ * What a project IS, which is not the same thing as what domain it serves.
+ *
+ * `capstone` — a ready-made system sold to students.
+ * `client`   — a real system built for a paying client and running in production.
+ *
+ * The two are presented differently: a capstone advertises source code and a
+ * submission-ready package, a client project advertises that it is live. Absent
+ * in the JSON means `capstone`, so existing records need no edit.
+ */
+export type CapstoneKind = 'capstone' | 'client';
+
 export interface Capstone {
     id: number;
     title: string;
     slug: string;
     description: string;
+    kind?: CapstoneKind;
     /** Internal reference only — never rendered on a public page. */
     price: number;
     category: string | null;
@@ -31,4 +44,7 @@ export interface Capstone {
  * `download_url` and `download_file` — the same cut `CapstoneController::publicFields`
  * made in the Laravel app.
  */
-export type PublicCapstone = Pick<Capstone, 'id' | 'title' | 'slug' | 'description' | 'demo_url' | 'thumbnail' | 'category' | 'technologies'>;
+export type PublicCapstone = Pick<Capstone, 'id' | 'title' | 'slug' | 'description' | 'demo_url' | 'thumbnail' | 'category' | 'technologies'> & {
+    /** Always resolved — `toPublic()` fills in the default. */
+    kind: CapstoneKind;
+};

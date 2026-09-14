@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { routes } from '@/lib/routes';
 import { FACEBOOK_URL } from '@/lib/site';
-import type { PublicCapstone } from '@/lib/types';
+import type { CapstoneKind, PublicCapstone } from '@/lib/types';
 
 /**
  * Ported from `pages/Capstone/Show.tsx`.
@@ -23,12 +23,26 @@ const CATEGORY_STYLES: Record<string, { bg: string; text: string; border: string
     Hospitality: { bg: 'rgba(16,185,129,0.08)', text: '#065f46', border: 'rgba(16,185,129,0.25)', dot: '#10b981' },
 };
 
-const INCLUDED = [
-    { label: 'Complete source code' },
-    { label: 'Full documentation (PDF)' },
-    { label: 'Step-by-step setup guide' },
-    { label: 'Submission-ready format' },
-];
+/**
+ * What the panel lists depends on what the project is.
+ *
+ * A capstone is a package you buy — source code, docs, a submission-ready build.
+ * A client project is a system already running someone's business, so the same
+ * list would be wrong ("Submission-ready format" especially).
+ */
+const INCLUDED_BY_KIND: Record<CapstoneKind, { heading: string; items: string[] }> = {
+    capstone: {
+        heading: "What's included",
+        items: ['Complete source code', 'Full documentation (PDF)', 'Step-by-step setup guide', 'Submission-ready format'],
+    },
+    client: {
+        heading: 'About this build',
+        items: ['Live in production', 'Built end to end', 'Custom-designed for the client', 'Maintained and supported'],
+    },
+};
+
+/** Gold, matching the badge on the catalog card. */
+const CLIENT_STYLE = { bg: 'rgba(202,138,4,0.10)', text: '#854d0e', border: 'rgba(202,138,4,0.30)', dot: '#eab308' };
 
 const PAGE_BG = '#ffffff';
 const CARD_BG = '#0d1526';
@@ -36,7 +50,10 @@ const BORDER = 'rgba(255,255,255,0.06)';
 const NAV_BG = 'rgba(255,255,255,0.95)';
 
 export function CapstoneDetail({ capstone }: { capstone: PublicCapstone }) {
-    const catStyle = capstone.category ? CATEGORY_STYLES[capstone.category] : null;
+    const isClient = capstone.kind === 'client';
+    const catStyle = isClient ? CLIENT_STYLE : capstone.category ? CATEGORY_STYLES[capstone.category] : null;
+    const badgeLabel = isClient ? 'Live Client Project' : capstone.category;
+    const included = INCLUDED_BY_KIND[capstone.kind];
 
     return (
         <div className="flex min-h-screen flex-col" style={{ background: PAGE_BG, fontFamily: 'var(--font-dm-sans)' }}>
@@ -96,11 +113,11 @@ export function CapstoneDetail({ capstone }: { capstone: PublicCapstone }) {
                         {/* What's included */}
                         <div className="rounded-2xl p-5" style={{ background: CARD_BG, border: `1px solid ${BORDER}` }}>
                             <p className="mb-4 text-xs font-semibold tracking-widest uppercase" style={{ color: '#334155' }}>
-                                What&apos;s included
+                                {included.heading}
                             </p>
                             <ul className="space-y-3">
-                                {INCLUDED.map((item) => (
-                                    <li key={item.label} className="flex items-center gap-3 text-sm" style={{ color: '#94a3b8' }}>
+                                {included.items.map((label) => (
+                                    <li key={label} className="flex items-center gap-3 text-sm" style={{ color: '#94a3b8' }}>
                                         <span
                                             className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full"
                                             style={{ background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.2)' }}
@@ -115,7 +132,7 @@ export function CapstoneDetail({ capstone }: { capstone: PublicCapstone }) {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                                             </svg>
                                         </span>
-                                        {item.label}
+                                        {label}
                                     </li>
                                 ))}
                             </ul>
@@ -125,13 +142,16 @@ export function CapstoneDetail({ capstone }: { capstone: PublicCapstone }) {
                     {/* ── Right: Info + Contact ── */}
                     <div className="flex flex-col">
                         {/* Category badge */}
-                        {capstone.category && catStyle && (
+                        {badgeLabel && catStyle && (
                             <span
                                 className="mb-5 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
                                 style={{ background: catStyle.bg, color: catStyle.text, border: `1px solid ${catStyle.border}` }}
                             >
-                                <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: catStyle.dot }} />
-                                {capstone.category}
+                                <span
+                                    className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${isClient ? 'animate-pulse' : ''}`}
+                                    style={{ background: catStyle.dot }}
+                                />
+                                {badgeLabel}
                             </span>
                         )}
 
@@ -184,15 +204,16 @@ export function CapstoneDetail({ capstone }: { capstone: PublicCapstone }) {
                         {/* ── Contact / pricing CTA ── */}
                         <div className="mt-auto rounded-2xl p-6" style={{ background: CARD_BG, border: `1px solid ${BORDER}` }}>
                             <p className="text-base font-bold text-white" style={{ fontFamily: 'var(--font-syne)' }}>
-                                Interested in this project?
+                                {isClient ? 'Want something like this?' : 'Interested in this project?'}
                             </p>
                             <p className="mt-2 text-sm leading-relaxed" style={{ color: '#94a3b8' }}>
-                                Every system is tailored to your needs. Message the developer directly to discuss pricing, customizations, and
-                                turnaround — you&apos;ll get a personal reply and a quote for exactly what you&apos;re looking for.
+                                {isClient
+                                    ? 'This one was designed and built for a real business and is running in production today. Message the developer to talk about a system for yours.'
+                                    : "Every system is tailored to your needs. Message the developer directly to discuss pricing, customizations, and turnaround — you'll get a personal reply and a quote for exactly what you're looking for."}
                             </p>
 
                             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                                {capstone.demo_url && <DemoButton href={capstone.demo_url} flex />}
+                                {capstone.demo_url && <DemoButton href={capstone.demo_url} label={isClient ? 'Visit Live Site' : 'View Demo'} flex />}
                                 <a
                                     href={FACEBOOK_URL}
                                     target="_blank"
@@ -236,7 +257,7 @@ export function CapstoneDetail({ capstone }: { capstone: PublicCapstone }) {
     );
 }
 
-function DemoButton({ href, flex }: { href: string; flex?: boolean }) {
+function DemoButton({ href, label, flex }: { href: string; label: string; flex?: boolean }) {
     return (
         <a
             href={href}
@@ -261,7 +282,7 @@ function DemoButton({ href, flex }: { href: string; flex?: boolean }) {
                     d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                 />
             </svg>
-            View Demo
+            {label}
         </a>
     );
 }

@@ -163,5 +163,34 @@
     "is_available": true,
     "created_at": "2026-05-15T09:31:12.000Z",
     "updated_at": "2026-05-15T09:31:12.000Z"
+  },
+  {
+    "id": 7,
+    "title": "MASTERmind Chess Café — Rating & Café Management System",
+    "slug": "mastermind-chess-cafe",
+    "description": "A live production system built for MASTERmind Chess Café in Angeles City — not a template, a real business running on it every day.\n\nPlayers join a queue from their phone, walk in, play rated chess on a real board, and climb a café-exclusive leaderboard. The rating engine, the staff terminal, and the café's public pages are all part of the same system.\n\nWhat it does\nPlayer accounts with username login, profile photos, badges, and in-app notifications.\nCustom Elo rating engine with a rank ladder — Pawn, Knight, Bishop, Rook, King, through to Mastermind Champion — capped at 10 rated games a day.\nOnline queue and café check-in: players queue remotely, staff confirm arrival at the counter.\nStaff terminal for starting matches, recording results, one-tap rematches, and handling disputes.\nMonthly rewards, membership tiers, and a live leaderboard.\nSwiss-Manager CSV import for tournaments run off-site.\nOwner-managed content — the café page, menu, coaching, tournaments, and champions are all edited from the admin panel with no developer involved.\nInstallable as a PWA with its own icon and an offline page.\n\nBuilt and maintained end to end: database design, row-level security, the rating math, the staff workflows, and the public site.",
+    "kind": "client",
+    "price": 0,
+    "category": "Business System",
+    "technologies": [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS 4",
+      "Supabase",
+      "PostgreSQL",
+      "Row Level Security",
+      "Supabase Auth",
+      "Supabase Storage",
+      "PWA",
+      "Vercel"
+    ],
+    "demo_url": "https://mastermindchesscafe.com/",
+    "download_url": null,
+    "download_file": null,
+    "thumbnail": "/assets/images/mastermind-chess-cafe.png",
+    "is_available": true,
+    "created_at": "2026-09-14T03:28:14.000Z",
+    "updated_at": "2026-09-14T03:28:14.000Z"
   }
 ]

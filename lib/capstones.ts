@@ -34,6 +34,8 @@ function toPublic(c: Capstone): PublicCapstone {
         title: c.title,
         slug: c.slug,
         description: c.description,
+        // Anything without an explicit kind is one of the ready-made capstones.
+        kind: c.kind ?? 'capstone',
         demo_url: c.demo_url,
         thumbnail: c.thumbnail,
         category: c.category,
