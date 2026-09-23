@@ -48,3 +48,42 @@ export type PublicCapstone = Pick<Capstone, 'id' | 'title' | 'slug' | 'descripti
     /** Always resolved — `toPublic()` fills in the default. */
     kind: CapstoneKind;
 };
+
+/* ── Services ────────────────────────────────────────────────────────────── */
+
+export interface ServiceSection {
+    heading: string;
+    /** One paragraph per entry. */
+    body: string[];
+}
+
+export interface ServiceFaq {
+    q: string;
+    a: string;
+}
+
+/**
+ * A service page. The copy lives in `content/services.ts`; this is its shape.
+ *
+ * `metaTitle` and `metaDescription` are deliberately separate from `name` and
+ * `tagline` — what ranks in a search result is rarely the best thing to print on
+ * the page itself.
+ */
+export interface Service {
+    slug: string;
+    name: string;
+    /** For nav, cards and breadcrumbs, where the full name is too long. */
+    shortName: string;
+    tagline: string;
+    icon: string;
+    /** Hex, used for the card accent and the page's badge. */
+    accent: string;
+    metaTitle: string;
+    metaDescription: string;
+    heroHeading: string;
+    heroBody: string;
+    sections: ServiceSection[];
+    faqs: ServiceFaq[];
+    /** Capstone slugs shown as proof at the foot of the page. */
+    relatedSlugs: string[];
+}

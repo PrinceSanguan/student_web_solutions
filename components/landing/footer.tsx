@@ -1,9 +1,37 @@
 'use client';
 
+import Link from 'next/link';
+
 const Footer = () => {
     return (
         <footer className={`'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'} py-6`}>
             <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+                {/* Internal links. Without these the footer sent every drop of link
+                    equity off-site and none of it to our own pages. */}
+                <nav aria-label="Footer" className="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+                    <Link href="/" className="transition-colors hover:text-blue-500">
+                        Home
+                    </Link>
+                    <Link href="/services" className="transition-colors hover:text-blue-500">
+                        Services
+                    </Link>
+                    <Link href="/services/web-development" className="transition-colors hover:text-blue-500">
+                        Web Development
+                    </Link>
+                    <Link href="/services/ai-automation" className="transition-colors hover:text-blue-500">
+                        AI Automation
+                    </Link>
+                    <Link href="/services/facebook-ads" className="transition-colors hover:text-blue-500">
+                        Facebook Ads
+                    </Link>
+                    <Link href="/services/google-ads" className="transition-colors hover:text-blue-500">
+                        Google Ads
+                    </Link>
+                    <Link href="/capstone" className="transition-colors hover:text-blue-500">
+                        Projects
+                    </Link>
+                </nav>
+
                 <div className="mb-4 flex justify-center space-x-6">
                     <a
                         href="https://www.facebook.com/Grandmaster1997/"

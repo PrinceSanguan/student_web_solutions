@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 
 import { CapstoneCatalog } from '@/components/capstone/catalog';
+import { JsonLd } from '@/components/seo/json-ld';
 import { listAvailable } from '@/lib/capstones';
+import { breadcrumbJsonLd, itemListJsonLd } from '@/lib/seo';
 
 /** Was the `<Head>` block in `pages/Capstone/Index.tsx`. */
 export const metadata: Metadata = {
@@ -13,5 +15,18 @@ export const metadata: Metadata = {
 
 /** Ported from `CapstoneController::index`. */
 export default function CapstoneIndexPage() {
-    return <CapstoneCatalog capstones={listAvailable()} />;
+    const capstones = listAvailable();
+
+    return (
+        <>
+            <CapstoneCatalog capstones={capstones} />
+            <JsonLd data={breadcrumbJsonLd([{ name: 'Projects', path: '/capstone' }])} />
+            <JsonLd
+                data={itemListJsonLd(
+                    'Capstone Projects and Client Systems',
+                    capstones.map((c) => ({ name: c.title, path: `/capstone/${c.slug}` })),
+                )}
+            />
+        </>
+    );
 }

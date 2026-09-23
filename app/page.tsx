@@ -1,24 +1,35 @@
+import type { Metadata } from 'next';
+
+import { FaqSection, HOME_FAQS } from '@/components/landing/faq-section';
 import Footer from '@/components/landing/footer';
 import GitHub from '@/components/landing/github';
 import HeroLanding from '@/components/landing/sections/HeroLanding';
 import ProjectShowcase from '@/components/landing/sections/ProjectShowcase';
+import { ServicesSection } from '@/components/landing/services-section';
 import TerminalSection from '@/components/landing/terminal-section';
-
-import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/json-ld';
+import { faqJsonLd, itemListJsonLd } from '@/lib/seo';
+import { listServices } from '@/lib/services';
 
 /** Was `<Head title=… >` inside `pages/Welcome.tsx`. */
 export const metadata: Metadata = {
-    title: 'Capstone Projects & Ready-Made Systems',
-    description: 'Browse ready-made capstone projects and web systems. Contact us for custom builds.',
+    title: 'Capstone Projects, Web Systems & AI Automation Philippines',
+    description:
+        'Ready-made capstone projects and custom web systems from ₱10,000, plus leads AI automation and Facebook & Google Ads management. Live client builds in the Philippines and the UK.',
     alternates: { canonical: '/' },
 };
 
 export default function HomePage() {
+    const services = listServices();
+
     return (
         <>
             <div>
                 {/* Hero Landing Section - Full Width */}
                 <HeroLanding />
+
+                {/* What we do — the page's indexable copy and its links to /services */}
+                <ServicesSection />
 
                 {/* How It Works — Terminal */}
                 <TerminalSection />
@@ -38,9 +49,20 @@ export default function HomePage() {
                     </section>
                 </div>
 
+                {/* FAQ — also the source of the FAQPage schema below */}
+                <FaqSection />
+
                 {/* Footer */}
                 <Footer />
             </div>
+
+            <JsonLd data={faqJsonLd(HOME_FAQS)} />
+            <JsonLd
+                data={itemListJsonLd(
+                    'Services',
+                    services.map((s) => ({ name: s.name, path: `/services/${s.slug}` })),
+                )}
+            />
         </>
     );
 }

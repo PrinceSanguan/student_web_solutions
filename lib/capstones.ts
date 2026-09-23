@@ -60,6 +60,18 @@ export function findPublicBySlug(slug: string): PublicCapstone | null {
     return match ? toPublic(match) : null;
 }
 
+/**
+ * Slug + last-modified date for the sitemap.
+ *
+ * A separate accessor rather than widening `PublicCapstone`: that type is the
+ * projection that keeps `price` and the download fields off public pages, and it
+ * should stay the narrowest thing that renders. The sitemap needs a date, not a
+ * record.
+ */
+export function listSitemapEntries(): { slug: string; updated_at: string }[] {
+    return newestFirst(capstones.filter((c) => c.is_available)).map((c) => ({ slug: c.slug, updated_at: c.updated_at }));
+}
+
 /** Every listed slug — lets the detail pages prerender at build time. */
 export function listSlugs(): string[] {
     return capstones.filter((c) => c.is_available).map((c) => c.slug);

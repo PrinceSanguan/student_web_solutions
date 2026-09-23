@@ -5,11 +5,57 @@ import { Modal, ModalBody, ModalContent, ModalFooter, ModalTrigger } from '@/com
 import { Cover } from '@/components/ui/cover';
 import { Vortex } from '@/components/ui/vortex';
 import { motion } from 'motion/react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+/** The words the crawler reads. Split for the stagger animation, joined with real spaces. */
+const HEADLINE = 'Capstone Projects & Custom Web Systems';
+
+/**
+ * The hero headline.
+ *
+ * Two things here exist for SEO, not for looks:
+ *
+ * 1. Each word is its own `<span>` so it can animate in, and the gap used to come
+ *    from a `mr-2` margin alone — no actual whitespace. A crawler strips the tags
+ *    and reads "CapstoneProjects&CustomWebSystems" as a single token. The trailing
+ *    `{' '}` puts real spaces back into the text content.
+ * 2. The copy names what the business sells. It previously read "Get a complete
+ *    system —", which contains nothing anyone searches for; that line is still on
+ *    the page, demoted to the subheading below.
+ *
+ * Rendered by both the mobile and desktop layouts, which are mutually exclusive by
+ * CSS, so exactly one is ever visible.
+ */
+function HeroHeadline({ className }: { className: string }) {
+    return (
+        <h1 className={className}>
+            {HEADLINE.split(' ').map((word, index) => (
+                <motion.span
+                    key={index}
+                    initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
+                    animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1, ease: 'easeInOut' }}
+                    className="mr-2 inline-block"
+                >
+                    {word}{' '}
+                </motion.span>
+            ))}
+            <motion.span
+                initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                transition={{ duration: 0.3, delay: 0.6, ease: 'easeInOut' }}
+                className="inline-block"
+            >
+                <Cover>in the Philippines</Cover>
+            </motion.span>
+        </h1>
+    );
+}
+
+const SUBHEAD =
+    'Get a complete system — ready to deploy. Ready-made capstone projects, custom business systems, leads AI automation, and Facebook & Google Ads management.';
 
 const HeroLanding = () => {
-    const router = useRouter();
-
     const projectImages = [
         'https://media.biyaherongchesscoach.com/studentwebsolution/project-1.webp',
         'https://media.biyaherongchesscoach.com/studentwebsolution/project-2.webp',
@@ -50,35 +96,7 @@ const HeroLanding = () => {
             {/* Mobile View with Vortex */}
             <div className="block h-full w-full md:hidden">
                 <Vortex backgroundColor="black" className="flex h-full w-full flex-col items-center justify-center px-2 py-4">
-                    <h1 className="max-w-4xl text-center text-2xl font-bold text-white">
-                        {'Get a complete system —'.split(' ').map((word, index) => (
-                            <motion.span
-                                key={index}
-                                initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
-                                animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                                transition={{
-                                    duration: 0.3,
-                                    delay: index * 0.1,
-                                    ease: 'easeInOut',
-                                }}
-                                className="mr-2 inline-block"
-                            >
-                                {word}
-                            </motion.span>
-                        ))}
-                        <motion.span
-                            initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
-                            animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                            transition={{
-                                duration: 0.3,
-                                delay: 0.6,
-                                ease: 'easeInOut',
-                            }}
-                            className="inline-block"
-                        >
-                            <Cover>ready to deploy.</Cover>
-                        </motion.span>
-                    </h1>
+                    <HeroHeadline className="max-w-4xl text-center text-2xl font-bold text-white" />
 
                     <motion.p
                         initial={{ opacity: 0 }}
@@ -86,7 +104,7 @@ const HeroLanding = () => {
                         transition={{ duration: 0.3, delay: 0.8 }}
                         className="mt-6 max-w-xl text-center text-sm text-white"
                     >
-                        Browse ready-made capstone projects and web systems, or request a custom build tailored to your needs.
+                        {SUBHEAD}
                     </motion.p>
 
                     <motion.div
@@ -95,18 +113,21 @@ const HeroLanding = () => {
                         transition={{ duration: 0.3, delay: 1 }}
                         className="mt-6 flex flex-col items-center gap-4"
                     >
-                        <button
-                            onClick={() => document.getElementById('capstone-projects')?.scrollIntoView({ behavior: 'smooth' })}
+                        {/* Real anchors, not click handlers: a crawler cannot follow
+                            `scrollIntoView` or `window.open`, so these pages used to get no
+                            link equity from the homepage at all. */}
+                        <Link
+                            href="/capstone"
                             className="rounded-lg bg-blue-600 px-6 py-2 text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset] transition duration-200 hover:bg-blue-700"
                         >
-                            🎓 View Capstone Projects Catalog
-                        </button>
-                        <button
-                            onClick={() => window.open('https://www.facebook.com/Grandmaster1997/', '_blank')}
+                            🎓 View Capstone Projects
+                        </Link>
+                        <Link
+                            href="/services"
                             className="rounded-lg border border-white/20 px-6 py-2 text-white transition-all duration-300 hover:bg-white/10"
                         >
-                            💬 Request Custom System
-                        </button>
+                            ⚙️ Web, AI Automation & Ads Services
+                        </Link>
                     </motion.div>
                 </Vortex>
             </div>
@@ -114,35 +135,7 @@ const HeroLanding = () => {
             {/* Desktop View */}
             <div className="relative hidden h-full w-full md:flex md:flex-col md:items-center md:justify-center">
                 <div className="px-4">
-                    <h1 className="relative z-20 mx-auto max-w-4xl text-center text-2xl font-bold text-black md:text-4xl md:text-white lg:text-7xl">
-                        {'Get a complete system —'.split(' ').map((word, index) => (
-                            <motion.span
-                                key={index}
-                                initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
-                                animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                                transition={{
-                                    duration: 0.3,
-                                    delay: index * 0.1,
-                                    ease: 'easeInOut',
-                                }}
-                                className="mr-2 inline-block"
-                            >
-                                {word}
-                            </motion.span>
-                        ))}
-                        <motion.span
-                            initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
-                            animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                            transition={{
-                                duration: 0.3,
-                                delay: 0.6,
-                                ease: 'easeInOut',
-                            }}
-                            className="inline-block"
-                        >
-                            <Cover>ready to deploy.</Cover>
-                        </motion.span>
-                    </h1>
+                    <HeroHeadline className="relative z-20 mx-auto max-w-4xl text-center text-2xl font-bold text-black md:text-4xl md:text-white lg:text-7xl" />
 
                     <motion.p
                         initial={{
@@ -157,7 +150,7 @@ const HeroLanding = () => {
                         }}
                         className="relative z-20 mx-auto max-w-xl py-4 text-center text-lg font-normal text-black md:text-neutral-200"
                     >
-                        Browse ready-made capstone projects and web systems, or request a custom build tailored to your needs.
+                        {SUBHEAD}
                     </motion.p>
 
                     <motion.div
@@ -241,21 +234,21 @@ const HeroLanding = () => {
                                     </div>
                                 </ModalContent>
                                 <ModalFooter className="gap-4">
-                                    <button
-                                        onClick={() => router.push('/capstone')}
+                                    <Link
+                                        href="/capstone"
                                         className="flex w-36 items-center justify-center gap-1 rounded-md border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
                                     >
                                         🎓 Browse Now
-                                    </button>
+                                    </Link>
                                 </ModalFooter>
                             </ModalBody>
                         </Modal>
-                        <button
-                            onClick={() => window.open('https://www.facebook.com/Grandmaster1997/', '_blank')}
-                            className="w-60 transform rounded-lg border border-white/20 bg-white/10 px-6 py-2 font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/20"
+                        <Link
+                            href="/services"
+                            className="flex w-60 transform items-center justify-center rounded-lg border border-white/20 bg-white/10 px-6 py-2 font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/20"
                         >
-                            💬 Request Custom System
-                        </button>
+                            ⚙️ Our Services
+                        </Link>
                     </motion.div>
                 </div>
 

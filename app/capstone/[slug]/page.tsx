@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { CapstoneDetail } from '@/components/capstone/detail';
+import { JsonLd } from '@/components/seo/json-ld';
 import { findPublicBySlug, listSlugs } from '@/lib/capstones';
+import { breadcrumbJsonLd, projectJsonLd } from '@/lib/seo';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -58,5 +60,16 @@ export default async function CapstoneShowPage({ params }: Props) {
     const capstone = findPublicBySlug(slug);
     if (!capstone) notFound();
 
-    return <CapstoneDetail capstone={capstone} />;
+    return (
+        <>
+            <CapstoneDetail capstone={capstone} />
+            <JsonLd data={projectJsonLd(capstone)} />
+            <JsonLd
+                data={breadcrumbJsonLd([
+                    { name: 'Projects', path: '/capstone' },
+                    { name: capstone.title, path: `/capstone/${capstone.slug}` },
+                ])}
+            />
+        </>
+    );
 }

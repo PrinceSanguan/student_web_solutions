@@ -38,17 +38,46 @@ export function localBusinessJsonLd() {
             '@type': 'GeoCoordinates',
             addressCountry: 'PH',
         },
-        areaServed: {
-            '@type': 'Country',
-            name: 'Philippines',
-        },
+        areaServed: [
+            { '@type': 'Country', name: 'Philippines' },
+            // SJA Martial Arts, Swansea — a live client, not an aspiration.
+            { '@type': 'Country', name: 'United Kingdom' },
+        ],
+        knowsLanguage: ['en', 'fil'],
         priceRange: '₱10,000 - ₱50,000',
         currenciesAccepted: 'PHP',
         openingHours: 'Mo-Su 00:00-24:00',
         hasOfferCatalog: {
             '@type': 'OfferCatalog',
-            name: 'Web Development Services',
+            name: 'Web Development, AI Automation and Advertising Services',
             itemListElement: [
+                {
+                    '@type': 'Offer',
+                    itemOffered: {
+                        '@type': 'Service',
+                        name: 'Leads AI Automation',
+                        description: 'AI chatbots and workflow automation that answer and qualify enquiries 24/7 on Facebook Messenger and the web',
+                        url: `${SITE_URL}/services/ai-automation`,
+                    },
+                },
+                {
+                    '@type': 'Offer',
+                    itemOffered: {
+                        '@type': 'Service',
+                        name: 'Facebook Ads Management',
+                        description: 'Facebook and Instagram advertising built for enquiries: targeting, creative, pixel tracking and reporting',
+                        url: `${SITE_URL}/services/facebook-ads`,
+                    },
+                },
+                {
+                    '@type': 'Offer',
+                    itemOffered: {
+                        '@type': 'Service',
+                        name: 'Google Ads Management',
+                        description: 'Google Search and Maps campaigns with conversion tracking and landing pages that convert high-intent searches',
+                        url: `${SITE_URL}/services/google-ads`,
+                    },
+                },
                 {
                     '@type': 'Offer',
                     itemOffered: {

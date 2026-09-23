@@ -43,29 +43,13 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
     metadataBase: new URL(SITE_URL),
     title: {
-        default: 'Student Web Solutions | Capstone System Maker Philippines | Paggawa ng Capstone | ₱10,000',
+        default: 'Capstone Projects, Web Systems & AI Automation Philippines | Student Web Solutions',
         template: `%s | ${SITE_NAME}`,
     },
     description:
-        'Student Web Solutions - #1 capstone system maker in the Philippines. We build capstone projects, thesis systems, library systems, POS, school management systems delivered in 1-2 days. Affordable rates starting ₱10,000. Trusted by Filipino students and businesses.',
-    keywords: [
-        'capstone philippines',
-        'paggawa ng capstone',
-        'capstone system maker',
-        'capstone project philippines',
-        'thesis system philippines',
-        'library system philippines',
-        'school system philippines',
-        'POS system philippines',
-        'web developer philippines',
-        'affordable web developer philippines',
-        'student web solutions',
-        'capstone maker philippines',
-        'information system philippines',
-        'laravel developer philippines',
-        'website maker philippines',
-        'web development philippines',
-    ],
+        'Capstone projects, custom web systems, leads AI automation, and Facebook & Google Ads management in the Philippines. Ready-made thesis and business systems from ₱10,000, plus live client builds in the Philippines and the UK.',
+    // No `keywords` meta: Google has ignored it since 2009. What ranks is the
+    // copy on the page, which is what /services now exists to provide.
     authors: [{ name: 'Prince Sanguan - Student Web Solutions' }],
     applicationName: SITE_NAME,
     referrer: 'strict-origin-when-cross-origin',

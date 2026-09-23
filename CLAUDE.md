@@ -31,6 +31,14 @@ npm run format
 There are no tests. `npm run build` is the gate that catches what matters — `npm run dev`
 tolerates server/client boundary errors the build rejects.
 
+## Content lives in `content/`
+
+Two files, both edited-and-redeployed — there is no CMS:
+
+- `content/capstones.json` — the project catalog
+- `content/services.ts` — the four service pages (TypeScript so the shape is
+  checked at build time and the prose keeps its apostrophes unescaped)
+
 ## The catalog
 
 `content/capstones.json` is the whole CMS. `lib/capstones.ts` imports it directly — no
@@ -47,6 +55,11 @@ component. That projection is the only thing keeping internal fields off the pub
 `findPublicBySlug` deliberately ignores `is_available`, so an unlisted project stays reachable by
 its direct URL and only drops out of the grid. That matches the Laravel `firstOrFail()` query.
 
+### Adding a service
+
+Append to `content/services.ts`. The route, sitemap entry, schema, footer link and
+homepage card all derive from that array — nothing else needs touching.
+
 ### Adding a capstone field
 
 `lib/types.ts` then `lib/capstones.ts` (`toPublic`, if it is public) then the components. Adding
@@ -61,6 +74,7 @@ app/
   page.tsx                landing page
   robots.ts sitemap.ts    file conventions — no plugin, no Blade template
   capstone/               catalog + detail (both prerendered)
+  services/               hub + one page per service (all prerendered)
   api/clarity-analytics/  Microsoft Clarity proxy
 components/
   ui/                     shadcn + Aceternity primitives — vendored third-party code
@@ -68,6 +82,8 @@ components/
 content/capstones.json    the catalog
 lib/
   capstones.ts            read-only accessors over the JSON
+  services.ts             read-only accessors over content/services.ts
+  seo.ts                  JSON-LD builders (Service, FAQPage, Breadcrumb, ItemList)
   routes.ts               every internal path (replaces Ziggy's route())
   site.ts types.ts rate-limit.ts utils.ts
 ```
@@ -101,6 +117,31 @@ restructured; prefer leaving them alone.
 One rule does matter there: **never call `Math.random()` in a render body.** The server and the
 client roll different numbers, which is a hydration mismatch, and React may re-render at any
 time. Use `seededRandom(index)` from `lib/utils.ts` — several components were fixed this way.
+
+## SEO — the rules that are load-bearing
+
+The homepage once shipped 116 indexable words, two `<h1>`s whose text read
+`Getacompletesystem` (the per-word `<span>`s were spaced with `mr-2` and no actual
+whitespace), and **zero** crawlable internal links — its only route to `/capstone`
+was a `router.push()` in an `onClick`. Those are fixed; keep them fixed.
+
+- **Never navigate with `router.push` or `window.open` where a `<Link>` would do.**
+  A crawler cannot follow a click handler, so those pages receive no link equity.
+- **Animating text word-by-word must still emit real spaces** — `{word}{' '}`
+  inside the span, not a margin alone. `mr-2` draws the gap; the space carries the
+  meaning.
+- **`content/services.ts` is the ranking surface.** Each page needs 600+ words of
+  genuine copy; the FAQ array is rendered *and* fed to `faqJsonLd()`, so the
+  answers exist in the HTML. Schema describing text a crawler cannot find is an
+  error, not a rich result — which is why the FAQs use native `<details>` rather
+  than a JS accordion that mounts empty.
+- **The hero keeps two `<h1>`s on purpose.** Mobile and desktop are separate
+  layouts, mutually exclusive by CSS. Collapsing to one would leave whichever
+  viewport lost it without a heading, and Google states plainly that multiple h1s
+  are fine. Do not "fix" this by deleting one.
+- **`app/sitemap.ts` uses each record's `updated_at`**, never the build clock.
+  Stamping every URL with the deploy time tells Google the whole site changed, and
+  it learns to distrust the signal.
 
 ## Deliberate differences from the Laravel app
 

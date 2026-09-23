@@ -33,10 +33,21 @@ npm run dev                    # http://localhost:3000
 | `/` | landing page |
 | `/capstone` | catalog |
 | `/capstone/[slug]` | project detail — one prerendered page per project |
+| `/services` | services hub |
+| `/services/[slug]` | one page per service — web development, AI automation, Facebook Ads, Google Ads |
 | `/api/clarity-analytics` | Microsoft Clarity proxy (optional, unused by the UI) |
 | `/robots.txt`, `/sitemap.xml` | generated |
 
 Everything except the Clarity proxy is prerendered at build time and served as static HTML.
+
+## Editing the services
+
+The four service pages live in **`content/services.ts`** — hero copy, body sections, FAQs, and
+which projects to show as proof. Add an object to the array and the route, sitemap entry, schema,
+footer link and homepage card all follow automatically.
+
+Each page needs at least 600 words of real copy to rank. The FAQ array is rendered on the page
+*and* used to build the `FAQPage` schema, so both stay in sync by construction.
 
 ## Editing the catalog
 

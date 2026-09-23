@@ -192,5 +192,58 @@
     "is_available": true,
     "created_at": "2026-09-14T03:28:14.000Z",
     "updated_at": "2026-09-14T03:28:14.000Z"
+  },
+  {
+    "id": 8,
+    "title": "Biyaherong Chess Coach — Chess Training App & Subscription Platform",
+    "slug": "biyaherong-chess-coach",
+    "description": "A subscription chess-training platform for Filipino players, built around FM Deniel Causo — a FIDE Master with a peak rating of 2410. Live on the web and on Google Play.\n\nWhat it does\n10,000+ rated puzzles with their own rating system, so training difficulty tracks the player.\nFive AI coaches with distinct teaching styles.\nLive engine analysis — players push a position through Stockfish and get it explained.\nOpening Trainer built on spaced repetition, so lines are reviewed exactly when they are about to be forgotten.\nPuzzle Streak and Puzzle Rush game modes for timed practice.\nVideo lessons curated by the coach, managed from an admin panel.\nSubscription billing with redeemable subscription codes for promos and sponsorships.\nSign-in with Google, plus shareable result cards — streak, rush and rating images are generated on the server so a player's score unfurls properly when posted to Facebook.\n\nBuilt as a Laravel and Inertia application with a React front end, and shipped as an Android app alongside the web platform.",
+    "kind": "client",
+    "price": 0,
+    "category": "Business System",
+    "technologies": [
+      "Laravel",
+      "Inertia.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "MySQL",
+      "Stockfish",
+      "Google OAuth",
+      "Android",
+      "Google Play"
+    ],
+    "demo_url": "https://biyaherongchesscoach.com/",
+    "download_url": null,
+    "download_file": null,
+    "thumbnail": "/assets/images/biyaherong-chess-coach.jpg",
+    "is_available": true,
+    "created_at": "2026-09-14T04:10:00.000Z",
+    "updated_at": "2026-09-14T04:10:00.000Z"
+  },
+  {
+    "id": 9,
+    "title": "SJA Martial Arts — Martial Arts Academy Website (Swansea, UK)",
+    "slug": "sja-martial-arts",
+    "description": "A booking and programme website for SJA Martial Arts, a family-run academy in Swansea, Wales, with locations at Swansea YMCA, Neath Town Centre and West Cross. An overseas client — the build was delivered from the Philippines to the UK.\n\nWhat it does\nSeparate programme pages for Brazilian Jiu-Jitsu, Submission Grappling and Self Defence, each split into kids' and adults' classes.\nDiscipline pages explaining Combat Jiu-Jitsu, Brazilian Jiu-Jitsu and Submission Grappling to people who have never trained.\nA class timetable and a free-trial booking flow, with a sticky call-to-action that follows the visitor down every page.\nMember testimonials, a coach introduction video, and click-to-call and email contact throughout.\nGoogle Ads conversion tracking wired in, so enquiries from paid search are attributed to the campaign that produced them.\n\nThe whole site is built for one job: turning a search for \"BJJ Swansea\" into a booked free trial.",
+    "kind": "client",
+    "price": 0,
+    "category": "Business System",
+    "technologies": [
+      "Bootstrap 5",
+      "jQuery",
+      "JavaScript",
+      "Font Awesome",
+      "Google Ads Conversion Tracking",
+      "Responsive Design",
+      "SEO"
+    ],
+    "demo_url": "https://sjamartialarts.com/",
+    "download_url": null,
+    "download_file": null,
+    "thumbnail": "/assets/images/sja-martial-arts.jpg",
+    "is_available": true,
+    "created_at": "2026-09-14T04:20:00.000Z",
+    "updated_at": "2026-09-14T04:20:00.000Z"
   }
 ]
